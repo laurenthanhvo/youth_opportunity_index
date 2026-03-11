@@ -1,0 +1,78 @@
+relative_path,domain_folder,filename,ext,size_mb
+data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Column-Metadata.csv,economic,ACSDT5Y2024.B19013-Column-Metadata.csv,.csv,0.0003
+data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Data.csv,economic,ACSDT5Y2024.B19013-Data.csv,.csv,0.0648
+data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Table-Notes.txt,economic,ACSDT5Y2024.B19013-Table-Notes.txt,.txt,0.011
+data/rawdomains/economic/ACSST5Y2024.S1701_2026-03-11T045641/ACSST5Y2024.S1701-Column-Metadata.csv,economic,ACSST5Y2024.S1701-Column-Metadata.csv,.csv,0.0557
+data/rawdomains/economic/ACSST5Y2024.S1701_2026-03-11T045641/ACSST5Y2024.S1701-Data.csv,economic,ACSST5Y2024.S1701-Data.csv,.csv,1.6295
+data/rawdomains/economic/ACSST5Y2024.S1701_2026-03-11T045641/ACSST5Y2024.S1701-Table-Notes.txt,economic,ACSST5Y2024.S1701-Table-Notes.txt,.txt,0.0112
+data/rawdomains/economic/ACSST5Y2024.S2201_2026-03-11T045827/ACSST5Y2024.S2201-Column-Metadata.csv,economic,ACSST5Y2024.S2201-Column-Metadata.csv,.csv,0.0579
+data/rawdomains/economic/ACSST5Y2024.S2201_2026-03-11T045827/ACSST5Y2024.S2201-Data.csv,economic,ACSST5Y2024.S2201-Data.csv,.csv,2.014
+data/rawdomains/economic/ACSST5Y2024.S2201_2026-03-11T045827/ACSST5Y2024.S2201-Table-Notes.txt,economic,ACSST5Y2024.S2201-Table-Notes.txt,.txt,0.0109
+data/rawdomains/economic/ACSST5Y2024.S2301_2026-03-11T045755/ACSST5Y2024.S2301-Column-Metadata.csv,economic,ACSST5Y2024.S2301-Column-Metadata.csv,.csv,0.034
+data/rawdomains/economic/ACSST5Y2024.S2301_2026-03-11T045755/ACSST5Y2024.S2301-Data.csv,economic,ACSST5Y2024.S2301-Data.csv,.csv,1.3489
+data/rawdomains/economic/ACSST5Y2024.S2301_2026-03-11T045755/ACSST5Y2024.S2301-Table-Notes.txt,economic,ACSST5Y2024.S2301-Table-Notes.txt,.txt,0.0114
+data/rawdomains/education/ACSDT5Y2024.B14005_2026-03-11T050236/ACSDT5Y2024.B14005-Column-Metadata.csv,education,ACSDT5Y2024.B14005-Column-Metadata.csv,.csv,0.0053
+data/rawdomains/education/ACSDT5Y2024.B14005_2026-03-11T050236/ACSDT5Y2024.B14005-Data.csv,education,ACSDT5Y2024.B14005-Data.csv,.csv,0.2518
+data/rawdomains/education/ACSDT5Y2024.B14005_2026-03-11T050236/ACSDT5Y2024.B14005-Table-Notes.txt,education,ACSDT5Y2024.B14005-Table-Notes.txt,.txt,0.011
+data/rawdomains/education/ACSST5Y2024.S1401_2026-03-11T050211/ACSST5Y2024.S1401-Column-Metadata.csv,education,ACSST5Y2024.S1401-Column-Metadata.csv,.csv,0.0434
+data/rawdomains/education/ACSST5Y2024.S1401_2026-03-11T050211/ACSST5Y2024.S1401-Data.csv,education,ACSST5Y2024.S1401-Data.csv,.csv,1.8117
+data/rawdomains/education/ACSST5Y2024.S1401_2026-03-11T050211/ACSST5Y2024.S1401-Table-Notes.txt,education,ACSST5Y2024.S1401-Table-Notes.txt,.txt,0.0108
+data/rawdomains/education/ACSST5Y2024.S1501_2026-03-11T050148/ACSST5Y2024.S1501-Column-Metadata.csv,education,ACSST5Y2024.S1501-Column-Metadata.csv,.csv,0.107
+data/rawdomains/education/ACSST5Y2024.S1501_2026-03-11T050148/ACSST5Y2024.S1501-Data.csv,education,ACSST5Y2024.S1501-Data.csv,.csv,3.4289
+data/rawdomains/education/ACSST5Y2024.S1501_2026-03-11T050148/ACSST5Y2024.S1501-Table-Notes.txt,education,ACSST5Y2024.S1501-Table-Notes.txt,.txt,0.0108
+data/rawdomains/health/ACSST5Y2024.S1810_2026-03-11T050449/ACSST5Y2024.S1810-Column-Metadata.csv,health,ACSST5Y2024.S1810-Column-Metadata.csv,.csv,0.0726
+data/rawdomains/health/ACSST5Y2024.S1810_2026-03-11T050449/ACSST5Y2024.S1810-Data.csv,health,ACSST5Y2024.S1810-Data.csv,.csv,1.8013
+data/rawdomains/health/ACSST5Y2024.S1810_2026-03-11T050449/ACSST5Y2024.S1810-Table-Notes.txt,health,ACSST5Y2024.S1810-Table-Notes.txt,.txt,0.0112
+data/rawdomains/health/ACSST5Y2024.S2701_2026-03-11T050431/ACSST5Y2024.S2701-Column-Metadata.csv,health,ACSST5Y2024.S2701-Column-Metadata.csv,.csv,0.0935
+data/rawdomains/health/ACSST5Y2024.S2701_2026-03-11T050431/ACSST5Y2024.S2701-Data.csv,health,ACSST5Y2024.S2701-Data.csv,.csv,2.7393
+data/rawdomains/health/ACSST5Y2024.S2701_2026-03-11T050431/ACSST5Y2024.S2701-Table-Notes.txt,health,ACSST5Y2024.S2701-Table-Notes.txt,.txt,0.0114
+"data/rawdomains/health/PLACES__Local_Data_for_Better_Health,_Census_Tract_Data,_2025_release_20260311.csv",health,"PLACES__Local_Data_for_Better_Health,_Census_Tract_Data,_2025_release_20260311.csv",.csv,8.1206
+data/rawdomains/housing/ACSDT5Y2024.B07001_2026-03-11T051133/ACSDT5Y2024.B07001-Column-Metadata.csv,housing,ACSDT5Y2024.B07001-Column-Metadata.csv,.csv,0.014
+data/rawdomains/housing/ACSDT5Y2024.B07001_2026-03-11T051133/ACSDT5Y2024.B07001-Data.csv,housing,ACSDT5Y2024.B07001-Data.csv,.csv,0.7441
+data/rawdomains/housing/ACSDT5Y2024.B07001_2026-03-11T051133/ACSDT5Y2024.B07001-Table-Notes.txt,housing,ACSDT5Y2024.B07001-Table-Notes.txt,.txt,0.0113
+data/rawdomains/housing/ACSDT5Y2024.B25003_2026-03-11T051156/ACSDT5Y2024.B25003-Column-Metadata.csv,housing,ACSDT5Y2024.B25003-Column-Metadata.csv,.csv,0.0003
+data/rawdomains/housing/ACSDT5Y2024.B25003_2026-03-11T051156/ACSDT5Y2024.B25003-Data.csv,housing,ACSDT5Y2024.B25003-Data.csv,.csv,0.0792
+data/rawdomains/housing/ACSDT5Y2024.B25003_2026-03-11T051156/ACSDT5Y2024.B25003-Table-Notes.txt,housing,ACSDT5Y2024.B25003-Table-Notes.txt,.txt,0.0108
+data/rawdomains/housing/ACSDT5Y2024.B25014_2026-03-11T051112/ACSDT5Y2024.B25014-Column-Metadata.csv,housing,ACSDT5Y2024.B25014-Column-Metadata.csv,.csv,0.002
+data/rawdomains/housing/ACSDT5Y2024.B25014_2026-03-11T051112/ACSDT5Y2024.B25014-Data.csv,housing,ACSDT5Y2024.B25014-Data.csv,.csv,0.1526
+data/rawdomains/housing/ACSDT5Y2024.B25014_2026-03-11T051112/ACSDT5Y2024.B25014-Table-Notes.txt,housing,ACSDT5Y2024.B25014-Table-Notes.txt,.txt,0.0109
+data/rawdomains/housing/ACSDT5Y2024.B25070_2026-03-11T051051/ACSDT5Y2024.B25070-Column-Metadata.csv,housing,ACSDT5Y2024.B25070-Column-Metadata.csv,.csv,0.0012
+data/rawdomains/housing/ACSDT5Y2024.B25070_2026-03-11T051051/ACSDT5Y2024.B25070-Data.csv,housing,ACSDT5Y2024.B25070-Data.csv,.csv,0.1338
+data/rawdomains/housing/ACSDT5Y2024.B25070_2026-03-11T051051/ACSDT5Y2024.B25070-Table-Notes.txt,housing,ACSDT5Y2024.B25070-Table-Notes.txt,.txt,0.0109
+data/rawdomains/mobility/ACSDT5Y2024.B08201_2026-03-11T052429/ACSDT5Y2024.B08201-Column-Metadata.csv,mobility,ACSDT5Y2024.B08201-Column-Metadata.csv,.csv,0.0043
+data/rawdomains/mobility/ACSDT5Y2024.B08201_2026-03-11T052429/ACSDT5Y2024.B08201-Data.csv,mobility,ACSDT5Y2024.B08201-Data.csv,.csv,0.2799
+data/rawdomains/mobility/ACSDT5Y2024.B08201_2026-03-11T052429/ACSDT5Y2024.B08201-Table-Notes.txt,mobility,ACSDT5Y2024.B08201-Table-Notes.txt,.txt,0.0111
+data/rawdomains/mobility/ACSDT5Y2024.B08303_2026-03-11T052441/ACSDT5Y2024.B08303-Column-Metadata.csv,mobility,ACSDT5Y2024.B08303-Column-Metadata.csv,.csv,0.0014
+data/rawdomains/mobility/ACSDT5Y2024.B08303_2026-03-11T052441/ACSDT5Y2024.B08303-Data.csv,mobility,ACSDT5Y2024.B08303-Data.csv,.csv,0.1538
+data/rawdomains/mobility/ACSDT5Y2024.B08303_2026-03-11T052441/ACSDT5Y2024.B08303-Table-Notes.txt,mobility,ACSDT5Y2024.B08303-Table-Notes.txt,.txt,0.0111
+data/rawdomains/mobility/ACSDT5Y2024.B28002_2026-03-11T052503/ACSDT5Y2024.B28002-Column-Metadata.csv,mobility,ACSDT5Y2024.B28002-Column-Metadata.csv,.csv,0.0027
+data/rawdomains/mobility/ACSDT5Y2024.B28002_2026-03-11T052503/ACSDT5Y2024.B28002-Data.csv,mobility,ACSDT5Y2024.B28002-Data.csv,.csv,0.1553
+data/rawdomains/mobility/ACSDT5Y2024.B28002_2026-03-11T052503/ACSDT5Y2024.B28002-Table-Notes.txt,mobility,ACSDT5Y2024.B28002-Table-Notes.txt,.txt,0.014
+data/rawdomains/mobility/transit_routes_datasd/transit_routes_datasd.cpg,mobility,transit_routes_datasd.cpg,.cpg,0.0
+data/rawdomains/mobility/transit_routes_datasd/transit_routes_datasd.dbf,mobility,transit_routes_datasd.dbf,.dbf,0.2161
+data/rawdomains/mobility/transit_routes_datasd/transit_routes_datasd.prj,mobility,transit_routes_datasd.prj,.prj,0.0005
+data/rawdomains/mobility/transit_routes_datasd/transit_routes_datasd.shp,mobility,transit_routes_datasd.shp,.shp,3.4047
+data/rawdomains/mobility/transit_routes_datasd/transit_routes_datasd.shx,mobility,transit_routes_datasd.shx,.shx,0.0065
+data/rawdomains/mobility/transit_routes_dictionary_datasd.csv,mobility,transit_routes_dictionary_datasd.csv,.csv,0.0016
+data/rawdomains/mobility/transit_stops_datasd/transit_stops_datasd.cpg,mobility,transit_stops_datasd.cpg,.cpg,0.0
+data/rawdomains/mobility/transit_stops_datasd/transit_stops_datasd.dbf,mobility,transit_stops_datasd.dbf,.dbf,1.5665
+data/rawdomains/mobility/transit_stops_datasd/transit_stops_datasd.prj,mobility,transit_stops_datasd.prj,.prj,0.0005
+data/rawdomains/mobility/transit_stops_datasd/transit_stops_datasd.shp,mobility,transit_stops_datasd.shp,.shp,0.1662
+data/rawdomains/mobility/transit_stops_datasd/transit_stops_datasd.shx,mobility,transit_stops_datasd.shx,.shx,0.0476
+data/rawdomains/safety/ACSDT5Y2024.B25002_2026-03-11T051657/ACSDT5Y2024.B25002-Column-Metadata.csv,safety,ACSDT5Y2024.B25002-Column-Metadata.csv,.csv,0.0003
+data/rawdomains/safety/ACSDT5Y2024.B25002_2026-03-11T051657/ACSDT5Y2024.B25002-Data.csv,safety,ACSDT5Y2024.B25002-Data.csv,.csv,0.0786
+data/rawdomains/safety/ACSDT5Y2024.B25002_2026-03-11T051657/ACSDT5Y2024.B25002-Table-Notes.txt,safety,ACSDT5Y2024.B25002-Table-Notes.txt,.txt,0.0108
+data/rawdomains/safety/ACSST5Y2024.S1101_2026-03-11T051312/ACSST5Y2024.S1101-Column-Metadata.csv,safety,ACSST5Y2024.S1101-Column-Metadata.csv,.csv,0.0249
+data/rawdomains/safety/ACSST5Y2024.S1101_2026-03-11T051312/ACSST5Y2024.S1101-Data.csv,safety,ACSST5Y2024.S1101-Data.csv,.csv,0.9337
+data/rawdomains/safety/ACSST5Y2024.S1101_2026-03-11T051312/ACSST5Y2024.S1101-Table-Notes.txt,safety,ACSST5Y2024.S1101-Table-Notes.txt,.txt,0.0112
+data/rawdomains/safety/CIBRS_Group_A_Public_Crime_Data_20260311.csv,safety,CIBRS_Group_A_Public_Crime_Data_20260311.csv,.csv,0.0099
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.cpg,safety,CES4 Final Shapefile.cpg,.cpg,0.0
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.dbf,safety,CES4 Final Shapefile.dbf,.dbf,13.0824
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.prj,safety,CES4 Final Shapefile.prj,.prj,0.0004
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.sbn,safety,CES4 Final Shapefile.sbn,.sbn,0.0708
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.sbx,safety,CES4 Final Shapefile.sbx,.sbx,0.0021
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.shp,safety,CES4 Final Shapefile.shp,.shp,8.0562
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.shp.xml,safety,CES4 Final Shapefile.shp.xml,.xml,0.0698
+data/rawdomains/safety/calenviroscreen40shpf2021shp/CES4 Final Shapefile.shx,safety,CES4 Final Shapefile.shx,.shx,0.0614
+data/rawdomains/youth/services_master.csv,youth,services_master.csv,.csv,4.661
+data/rawdomains/youth/services_master.geojson,youth,services_master.geojson,.geojson,6.3219
