@@ -1,4 +1,7 @@
 relative_path,domain_folder,filename,ext,size_mb
+data/rawdomains/economic/ACSDT5Y2024.B01003_2026-03-11T063504/ACSDT5Y2024.B01003-Column-Metadata.csv,economic,ACSDT5Y2024.B01003-Column-Metadata.csv,.csv,0.0001
+data/rawdomains/economic/ACSDT5Y2024.B01003_2026-03-11T063504/ACSDT5Y2024.B01003-Data.csv,economic,ACSDT5Y2024.B01003-Data.csv,.csv,0.0623
+data/rawdomains/economic/ACSDT5Y2024.B01003_2026-03-11T063504/ACSDT5Y2024.B01003-Table-Notes.txt,economic,ACSDT5Y2024.B01003-Table-Notes.txt,.txt,0.0108
 data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Column-Metadata.csv,economic,ACSDT5Y2024.B19013-Column-Metadata.csv,.csv,0.0003
 data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Data.csv,economic,ACSDT5Y2024.B19013-Data.csv,.csv,0.0648
 data/rawdomains/economic/ACSDT5Y2024.B19013_2026-03-11T045723/ACSDT5Y2024.B19013-Table-Notes.txt,economic,ACSDT5Y2024.B19013-Table-Notes.txt,.txt,0.011

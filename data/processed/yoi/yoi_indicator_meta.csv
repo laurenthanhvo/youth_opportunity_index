@@ -1,0 +1,27 @@
+indicator,domain,higher_is_better,source,notes
+poverty_rate,economic,False,ACS S1701,column=S1701_C02_001E
+median_hh_income,economic,True,ACS B19013,column=B19013_001E
+unemployment_rate,economic,False,ACS S2301,column=S2301_C04_001E
+snap_or_assist_rate,economic,False,ACS S2201,column=S2201_C02_013E
+hs_plus,education,True,ACS S1501,hs_col=S1501_C02_015E
+ba_plus,education,True,ACS S1501,ba_col=S1501_C02_016E
+school_enrollment,education,True,ACS S1401,column=S1401_C02_001E
+youth_disconnection_proxy,education,False,ACS B14005,placeholder using sum(non_total)/total; total=B14005_001E
+uninsured_rate,health,False,ACS S2701,column=S2701_C02_001E
+disability_rate,health,False,ACS S1810,column=S1810_C02_001E
+frequent_mental_distress,health,False,CDC PLACES,MeasureId=MHLTH
+poor_physical_health,health,False,CDC PLACES,MeasureId=PHLTH
+rent_burden_proxy,housing,False,ACS B25070,placeholder column=B25070_001E (replace with >=30% bin sum)
+overcrowding_proxy,housing,False,ACS B25014,placeholder column=B25014_001E (replace with >1.0 occupants/room share)
+moved_past_year_proxy,housing,False,ACS B07001,placeholder column=B07001_001E (replace with 1 - same-house share)
+homeownership_rate,housing,True,ACS B25003,owner=B25003_002E / occupied=B25003_001E
+single_parent_proxy,safety_env,False,ACS S1101,placeholder column=S1101_C02_002E (replace with true single-parent % logic)
+vacancy_rate,safety_env,False,ACS B25002,vacant=B25002_003E/total=B25002_001E
+env_burden,safety_env,False,CalEnviroScreen 4.0,CalEnviroScreen percentile/score (higher burden = worse)
+no_vehicle_rate,mobility_connectivity,False,ACS B08201,no_vehicle=B08201_002E/total=B08201_001E
+commute_time_proxy,mobility_connectivity,False,ACS B08303,placeholder (replace with >=30min bin share)
+internet_sub_rate_proxy,mobility_connectivity,True,ACS B28002,proxy using B28002_002E/B28002_001E (replace with true broadband subscription col)
+service_count,youth_supports,True,services_master,total services per tract
+services_per_10k,youth_supports,True,services_master + population,density per 10k
+youth_services_per_10k,youth_supports,True,services_master,youth-keyword density per 10k
+mh_services_per_10k,youth_supports,True,services_master,mental-health-keyword density per 10k
