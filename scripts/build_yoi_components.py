@@ -285,14 +285,13 @@ def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
         return None
 
     gdf = gpd.read_file(shp)
-    # Find a tract id column
+
     tract_col = None
     for cand in ["GEOID", "geoid", "Tract", "TRACT", "CensusTract", "CENSUS_TRACT"]:
         if cand in gdf.columns:
             tract_col = cand
             break
     if tract_col is None:
-        # last resort: any column containing 'tract'
         for c in gdf.columns:
             if "tract" in c.lower():
                 tract_col = c
@@ -305,14 +304,12 @@ def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
     gdf = gdf.dropna(subset=["tract_geoid"]).copy()
     gdf = gdf[gdf["tract_geoid"].astype(str).str.startswith("06073")].copy()
 
-    # Pick an env-burden field (robust)
     env_col = None
     for cand in ["CES4_Percentile", "CES4_Pctl", "Percentile", "CES_Pctl", "CES_SCORE", "CES4_Score"]:
         if cand in gdf.columns:
             env_col = cand
             break
     if env_col is None:
-        # fallback: try any column containing 'pctl' or 'percent'
         for c in gdf.columns:
             lc = c.lower()
             if "pctl" in lc or "percent" in lc:
@@ -323,6 +320,16 @@ def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
         gdf["env_burden"] = safe_num(gdf[env_col])
     else:
         gdf["env_burden"] = np.nan
+
+    # IMPORTANT: Folium/Leaflet needs lat/lon
+    if gdf.crs is not None:
+        gdf = gdf.to_crs(epsg=4326)
+
+    # optional geometry cleanup
+    try:
+        gdf["geometry"] = gdf["geometry"].buffer(0)
+    except Exception:
+        pass
 
     return gdf[["tract_geoid", "env_burden", "geometry"]].copy()
 
@@ -348,7 +355,7 @@ if ces_gdf is not None and len(ces_gdf) > 0:
 
     # Save geometry for dashboard
     geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
-    ces_gdf.to_file(geo_out, driver="GeoJSON")
+    ces_gdf[["tract_geoid", "geometry"]].to_file(geo_out, driver="GeoJSON")
     print("Saved SD tract boundaries:", geo_out)
 
     # Base tracts table (always one row per tract)
@@ -750,7 +757,12 @@ else:
 ces_gdf = load_calenviroscreen_sd_geo()
 if ces_gdf is not None and len(ces_gdf) > 0:
     # save geometry for dashboard map
-    ces_gdf.to_file(OUT_BOUNDS_DIR / "sd_tracts.geojson", driver="GeoJSON")
+    geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
+    ces_gdf[["tract_geoid", "geometry"]].to_file(
+    OUT_BOUNDS_DIR / "sd_tracts.geojson",
+    driver="GeoJSON"
+    )
+    print("Saved SD tract boundaries:", geo_out)
 
     # IMPORTANT:
     # If we anchored from CalEnviroScreen earlier, tracts already has env_burden.
@@ -971,8 +983,12 @@ domain_scores["yoi_0_100"] = domain_scores["yoi_raw_0_1"] * 100.0
 
 # Attach some useful raw columns
 keep_raw = ["tract_geoid"]
-if pop_col and pop_col in tracts.columns:
+
+if "total_population" in tracts.columns:
+    keep_raw.append("total_population")
+elif pop_col and pop_col in tracts.columns:
     keep_raw.append(pop_col)
+
 for c in ["crime_rate_per_1k", "service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
     if c in tracts.columns:
         keep_raw.append(c)

@@ -1,6 +1,7 @@
 # app/app.py
 import json
 import re
+import copy
 from pathlib import Path
 
 import numpy as np
@@ -9,14 +10,12 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 
-# optional overlays
+# Optional overlays (transit) use geopandas if available
 try:
     import geopandas as gpd
-    from folium.plugins import MarkerCluster
     _HAS_GPD = True
 except Exception:
     gpd = None
-    MarkerCluster = None
     _HAS_GPD = False
 
 st.set_page_config(page_title="Youth Opportunity Index", layout="wide")
@@ -33,10 +32,11 @@ def find_repo_root(start: Path) -> Path:
 REPO_ROOT = find_repo_root(Path.cwd())
 DATA_DIR = REPO_ROOT / "data"
 
-YOI_PATH = DATA_DIR / "processed" / "yoi" / "yoi_components.csv"
+YOI_PATH  = DATA_DIR / "processed" / "yoi" / "yoi_components.csv"
 META_PATH = DATA_DIR / "processed" / "yoi" / "yoi_indicator_meta.csv"
-GEO_PATH = DATA_DIR / "processed" / "boundaries" / "sd_tracts.geojson"
+GEO_PATH  = DATA_DIR / "processed" / "boundaries" / "sd_tracts.geojson"
 
+# Transit shapefiles you already have
 ROUTES_SHP = DATA_DIR / "rawdomains" / "mobility" / "transit_routes_datasd" / "transit_routes_datasd.shp"
 STOPS_SHP  = DATA_DIR / "rawdomains" / "mobility" / "transit_stops_datasd" / "transit_stops_datasd.shp"
 
@@ -46,20 +46,10 @@ INV_PATH_CANDS = [
 ]
 INV_PATH = next((p for p in INV_PATH_CANDS if p.exists()), None)
 
-DOMAINS = [
-    "economic",
-    "education",
-    "health",
-    "housing",
-    "safety_env",
-    "mobility_connectivity",
-    "youth_supports",
-]
-
 # -----------------------------
 # Helpers
 # -----------------------------
-def normalize_geoid11(x) -> str:
+def geoid11(x) -> str:
     d = re.sub(r"\D", "", str(x))
     return d.zfill(11)[-11:] if d else ""
 
@@ -70,36 +60,34 @@ def is_nan(x) -> bool:
         return False
 
 def ramp_color(v, bins, colors):
-    if v < bins[0]: return colors[0]
-    if v < bins[1]: return colors[1]
-    if v < bins[2]: return colors[2]
-    if v < bins[3]: return colors[3]
+    if v < bins[0]:
+        return colors[0]
+    if v < bins[1]:
+        return colors[1]
+    if v < bins[2]:
+        return colors[2]
+    if v < bins[3]:
+        return colors[3]
     return colors[4]
 
-def add_legend_html(map_layer: str, legend_name: str, show_routes: bool, show_stops: bool):
-    # bins and labels
+def legend_html(map_layer: str, legend_name: str):
     if map_layer == "YOI (0–100)":
         labels = ["<20", "20–40", "40–60", "60–80", "80+"]
+        colors = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"]
     else:
         labels = ["<0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8+"]
+        colors = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"]
 
-    colors = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"]
-
-    items = ""
-    for c, lab in zip(colors, labels):
-        items += f"""
+    items = "\n".join(
+        f"""
         <div style="display:flex;align-items:center;margin-bottom:4px;">
           <div style="width:14px;height:14px;background:{c};margin-right:8px;border:1px solid #333;"></div>
           <div style="font-size:12px;">{lab}</div>
         </div>
-        """
+        """ for c, lab in zip(colors, labels)
+    )
 
-    overlays = []
-    if show_routes: overlays.append("Transit routes (blue)")
-    if show_stops: overlays.append("Transit stops (cyan dots)")
-    overlays_txt = ", ".join(overlays) if overlays else "None"
-
-    html = f"""
+    return f"""
     <div style="
       position: fixed;
       bottom: 24px;
@@ -114,37 +102,10 @@ def add_legend_html(map_layer: str, legend_name: str, show_routes: bool, show_st
       <div style="font-weight:600;font-size:13px;margin-bottom:6px;">{legend_name}</div>
       {items}
       <div style="font-size:11px;color:#444;margin-top:6px;">
-        <div><b>Overlays:</b> {overlays_txt}</div>
-        <div><b>Selected tract:</b> thick black outline</div>
+        Click a tract to select it. Hover to see tract + population.
       </div>
     </div>
     """
-    return html
-
-def feature_bounds(feat) -> tuple[float, float, float, float] | None:
-    """Return (min_lat, min_lon, max_lat, max_lon) for a GeoJSON feature."""
-    geom = feat.get("geometry", {})
-    coords = geom.get("coordinates", None)
-    if coords is None:
-        return None
-
-    min_lat, min_lon =  90.0,  180.0
-    max_lat, max_lon = -90.0, -180.0
-
-    def walk(c):
-        nonlocal min_lat, min_lon, max_lat, max_lon
-        if isinstance(c, (list, tuple)) and len(c) == 2 and all(isinstance(v, (int, float)) for v in c):
-            lon, lat = c[0], c[1]
-            min_lat = min(min_lat, lat)
-            min_lon = min(min_lon, lon)
-            max_lat = max(max_lat, lat)
-            max_lon = max(max_lon, lon)
-        elif isinstance(c, (list, tuple)):
-            for cc in c:
-                walk(cc)
-
-    walk(coords)
-    return (min_lat, min_lon, max_lat, max_lon)
 
 # -----------------------------
 # Load (cached)
@@ -170,11 +131,14 @@ def load_routes_geojson(path_str: str, mtime: float) -> dict | None:
     if not p.exists():
         return None
     gdf = gpd.read_file(p)
-    if gdf.crs is not None:
-        gdf = gdf.to_crs(4326)
-    # keep it visible: simplify only a little
     try:
-        gdf["geometry"] = gdf["geometry"].simplify(0.00005, preserve_topology=True)
+        if gdf.crs is not None:
+            gdf = gdf.to_crs(4326)
+    except Exception:
+        pass
+    # light simplify for web
+    try:
+        gdf["geometry"] = gdf["geometry"].simplify(0.0002, preserve_topology=True)
     except Exception:
         pass
     return json.loads(gdf.to_json())
@@ -187,16 +151,20 @@ def load_stops_points(path_str: str, mtime: float) -> pd.DataFrame | None:
     if not p.exists():
         return None
     gdf = gpd.read_file(p)
-    if gdf.crs is not None:
-        gdf = gdf.to_crs(4326)
+    try:
+        if gdf.crs is not None:
+            gdf = gdf.to_crs(4326)
+    except Exception:
+        pass
     gdf = gdf[gdf.geometry.notna()].copy()
-
-    # point-like only
     gdf = gdf[gdf.geometry.geom_type.isin(["Point", "MultiPoint"])].copy()
-    gdf["geom"] = gdf.geometry
-    gdf.loc[gdf.geom_type == "MultiPoint", "geom"] = gdf.loc[gdf.geom_type == "MultiPoint"].geometry.centroid
-    gdf["lon"] = gdf["geom"].x
-    gdf["lat"] = gdf["geom"].y
+
+    # MultiPoint -> centroid
+    geom = gdf.geometry
+    mp = gdf.geometry.geom_type == "MultiPoint"
+    geom.loc[mp] = gdf.loc[mp].geometry.centroid
+    gdf["lon"] = geom.x
+    gdf["lat"] = geom.y
 
     keep = ["lat", "lon"]
     for c in ["stop_id", "stop_name", "name"]:
@@ -222,12 +190,20 @@ if not boundary_raw.get("features"):
     st.error("Boundary GeoJSON has 0 features. Rebuild data/processed/boundaries/sd_tracts.geojson")
     st.stop()
 
-# normalize tract ids in geojson once (don’t mutate cache)
-geo = {"type": boundary_raw.get("type", "FeatureCollection"), "features": []}
-for feat in boundary_raw.get("features", []):
-    props = dict(feat.get("properties", {}))
-    props["tract_geoid"] = normalize_geoid11(props.get("tract_geoid", props.get("Tract", props.get("TRACT", ""))))
-    geo["features"].append({"type": "Feature", "properties": props, "geometry": feat.get("geometry", None)})
+geo = copy.deepcopy(boundary_raw)
+for feat in geo.get("features", []):
+    props = feat.setdefault("properties", {})
+    props["tract_geoid"] = geoid11(props.get("tract_geoid", props.get("Tract", props.get("TRACT", ""))))
+
+DOMAINS = [
+    "economic",
+    "education",
+    "health",
+    "housing",
+    "safety_env",
+    "mobility_connectivity",
+    "youth_supports",
+]
 
 # -----------------------------
 # Sidebar
@@ -251,7 +227,6 @@ s = sum(raw_w.values())
 weights = {d: (1 / len(DOMAINS) if s == 0 else raw_w[d] / s) for d in DOMAINS}
 st.sidebar.caption("Weights auto-normalize to sum to 1.")
 
-# persistent selection
 if "selected_geoid" not in st.session_state:
     st.session_state["selected_geoid"] = None
 
@@ -261,8 +236,6 @@ tract_pick = st.sidebar.selectbox(
 )
 if tract_pick != "(none)":
     st.session_state["selected_geoid"] = tract_pick
-
-selected_geoid = st.session_state["selected_geoid"]
 
 # -----------------------------
 # Recompute YOI under weights
@@ -277,16 +250,23 @@ if map_layer == "YOI (0–100)":
     value_col = "yoi_custom_0_100"
     legend_name = "YOI (custom weights)"
 else:
-    dd = map_layer.replace(" score", "")
-    value_col = f"{dd}_score"
-    legend_name = f"{dd} domain score (0–1)"
+    d = map_layer.replace(" score", "")
+    value_col = f"{d}_score"
+    legend_name = f"{d} domain score (0–1)"
 
 val_map = dict(zip(df["tract_geoid"].astype(str), df[value_col].astype(float)))
 
-# attach current "value" onto geojson props
+# Population: pick best available column (don’t assume total_population exists)
+POP_CANDS = ["total_population", "population", "pop_total", "B01003_001E"]
+pop_col = next((c for c in POP_CANDS if c in df.columns), None)
+pop_map = dict(zip(df["tract_geoid"].astype(str), df[pop_col].astype(float))) if pop_col else {}
+
+# attach props used by tooltip/popup/styling
 for feat in geo.get("features", []):
-    tg = feat["properties"].get("tract_geoid", "")
-    feat["properties"]["value"] = float(val_map.get(tg, np.nan)) if tg else np.nan
+    props = feat.setdefault("properties", {})
+    tg = props.get("tract_geoid", "")
+    props["value"] = float(val_map.get(tg, np.nan)) if tg else np.nan
+    props["population"] = float(pop_map.get(tg, np.nan)) if pop_col and tg in pop_map else np.nan
 
 # -----------------------------
 # Layout
@@ -295,116 +275,114 @@ st.title("Youth Opportunity Index (San Diego County)")
 tab_map, tab_data = st.tabs(["Map", "Data / Sources"])
 
 # -----------------------------
-# MAP TAB
+# MAP
 # -----------------------------
 with tab_map:
     left, right = st.columns([2.2, 1], gap="large")
 
-    # decide map viewport: zoom to selected tract if we have it
-    center = [32.8, -117.1]
-    zoom = 10
-    if selected_geoid:
-        sel_feat = next((f for f in geo["features"] if f["properties"].get("tract_geoid") == str(selected_geoid)), None)
-        if sel_feat:
-            b = feature_bounds(sel_feat)
-            if b:
-                min_lat, min_lon, max_lat, max_lon = b
-                center = [(min_lat + max_lat) / 2.0, (min_lon + max_lon) / 2.0]
-                zoom = 12  # fit_bounds also below; zoom is just a fallback
-
     with left:
-        m = folium.Map(location=center, zoom_start=zoom, tiles="cartodbpositron")
+        m = folium.Map(location=[32.8, -116.9], zoom_start=10, tiles="cartodbpositron")
 
-        # always keep a clickable tract layer (even if choropleth is off)
-        # so clicking still works + we can highlight selection.
-        def style_clickable(feature):
-            tg = feature.get("properties", {}).get("tract_geoid", "")
-            base = {"fillOpacity": 0.0, "weight": 0.0, "color": "#00000000"}  # invisible
-            if show_boundaries:
-                base = {"fillOpacity": 0.0, "weight": 0.9, "color": "#666"}
-            # selected outline is handled by separate layer below
-            return base
+        selected_geoid = st.session_state["selected_geoid"]
 
-        clickable = folium.GeoJson(
-            geo,
-            name="tracts_clickable",
-            style_function=style_clickable,
-            tooltip=folium.GeoJsonTooltip(
-                fields=["tract_geoid"],
-                aliases=["Tract GEOID"],
-                sticky=False,
-            ),
-            # popup ONLY tract_geoid so st_folium parsing is easy
-            popup=folium.GeoJsonPopup(fields=["tract_geoid"], aliases=["tract_geoid"]),
-        )
-        clickable.add_to(m)
+        # Single polygon layer controls BOTH fill + outlines
+        def style_fn(feature):
+            props = feature.get("properties", {})
+            tg = props.get("tract_geoid", "")
+            v = props.get("value", np.nan)
 
-        # choropleth layer (optional)
-        if show_choropleth:
-            def style_choro(feature):
-                v = feature.get("properties", {}).get("value", np.nan)
+            # boundaries
+            weight = 0.9 if show_boundaries else 0.0
+            color = "#666" if show_boundaries else "#00000000"
+
+            # fill
+            if not show_choropleth:
+                fill_opacity = 0.0
+                fill_color = "#ffffff"
+            else:
                 if v is None or is_nan(v):
-                    return {"fillOpacity": 0.05, "weight": 0.0, "color": "#00000000", "fillColor": "#ffffff"}
-
-                if map_layer == "YOI (0–100)":
-                    bins = [20, 40, 60, 80]
+                    fill_opacity = 0.05
+                    fill_color = "#ffffff"
                 else:
-                    bins = [0.2, 0.4, 0.6, 0.8]
-                colors = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"]
-                fill = ramp_color(float(v), bins, colors)
-                return {"fillColor": fill, "fillOpacity": 0.70, "weight": 0.0, "color": "#00000000"}
+                    if map_layer == "YOI (0–100)":
+                        bins = [20, 40, 60, 80]
+                    else:
+                        bins = [0.2, 0.4, 0.6, 0.8]
+                    colors = ["#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"]
+                    fill_color = ramp_color(float(v), bins, colors)
+                    fill_opacity = 0.70
 
-            folium.GeoJson(
-                geo,
-                name="choropleth",
-                style_function=style_choro,
-                tooltip=folium.GeoJsonTooltip(
-                    fields=["tract_geoid", "value"],
-                    aliases=["Tract GEOID", legend_name],
-                    localize=True,
-                    sticky=False,
-                ),
-            ).add_to(m)
+            # base style
+            style = {
+                "fillColor": fill_color,
+                "fillOpacity": fill_opacity,
+                "weight": weight,
+                "color": color,
+            }
 
-        # selected tract overlay (always on top)
+            # selection outline
+            if selected_geoid and tg == str(selected_geoid):
+                style.update({"color": "#000000", "weight": 4.0, "fillOpacity": max(fill_opacity, 0.85)})
+
+            return style
+
+        # Tooltip fields must exist in properties; we always set population (NaN ok)
+        tooltip = folium.GeoJsonTooltip(
+            fields=["tract_geoid", "population", "value"],
+            aliases=["Tract GEOID", "Population", legend_name],
+            localize=True,
+            sticky=False,
+        )
+
+        popup = folium.GeoJsonPopup(
+            fields=["tract_geoid"],
+            aliases=["Tract GEOID"],
+            localize=False,
+        )
+
+        tracts_layer = folium.GeoJson(
+            geo,
+            name="tracts",
+            style_function=style_fn,
+            highlight_function=lambda f: {"weight": 2.0, "color": "#111"},
+            tooltip=tooltip,
+            popup=popup,
+        )
+        tracts_layer.add_to(m)
+        # Zoom behavior:
+        # - if a tract is selected, zoom to that tract
+        # - otherwise just keep the default initial map view
         if selected_geoid:
-            sel_feat = next((f for f in geo["features"] if f["properties"].get("tract_geoid") == str(selected_geoid)), None)
-            if sel_feat:
-                folium.GeoJson(
-                    sel_feat,
-                    name="selected_tract",
-                    style_function=lambda f: {
-                        "fillOpacity": 0.0,
-                        "weight": 3.5,
-                        "color": "#000000",
-                    },
-                ).add_to(m)
+            selected_feature = next(
+                (
+                    f for f in geo.get("features", [])
+                    if str(f.get("properties", {}).get("tract_geoid", "")) == str(selected_geoid)
+                ),
+                None,
+            )
+            if selected_feature is not None:
+                selected_layer = folium.GeoJson(selected_feature)
+                m.fit_bounds(selected_layer.get_bounds())
 
-                # tighten view to selected tract
-                b = feature_bounds(sel_feat)
-                if b:
-                    min_lat, min_lon, max_lat, max_lon = b
-                    m.fit_bounds([[min_lat, min_lon], [max_lat, max_lon]])
-
-        # transit routes (optional)
+        # Transit overlays (bold + visible)
         if show_routes:
-            if ROUTES_SHP.exists() and _HAS_GPD:
+            if _HAS_GPD and ROUTES_SHP.exists():
                 routes_geo = load_routes_geojson(str(ROUTES_SHP), ROUTES_SHP.stat().st_mtime)
                 if routes_geo and routes_geo.get("features"):
                     folium.GeoJson(
                         routes_geo,
-                        name="Transit routes",
-                        style_function=lambda f: {"color": "#0047FF", "weight": 5, "opacity": 1.0},
+                        name="routes",
+                        style_function=lambda f: {"color": "#7592d1", "weight": 3, "opacity": 1.0},
                     ).add_to(m)
             else:
-                st.warning("Transit routes require geopandas + the routes shapefile.")
+                st.warning("Transit routes overlay requires geopandas and the routes shapefile.")
 
-        # transit stops (optional)
         if show_stops:
-            if STOPS_SHP.exists() and _HAS_GPD and MarkerCluster is not None:
+            if _HAS_GPD and STOPS_SHP.exists():
+                from folium.plugins import MarkerCluster
                 stops_df = load_stops_points(str(STOPS_SHP), STOPS_SHP.stat().st_mtime)
                 if stops_df is not None and len(stops_df) > 0:
-                    cluster = MarkerCluster(name="Transit stops")
+                    cluster = MarkerCluster(name="stops")
                     for _, r in stops_df.iterrows():
                         lat, lon = float(r["lat"]), float(r["lon"])
                         label = None
@@ -414,40 +392,40 @@ with tab_map:
                                 break
                         folium.CircleMarker(
                             location=(lat, lon),
-                            radius=3,
-                            weight=1,
-                            color="#0b0f19",
+                            radius=5,
+                            weight=2,
+                            color="#000000",
                             fill=True,
-                            fill_color="#00E5FF",
+                            fill_color="#00c2ff",
                             fill_opacity=0.9,
                             tooltip=label if label else None,
                         ).add_to(cluster)
                     cluster.add_to(m)
             else:
-                st.warning("Transit stops require geopandas + the stops shapefile.")
+                st.warning("Transit stops overlay requires geopandas and the stops shapefile.")
 
-        # legend
-        m.get_root().html.add_child(
-            folium.Element(add_legend_html(map_layer, legend_name, show_routes, show_stops))
-        )
+        # Legend
+        m.get_root().html.add_child(folium.Element(legend_html(map_layer, legend_name)))
 
-        # IMPORTANT:
-        # Only return popup to avoid reruns on pan/zoom. :contentReference[oaicite:1]{index=1}
+        # IMPORTANT: prevent rerun on pan/zoom by only returning click-related objects
         out = st_folium(
             m,
             height=650,
             width=1100,
+            key="map",
             returned_objects=["last_object_clicked_popup"],
-            key="sd_map",
         )
 
-        clicked = None
+        # Click-to-select (extract 11-digit GEOID from popup)
+        clicked_geoid = None
         if out:
-            raw = out.get("last_object_clicked_popup") or ""
-            clicked = normalize_geoid11(raw)
+            raw = str(out.get("last_object_clicked_popup") or "")
+            m_geoid = re.search(r"\b06073\d{6}\b", raw)
+            if m_geoid:
+                clicked_geoid = m_geoid.group(0)
 
-        if clicked and clicked != st.session_state["selected_geoid"]:
-            st.session_state["selected_geoid"] = clicked
+        if clicked_geoid and clicked_geoid != st.session_state["selected_geoid"]:
+            st.session_state["selected_geoid"] = clicked_geoid
             st.rerun()
 
     with right:
@@ -470,11 +448,11 @@ with tab_map:
             })
             st.dataframe(dom_table, width="stretch")
 
-            st.markdown("### Notes")
-            st.caption("Scores are percentile-normalized indicators aggregated within domains, then weighted across domains.")
+            if pop_col and pop_col in row.index:
+                st.caption(f"Population source column in yoi_components.csv: `{pop_col}`")
 
 # -----------------------------
-# DATA / SOURCES TAB
+# DATA / SOURCES
 # -----------------------------
 with tab_data:
     st.subheader("Indicator metadata (what your index is using)")
