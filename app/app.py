@@ -9,6 +9,7 @@ import pandas as pd
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
+import plotly.express as px
 
 # Optional overlays (transit) use geopandas if available
 try:
@@ -440,13 +441,75 @@ with tab_map:
             st.metric("YOI (custom, 0–100)", f"{row['yoi_custom_0_100']:.1f}")
 
             st.markdown("### Domain breakdown (0–1)")
+
             dom_table = pd.DataFrame({
                 "domain": DOMAINS,
-                "score": [row[f"{d}_score"] for d in DOMAINS],
-                "weight": [weights[d] for d in DOMAINS],
-                "weighted": [row[f"{d}_score"] * weights[d] for d in DOMAINS],
+                "score": [float(row[f"{d}_score"]) for d in DOMAINS],
+                "weight": [float(weights[d]) for d in DOMAINS],
+                "weighted": [float(row[f"{d}_score"] * weights[d]) for d in DOMAINS],
             })
-            st.dataframe(dom_table, width="stretch")
+
+            # nicer labels
+            label_map = {
+                "economic": "Economic",
+                "education": "Education",
+                "health": "Health",
+                "housing": "Housing",
+                "safety_env": "Safety / Env",
+                "mobility_connectivity": "Mobility / Conn",
+                "youth_supports": "Youth Supports",
+            }
+            dom_table["label"] = dom_table["domain"].map(label_map)
+
+            # sort so the largest bar is on top
+            dom_table = dom_table.sort_values("weighted", ascending=True).reset_index(drop=True)
+
+            fig = px.bar(
+                dom_table,
+                x="weighted",
+                y="label",
+                orientation="h",
+                custom_data=["domain", "score", "weight", "weighted"],
+                text="weighted",
+            )
+
+            fig.update_traces(
+                texttemplate="%{x:.3f}",
+                textposition="outside",
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Raw score: %{customdata[1]:.3f}<br>"
+                    "Weight: %{customdata[2]:.3f}<br>"
+                    "Weighted contribution: %{customdata[3]:.3f}"
+                    "<extra></extra>"
+                ),
+            )
+
+            fig.update_layout(
+                height=320,
+                margin=dict(l=10, r=10, t=10, b=10),
+                xaxis_title="Weighted contribution",
+                yaxis_title="",
+                showlegend=False,
+            )
+
+            chart_event = st.plotly_chart(
+                fig,
+                use_container_width=True,
+                key=f"domain_chart_{selected_geoid}",
+                on_select="rerun",
+            )
+
+            # optional: clicking a bar selects a domain and switches the map layer
+            if chart_event and chart_event.selection and chart_event.selection.get("points"):
+                point = chart_event.selection["points"][0]
+                clicked_domain = dom_table.iloc[point["point_index"]]["domain"]
+                st.session_state["clicked_domain"] = clicked_domain
+                st.caption(f"Selected domain: {label_map.get(clicked_domain, clicked_domain)}")
+
+            # optional: keep the exact table below the chart
+            with st.expander("Show exact values"):
+                st.dataframe(dom_table[["label", "score", "weight", "weighted"]], width="stretch")
 
             if pop_col and pop_col in row.index:
                 st.caption(f"Population source column in yoi_components.csv: `{pop_col}`")
