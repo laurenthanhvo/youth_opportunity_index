@@ -33,7 +33,7 @@ const state = {
   showHover: true,
   rawWeights: Object.fromEntries(DOMAINS.map(d => [d, 1])),
   normalizedWeights: Object.fromEntries(DOMAINS.map(d => [d, 1 / DOMAINS.length])),
-  hasInitializedView: false,
+  hasInitialFit: false,
 };
 
 let tractLayer = null;
@@ -44,6 +44,9 @@ let chartTooltip = null;
 let popupRef = null;
 
 const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
+
+map.getContainer().style.opacity = '0';
+map.getContainer().style.transition = 'opacity 120ms ease';
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
   maxZoom: 19,
@@ -408,14 +411,6 @@ layer.on({
     },
   }).addTo(map);
 
-  if (!state.hasInitializedView) {
-    const bounds = tractLayer.getBounds();
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { paddingTopLeft: [390, 110], paddingBottomRight: [310, 70] });
-      state.hasInitializedView = true;
-    }
-  }
-
   if (routesLayer) routesLayer.remove();
   routesLayer = null;
   if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson) > 0) {
@@ -725,6 +720,51 @@ function initGeojsonProps() {
   });
 }
 
+function applyInitialMapView() {
+  if (state.hasInitialFit) return;
+  if (!tractLayer) return;
+
+  let fitted = false;
+
+  if (state.selectedGeoid) {
+    const feature = searchFeature(state.selectedGeoid);
+    if (feature) {
+      const bounds = L.geoJSON(feature).getBounds();
+      if (bounds.isValid()) {
+        map.fitBounds(bounds.pad(0.8), {
+          animate: false,
+          paddingTopLeft: [390, 110],
+          paddingBottomRight: [310, 70],
+        });
+        fitted = true;
+      }
+    }
+  }
+
+  if (!fitted) {
+    const bounds = tractLayer.getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, {
+        animate: false,
+        paddingTopLeft: [390, 110],
+        paddingBottomRight: [310, 70],
+      });
+      fitted = true;
+    }
+  }
+
+  if (fitted) {
+    state.hasInitialFit = true;
+
+    requestAnimationFrame(() => {
+      map.invalidateSize(false);
+      requestAnimationFrame(() => {
+        map.getContainer().style.opacity = '1';
+      });
+    });
+  }
+}
+
 async function init() {
   buildLayerSelect();
   buildWeightSliders();
@@ -749,7 +789,14 @@ async function init() {
   }
 
   updateAll();
-  if (state.selectedGeoid) setPanel('location');
+if (state.selectedGeoid) setPanel('location');
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    map.invalidateSize(false);
+    applyInitialMapView();
+  });
+});
 }
 
 init().catch(err => {
