@@ -1,4 +1,4 @@
-# Youth Opportunity Index Explorer
+# Youth Opportunity Index Dashboard
 
 An interactive map-based dashboard for exploring a **Youth Opportunity Index (YOI)** across **San Diego County census tracts**.
 
