@@ -88,13 +88,13 @@ def main():
     if len(gdf) == 0:
         raise RuntimeError("0 SD tracts after filtering. Something is off with tract parsing.")
 
-    # --- IMPORTANT: reproject to lat/lon for Leaflet/Folium ---
+    # IMPORTANT: reproject to lat/lon for Leaflet/Folium
     if gdf.crs is None:
         print("WARNING: shapefile CRS is None. Check the .prj file. Attempting to continue.")
     else:
         gdf = gdf.to_crs(epsg=4326)
 
-    # (optional) fix invalid geometries
+    # Fix invalid geometries
     try:
         gdf["geometry"] = gdf["geometry"].buffer(0)
     except Exception:
@@ -104,8 +104,6 @@ def main():
     if gdf.crs is not None:
         gdf = gdf.to_crs(epsg=4326)
     else:
-        # If CRS is missing but you know it from .prj, geopandas usually sets it.
-        # If it truly isn't set, tell me what the .prj says and we’ll set it explicitly.
         pass
 
     gdf[["tract_geoid", "geometry"]].to_file(out_dir / "sd_tracts.geojson", driver="GeoJSON")

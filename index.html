@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Youth Opportunity Index Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="map"></div>
+
+  <header class="top-header">
+    <div class="brand-wrap">
+      <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>.org</div>
+      <div class="brand-subtitle">data for equitable youth opportunity in San Diego County</div>
+    </div>
+    <div class="top-actions">
+      <div class="search-shell">
+        <i class="bi bi-search"></i>
+        <input id="searchInput" type="text" placeholder="Search for a tract GEOID">
+      </div>
+      <button id="menuBtn" class="menu-btn"><i class="bi bi-list"></i> Menu</button>
+    </div>
+  </header>
+
+  <aside class="left-rail">
+    <button class="rail-btn active" data-panel="controls"><i class="bi bi-sliders2"></i><span>Data<br>Controls</span></button>
+    <button class="rail-btn" data-panel="overlays"><i class="bi bi-layers"></i><span>Overlays</span></button>
+    <button class="rail-btn" data-panel="profile"><i class="bi bi-bar-chart"></i><span>Domain<br>Profile</span></button>
+    <button class="rail-btn" data-panel="location"><i class="bi bi-geo-alt"></i><span>Location<br>Details</span></button>
+    <button class="rail-btn" data-panel="faqs"><i class="bi bi-question-circle"></i><span>FAQs</span></button>
+    <button class="rail-btn" data-panel="share"><i class="bi bi-share"></i><span>Share</span></button>
+  </aside>
+
+  <section class="drawer-panel" id="drawerPanel">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title" id="drawerTitle">Data Controls</div>
+        <div class="drawer-subtitle" id="drawerSubtitle">Adjust the map and comparison view.</div>
+      </div>
+      <button id="closeDrawerBtn" class="drawer-close"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="panel-view active" id="panel-controls">
+        <div class="control-section">
+          <label class="control-label">Youth Opportunity Index</label>
+          <select id="mapLayerSelect" class="form-select control-select"></select>
+        </div>
+
+        <div class="control-section">
+          <label class="control-label">Rate locations by</label>
+          <div class="segmented" id="scoreModeGroup">
+            <button class="seg-btn active" data-mode="level">Level</button>
+            <button class="seg-btn" data-mode="score">Score</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label class="control-label">Show data for</label>
+          <div class="segmented three-up">
+            <button class="seg-btn active">Census tracts</button>
+            <button class="seg-btn ghost" disabled>ZIP codes</button>
+            <button class="seg-btn ghost" disabled>Counties</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label class="control-label">Level of comparison</label>
+          <div class="segmented three-up">
+            <button class="seg-btn active">County</button>
+            <button class="seg-btn ghost" disabled>State</button>
+            <button class="seg-btn ghost" disabled>Nation</button>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <label class="control-label">Year</label>
+          <div class="segmented three-up">
+            <button class="seg-btn ghost" disabled>2021</button>
+            <button class="seg-btn ghost" disabled>2023</button>
+            <button class="seg-btn active">2024</button>
+          </div>
+        </div>
+
+        <div class="control-section switch-row">
+          <label class="switch-label">Show data on hover</label>
+          <label class="toggle-switch"><input id="hoverToggle" type="checkbox" checked><span></span></label>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="control-section">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="control-label mb-0">Custom domain weights</label>
+            <button id="resetWeights" class="mini-btn">Reset</button>
+          </div>
+          <div id="weightSliders"></div>
+          <div id="weightsSummary" class="helper-text">All sliders are equal, so each domain currently contributes 14.3%.</div>
+          <div id="weightsImpactNote" class="callout-note mt-2">You are viewing Overall Youth Opportunity, so slider changes recolor the map immediately.</div>
+        </div>
+      </div>
+
+      <div class="panel-view" id="panel-overlays">
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleChoro" type="checkbox" checked><span></span></label>
+            <div>
+              <div class="overlay-title">YOI Choropleth</div>
+              <div class="overlay-desc">Display tract-level opportunity shading on the map.</div>
+            </div>
+          </label>
+        </div>
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleBounds" type="checkbox" checked><span></span></label>
+            <div>
+              <div class="overlay-title">Tract Boundaries</div>
+              <div class="overlay-desc">Show census tract outlines on top of the choropleth.</div>
+            </div>
+          </label>
+        </div>
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleRoutes" type="checkbox"><span></span></label>
+            <div>
+              <div class="overlay-title">Transit Routes</div>
+              <div class="overlay-desc">Overlay exported transit route GeoJSON if available.</div>
+            </div>
+          </label>
+        </div>
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleStops" type="checkbox"><span></span></label>
+            <div>
+              <div class="overlay-title">Transit Stops</div>
+              <div class="overlay-desc">Overlay transit stop points if exported during the Python build step.</div>
+            </div>
+          </label>
+        </div>
+        <div id="transitAvailabilityNote" class="callout-note mt-3"></div>
+      </div>
+
+      <div class="panel-view" id="panel-profile">
+        <div class="helper-text mb-3">Weighted domain contribution under the current slider settings.</div>
+        <div id="profileChart"></div>
+        <div class="helper-text mt-3">Click a bar to switch the map layer to that domain.</div>
+      </div>
+
+      <div class="panel-view" id="panel-location">
+        <div id="locationDetails"></div>
+      </div>
+
+      <div class="panel-view" id="panel-faqs">
+        <div class="faq-item open">
+          <button class="faq-btn">What does this map show?<i class="bi bi-chevron-down"></i></button>
+          <div class="faq-body">This dashboard displays a tract-level Youth Opportunity Index for San Diego County. The choropleth updates as you change domain weights, and each tract can be inspected for its score breakdown.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn">How should I read the colors?<i class="bi bi-chevron-down"></i></button>
+          <div class="faq-body">Lighter blue represents lower opportunity and darker blue represents higher opportunity. Switch to a domain layer to inspect a single domain score instead of the overall index.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn">Why are some populations unavailable?<i class="bi bi-chevron-down"></i></button>
+          <div class="faq-body">Some tracts in the geometry layer do not match the ACS population source exactly. When that happens, the map still displays the tract but population-dependent statistics can appear as unavailable.</div>
+        </div>
+      </div>
+
+      <div class="panel-view" id="panel-share">
+        <div class="share-stack">
+          <button id="copyLinkBtn" class="share-btn"><i class="bi bi-link-45deg"></i> Copy current view link</button>
+          <button id="copySelectedBtn" class="share-btn"><i class="bi bi-copy"></i> Copy selected tract GEOID</button>
+          <div class="helper-text">The copied link includes the selected tract and map layer when available.</div>
+          <div id="shareStatus" class="callout-note mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="legend-card">
+    <div class="legend-head">
+      <div>
+        <div class="legend-title">Youth Opportunity Levels</div>
+        <div class="legend-subtitle" id="legendSubtitle">Overall YOI by Census Tract, county-normalized for 2024</div>
+      </div>
+      <button class="legend-icon"><i class="bi bi-sliders"></i></button>
+    </div>
+    <div class="legend-scale" id="legendScale"></div>
+    <div class="legend-labels" id="legendLabels"></div>
+  </section>
+
+  <div class="map-status-pill" id="mapStatusPill">627 tracts loaded</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

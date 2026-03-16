@@ -1,25 +1,11 @@
-# scripts/build_yoi_components.py
-# ============================================================
-# Build Youth Opportunity Index components from data/rawdomains
-# Outputs:
-#   data/processed/yoi/yoi_components.csv   (one row per tract)
-#   data/processed/yoi/yoi_indicator_meta.csv
-#   data/processed/boundaries/sd_tracts.geojson  (geometry for map)
-# ============================================================
-
 from __future__ import annotations
 
 from pathlib import Path
 import re
 import numpy as np
 import pandas as pd
-
-# Optional geospatial pieces (used for CalEnviroScreen geometry + overlay)
 import geopandas as gpd
 
-# -----------------------------
-# Paths (works from anywhere)
-# -----------------------------
 def find_repo_root(start: Path) -> Path:
     for p in [start] + list(start.parents):
         if (p / "data").exists():
@@ -38,9 +24,6 @@ OUT_BOUNDS_DIR.mkdir(parents=True, exist_ok=True)
 print("Repo root:", REPO_ROOT)
 print("RAW_DOMAINS:", RAW_DOMAINS)
 
-# -----------------------------
-# Helpers
-# -----------------------------
 def digits_only(x) -> str:
     return re.sub(r"\D", "", str(x))
 
@@ -146,7 +129,7 @@ def load_census_table(domain: str, prefix: str) -> pd.DataFrame | None:
 
 def load_places_latest() -> pd.DataFrame | None:
     """
-    Loads your PLACES tract CSV from rawdomains/health (file directly in folder).
+    Loads PLACES tract CSV from rawdomains/health.
     Keeps latest year and SD county if possible.
     """
     health_dir = RAW_DOMAINS / "health"
@@ -219,7 +202,6 @@ def load_cibrs_and_aggregate_latest_full_year() -> pd.DataFrame | None:
     p = cands[-1]
     print("Using CIBRS:", p)
 
-    # Read only columns we need, chunked
     usecols = []
     for c in ["incidentuid", "Incident UID", "incident_date", "Incident Date", "census_tract", "Census Tract"]:
         usecols.append(c)
@@ -252,7 +234,6 @@ def load_cibrs_and_aggregate_latest_full_year() -> pd.DataFrame | None:
     max_year = max(years)
     # Use latest *full* year:
     # if current year is partial, use max_year-1; otherwise max_year
-    # (If you KNOW you want 2024, just set target_year=2024)
     target_year = max_year - 1 if max_year >= 2025 else max_year
     print("CIBRS years found:", sorted(years))
     print("Using target crime year:", target_year)
@@ -275,7 +256,7 @@ def load_cibrs_and_aggregate_latest_full_year() -> pd.DataFrame | None:
 
 def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
     """
-    Uses the CalEnviroScreen shapefile you already downloaded as the tract geometry source.
+    Uses the CalEnviroScreen shapefile.
     Also pulls an environmental burden indicator from percentile/score if available.
     """
     safety_dir = RAW_DOMAINS / "safety" / "calenviroscreen40shpf2021shp"
@@ -341,13 +322,6 @@ def pick_col(df, candidates):
             return c
     return None
 
-# -----------------------------
-# Base tract list (anchor GEOIDs)
-# Priority:
-#   1) CalEnviroScreen SD tract polygons (best anchor)
-#   2) Union of GEOIDs found in raw ACS tables (fallback)
-# -----------------------------
-
 # 1) Use CalEnviroScreen shapefile as the base tract list + geometry
 ces_gdf = load_calenviroscreen_sd_geo()
 if ces_gdf is not None and len(ces_gdf) > 0:
@@ -365,14 +339,13 @@ if ces_gdf is not None and len(ces_gdf) > 0:
         "env_burden": pd.to_numeric(ces_gdf.get("env_burden", np.nan), errors="coerce"),
     }).drop_duplicates("tract_geoid")
 
-    pop_col = None  # we may not have population in this repo yet
+    pop_col = None  
 else:
     print("WARNING: CalEnviroScreen anchor not found. Falling back to GEOIDs from raw tables.")
 
     # 2) Fallback: build tract list from whatever raw ACS tables exist
     geoid_sets = []
 
-    # try a handful of tables you *definitely* have
     for domain, prefix in [
         ("economic", "ACSST5Y2024.S1701"),
         ("economic", "ACSDT5Y2024.B19013"),
@@ -399,9 +372,7 @@ else:
 
 print("Base SD tracts:", tracts.shape)
 
-# -----------------------------
 # Add TOTAL POPULATION (ACS B01003) for per-capita rates
-# -----------------------------
 pop = load_census_table("economic", "ACSDT5Y2024.B01003")  # expects tract_geoid inside loader output
 if pop is None or len(pop) == 0:
     print("WARNING: Could not load ACSDT5Y2024.B01003 (Total Population). Per-capita rates will be NaN.")
@@ -430,10 +401,8 @@ else:
         print("Merged total_population from B01003. Coverage:",
               tracts["total_population"].notna().mean())
 
-# -----------------------------
 # Indicator extraction
-# (These are “good defaults” for your 7x4 plan)
-# -----------------------------
+
 indicator_meta = []
 
 def add_indicator(df: pd.DataFrame, name: str, domain: str, series: pd.Series, higher_is_better: bool, source: str, notes: str):
@@ -446,8 +415,8 @@ def add_indicator(df: pd.DataFrame, name: str, domain: str, series: pd.Series, h
         "notes": notes,
     })
 
-# ---------- ECONOMIC ----------
-# poverty rate (S1701) -> we try common percent column; fallback to label-less heuristics
+# ECONOMIC
+# poverty rate (S1701) -> try common percent column; fallback to label-less heuristics
 s1701 = load_census_table("economic", "ACSST5Y2024.S1701")
 if s1701 is not None:
     # common: S1701_C02_001E (percent below poverty) BUT not guaranteed
@@ -522,7 +491,7 @@ if s2201 is not None:
 else:
     tracts["snap_or_assist_rate"] = np.nan
 
-# ---------- EDUCATION ----------
+# EDUCATION 
 s1501 = load_census_table("education", "ACSST5Y2024.S1501")
 if s1501 is not None:
     # HS+ and BA+ percent columns vary; try common candidates
@@ -570,7 +539,6 @@ b14005 = load_census_table("education", "ACSDT5Y2024.B14005")
 if b14005 is not None:
     # Youth disconnection proxy is complicated; start with a simple proxy:
     # If B14005_001E is total 16-19, use a "not enrolled" share if present.
-    # You can refine later once you confirm exact columns via metadata.
     total_col = "B14005_001E" if "B14005_001E" in b14005.columns else None
     # try to find ANY "not enrolled" column by code pattern
     not_enrolled_cols = [c for c in b14005.columns if c.startswith("B14005_") and c.endswith("E") and c != total_col]
@@ -593,7 +561,7 @@ if b14005 is not None:
 else:
     tracts["youth_disconnection_proxy"] = np.nan
 
-# ---------- HEALTH ----------
+# HEALTH
 s2701 = load_census_table("health", "ACSST5Y2024.S2701")
 if s2701 is not None:
     pick = None
@@ -638,7 +606,7 @@ else:
     tracts["frequent_mental_distress"] = np.nan
     tracts["poor_physical_health"] = np.nan
 
-# ---------- HOUSING ----------
+# HOUSING 
 b25070 = load_census_table("housing", "ACSDT5Y2024.B25070")
 if b25070 is not None:
     # Rent burden share (>=30%) usually requires summing bins.
@@ -691,7 +659,7 @@ if b25003 is not None:
 else:
     tracts["homeownership_rate"] = np.nan
 
-# ---------- SAFETY & ENVIRONMENT ----------
+# SAFETY & ENVIRONMENT 
 s1101 = load_census_table("safety", "ACSST5Y2024.S1101")
 if s1101 is not None:
     pick = None
@@ -789,7 +757,7 @@ else:
     if "env_burden" not in tracts.columns:
         tracts["env_burden"] = np.nan
 
-# ---------- MOBILITY & CONNECTIVITY ----------
+# MOBILITY & CONNECTIVITY
 b08201 = load_census_table("mobility", "ACSDT5Y2024.B08201")
 if b08201 is not None:
     total = "B08201_001E" if "B08201_001E" in b08201.columns else None
@@ -843,14 +811,14 @@ if b28002 is not None:
 else:
     tracts["internet_sub_rate_proxy"] = np.nan
 
-# transit access (we’ll compute later once you decide exact definition)
+# transit access 
 # For now, use PLACES lack transport as a stand-in if present
 if "places_LACKTRPT" in tracts.columns:
     add_indicator(tracts, "lack_transport", "mobility_connectivity", safe_num(tracts["places_LACKTRPT"]), False, "CDC PLACES", "MeasureId=LACKTRPT")
 else:
     tracts["lack_transport"] = np.nan
 
-# ---------- YOUTH SUPPORTS / WRAPAROUND ----------
+# YOUTH SUPPORTS / WRAPAROUND 
 services_csv = RAW_DOMAINS / "youth" / "services_master.csv"
 if services_csv.exists():
     svc = pd.read_csv(services_csv)
@@ -883,7 +851,7 @@ if services_csv.exists():
     # total services per tract
     tot = svc.groupby("tract_geoid").size().reset_index(name="service_count")
 
-    # youth-focused proxy via keywords (edit keywords to match your schema)
+    # youth-focused proxy via keywords 
     text_cols = [c for c in svc.columns if svc[c].dtype == object]
     def row_text(r):
         return " ".join([str(r[c]) for c in text_cols if pd.notna(r[c])]).lower()
@@ -932,9 +900,7 @@ else:
     for c in ["service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
         tracts[c] = np.nan
 
-# -----------------------------
 # Build domain scores + YOI
-# -----------------------------
 DOMAINS = [
     "economic",
     "education",
