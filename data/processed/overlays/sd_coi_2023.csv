@@ -1,0 +1,737 @@
+tract_geoid,coi_score,coi_level,coi_ed_score,coi_ed_level,coi_he_score,coi_he_level,coi_se_score,coi_se_level
+06073000100,99,Very High,89,Very High,97,Very High,100.0,Very High
+06073000201,95,Very High,82,Very High,100,Very High,96.0,Very High
+06073000202,90,Very High,79,High,98,Very High,91.0,Very High
+06073000301,85,Very High,62,High,100,Very High,89.0,Very High
+06073000302,88,Very High,78,High,68,High,91.0,Very High
+06073000400,87,Very High,62,High,100,Very High,90.0,Very High
+06073000500,87,Very High,73,High,97,Very High,88.0,Very High
+06073000600,91,Very High,75,High,99,Very High,93.0,Very High
+06073000700,93,Very High,84,Very High,100,Very High,92.0,Very High
+06073000800,89,Very High,89,Very High,99,Very High,84.0,Very High
+06073000901,77,High,70,High,89,Very High,76.0,High
+06073000902,60,Moderate,57,Moderate,93,Very High,53.0,Moderate
+06073001000,74,High,61,High,100,Very High,71.0,High
+06073001100,86,Very High,80,High,94,Very High,85.0,Very High
+06073001201,62,High,47,Moderate,77,High,63.0,High
+06073001202,70,High,61,High,91,Very High,68.0,High
+06073001301,69,High,51,Moderate,62,High,76.0,High
+06073001302,71,High,64,High,100,Very High,65.0,High
+06073001400,83,Very High,74,High,92,Very High,83.0,Very High
+06073001500,80,High,74,High,86,Very High,80.0,High
+06073001600,39,Low,66,High,37,Low,25.0,Low
+06073001700,61,High,35,Low,95,Very High,63.0,High
+06073001801,60,Moderate,48,Moderate,77,High,60.0,Moderate
+06073001802,66,High,40,Low,80,High,73.0,High
+06073001900,86,Very High,44,Moderate,90,Very High,95.0,Very High
+06073002001,93,Very High,61,High,92,Very High,98.0,Very High
+06073002002,84,Very High,53,Moderate,77,High,93.0,Very High
+06073002100,57,Moderate,39,Low,79,High,60.0,Moderate
+06073002201,21,Low,16,Very Low,56,Moderate,17.0,Very Low
+06073002202,9,Very Low,16,Very Low,36,Low,6.0,Very Low
+06073002301,41,Moderate,30,Low,63,High,41.0,Moderate
+06073002302,14,Very Low,22,Low,24,Low,12.0,Very Low
+06073002401,43,Moderate,40,Low,58,Moderate,41.0,Moderate
+06073002402,17,Very Low,14,Very Low,44,Moderate,15.0,Very Low
+06073002501,24,Low,23,Low,39,Low,22.0,Low
+06073002502,47,Moderate,43,Moderate,35,Low,50.0,Moderate
+06073002601,15,Very Low,20,Very Low,37,Low,12.0,Very Low
+06073002602,18,Very Low,22,Low,34,Low,16.0,Very Low
+06073002702,56,Moderate,43,Moderate,70,High,58.0,Moderate
+06073002703,45,Moderate,31,Low,53,Moderate,48.0,Moderate
+06073002705,40,Low,34,Low,81,Very High,34.0,Low
+06073002707,3,Very Low,15,Very Low,17,Very Low,2.0,Very Low
+06073002708,9,Very Low,19,Very Low,30,Low,6.0,Very Low
+06073002709,7,Very Low,17,Very Low,51,Moderate,4.0,Very Low
+06073002710,13,Very Low,25,Low,32,Low,9.0,Very Low
+06073002711,42,Moderate,39,Low,80,High,35.0,Low
+06073002712,22,Low,29,Low,48,Moderate,16.0,Very Low
+06073002801,54,Moderate,68,High,21,Low,53.0,Moderate
+06073002803,59,Moderate,46,Moderate,90,Very High,54.0,Moderate
+06073002804,69,High,58,Moderate,71,High,73.0,High
+06073002902,68,High,69,High,70,High,63.0,High
+06073002903,61,High,46,Moderate,94,Very High,59.0,Moderate
+06073002904,48,Moderate,66,High,67,High,33.0,Low
+06073002905,51,Moderate,60,Moderate,96,Very High,34.0,Low
+06073003001,46,Moderate,40,Low,59,Moderate,44.0,Moderate
+06073003003,47,Moderate,34,Low,77,High,46.0,Moderate
+06073003004,25,Low,30,Low,40,Low,21.0,Low
+06073003101,43,Moderate,43,Moderate,30,Low,45.0,Moderate
+06073003103,45,Moderate,23,Low,76,High,49.0,Moderate
+06073003105,44,Moderate,25,Low,54,Moderate,49.0,Moderate
+06073003107,52,Moderate,34,Low,58,Moderate,58.0,Moderate
+06073003108,54,Moderate,39,Low,62,High,58.0,Moderate
+06073003109,61,High,48,Moderate,61,High,64.0,High
+06073003111,18,Very Low,35,Low,37,Low,12.0,Very Low
+06073003112,50,Moderate,35,Low,76,High,50.0,Moderate
+06073003113,55,Moderate,55,Moderate,53,Moderate,53.0,Moderate
+06073003114,51,Moderate,43,Moderate,76,High,48.0,Moderate
+06073003115,42,Moderate,42,Moderate,67,High,37.0,Low
+06073003201,44,Moderate,47,Moderate,44,Moderate,42.0,Moderate
+06073003202,54,Moderate,57,Moderate,41,Moderate,53.0,Moderate
+06073003204,65,High,50,Moderate,80,High,66.0,High
+06073003207,59,Moderate,42,Moderate,66,High,64.0,High
+06073003208,43,Moderate,60,Moderate,49,Moderate,33.0,Low
+06073003209,51,Moderate,48,Moderate,74,High,47.0,Moderate
+06073003211,53,Moderate,46,Moderate,64,High,53.0,Moderate
+06073003212,66,High,67,High,78,High,60.0,Moderate
+06073003213,67,High,53,Moderate,88,Very High,68.0,High
+06073003214,48,Moderate,38,Low,64,High,49.0,Moderate
+06073003301,19,Very Low,11,Very Low,49,Moderate,19.0,Very Low
+06073003303,16,Very Low,10,Very Low,56,Moderate,14.0,Very Low
+06073003304,17,Very Low,24,Low,50,Moderate,11.0,Very Low
+06073003305,10,Very Low,13,Very Low,37,Low,8.0,Very Low
+06073003401,55,Moderate,69,High,55,Moderate,44.0,Moderate
+06073003403,23,Low,36,Low,44,Moderate,15.0,Very Low
+06073003404,27,Low,28,Low,63,High,20.0,Very Low
+06073003501,8,Very Low,8,Very Low,23,Low,9.0,Very Low
+06073003502,8,Very Low,7,Very Low,45,Moderate,6.0,Very Low
+06073003601,14,Very Low,5,Very Low,43,Moderate,15.0,Very Low
+06073003602,12,Very Low,5,Very Low,46,Moderate,14.0,Very Low
+06073003603,15,Very Low,6,Very Low,55,Moderate,16.0,Very Low
+06073003800,14,Very Low,9,Very Low,14,Very Low,21.0,Low
+06073003901,11,Very Low,9,Very Low,54,Moderate,9.0,Very Low
+06073003902,12,Very Low,6,Very Low,36,Low,13.0,Very Low
+06073004000,19,Very Low,20,Very Low,77,High,12.0,Very Low
+06073004101,53,Moderate,40,Low,51,Moderate,55.0,Moderate
+06073004102,46,Moderate,49,Moderate,91,Very High,34.0,Low
+06073004200,84,Very High,64,High,67,High,91.0,Very High
+06073004300,78,High,59,Moderate,97,Very High,80.0,High
+06073004400,73,High,63,High,75,High,76.0,High
+06073004501,56,Moderate,56,Moderate,58,Moderate,54.0,Moderate
+06073004600,57,Moderate,42,Moderate,70,High,59.0,Moderate
+06073004700,46,Moderate,66,High,28,Low,37.0,Low
+06073004800,18,Very Low,25,Low,20,Very Low,17.0,Very Low
+06073004900,15,Very Low,15,Very Low,58,Moderate,12.0,Very Low
+06073005000,10,Very Low,7,Very Low,51,Moderate,9.0,Very Low
+06073005101,36,Low,38,Low,75,High,28.0,Low
+06073005102,83,Very High,49,Moderate,94,Very High,88.0,Very High
+06073005103,7,Very Low,17,Very Low,87,Very High,2.0,Very Low
+06073005201,63,High,57,Moderate,95,Very High,56.0,Moderate
+06073005202,56,Moderate,48,Moderate,88,Very High,52.0,Moderate
+06073005301,46,Moderate,58,Moderate,84,Very High,32.0,Low
+06073005302,71,High,39,Low,44,Moderate,84.0,Very High
+06073005401,91,Very High,55,Moderate,59,Moderate,98.0,Very High
+06073005402,93,Very High,83,Very High,90,Very High,95.0,Very High
+06073005403,93,Very High,59,Moderate,68,High,99.0,Very High
+06073005500,92,Very High,87,Very High,100,Very High,88.0,Very High
+06073005601,58,Moderate,63,High,75,High,50.0,Moderate
+06073005602,91,Very High,77,High,100,Very High,92.0,Very High
+06073005700,67,High,57,Moderate,97,Very High,60.0,Moderate
+06073005801,90,Very High,70,High,95,Very High,94.0,Very High
+06073005802,96,Very High,74,High,100,Very High,98.0,Very High
+06073005900,81,Very High,57,Moderate,97,Very High,85.0,Very High
+06073006000,94,Very High,74,High,99,Very High,97.0,Very High
+06073006100,88,Very High,87,Very High,89,Very High,85.0,Very High
+06073006200,83,Very High,63,High,100,Very High,,
+06073006300,54,Moderate,50,Moderate,100,Very High,25.0,Low
+06073006500,61,High,68,High,96,Very High,47.0,Moderate
+06073006600,56,Moderate,58,Moderate,90,Very High,46.0,Moderate
+06073006801,75,High,77,High,98,Very High,66.0,High
+06073006802,64,High,74,High,64,High,55.0,Moderate
+06073006900,93,Very High,85,Very High,96,Very High,94.0,Very High
+06073007002,98,Very High,89,Very High,99,Very High,98.0,Very High
+06073007100,96,Very High,92,Very High,76,High,98.0,Very High
+06073007200,98,Very High,94,Very High,97,Very High,99.0,Very High
+06073007302,97,Very High,94,Very High,97,Very High,97.0,Very High
+06073007303,95,Very High,96,Very High,89,Very High,94.0,Very High
+06073007304,88,Very High,87,Very High,81,Very High,87.0,Very High
+06073007401,87,Very High,92,Very High,77,High,81.0,Very High
+06073007402,88,Very High,90,Very High,85,Very High,85.0,Very High
+06073007501,78,High,86,Very High,78,High,70.0,High
+06073007502,89,Very High,95,Very High,68,High,85.0,Very High
+06073007601,93,Very High,95,Very High,20,Very Low,95.0,Very High
+06073007602,84,Very High,84,Very High,11,Very Low,93.0,Very High
+06073007701,91,Very High,91,Very High,64,High,92.0,Very High
+06073007702,84,Very High,74,High,53,Moderate,90.0,Very High
+06073007800,75,High,87,Very High,72,High,65.0,High
+06073007905,91,Very High,97,Very High,57,Moderate,87.0,Very High
+06073007907,89,Very High,82,Very High,82,Very High,91.0,Very High
+06073007908,78,High,82,Very High,65,High,75.0,High
+06073007910,92,Very High,93,Very High,64,High,92.0,Very High
+06073007911,94,Very High,88,Very High,80,High,96.0,Very High
+06073007912,87,Very High,92,Very High,93,Very High,82.0,Very High
+06073008002,99,Very High,97,Very High,94,Very High,99.0,Very High
+06073008003,98,Very High,98,Very High,91,Very High,97.0,Very High
+06073008006,95,Very High,96,Very High,69,High,94.0,Very High
+06073008101,97,Very High,98,Very High,78,High,96.0,Very High
+06073008102,97,Very High,92,Very High,75,High,99.0,Very High
+06073008201,98,Very High,100,Very High,53,Moderate,96.0,Very High
+06073008202,97,Very High,100,Very High,28,Low,96.0,Very High
+06073008301,99,Very High,95,Very High,97,Very High,99.0,Very High
+06073008303,100,Very High,100,Very High,73,High,100.0,Very High
+06073008305,69,High,94,Very High,94,Very High,37.0,Low
+06073008306,100,Very High,98,Very High,95,Very High,100.0,Very High
+06073008307,96,Very High,97,Very High,94,Very High,93.0,Very High
+06073008310,99,Very High,96,Very High,91,Very High,99.0,Very High
+06073008311,100,Very High,100,Very High,95,Very High,100.0,Very High
+06073008312,100,Very High,100,Very High,88,Very High,99.0,Very High
+06073008313,100,Very High,100,Very High,91,Very High,100.0,Very High
+06073008324,100,Very High,100,Very High,96,Very High,100.0,Very High
+06073008327,99,Very High,99,Very High,97,Very High,98.0,Very High
+06073008328,99,Very High,99,Very High,52,Moderate,100.0,Very High
+06073008330,99,Very High,100,Very High,82,Very High,96.0,Very High
+06073008331,100,Very High,100,Very High,95,Very High,100.0,Very High
+06073008336,98,Very High,96,Very High,95,Very High,98.0,Very High
+06073008337,96,Very High,93,Very High,88,Very High,96.0,Very High
+06073008339,86,Very High,96,Very High,94,Very High,73.0,High
+06073008343,87,Very High,94,Very High,95,Very High,77.0,High
+06073008344,98,Very High,97,Very High,85,Very High,98.0,Very High
+06073008345,92,Very High,96,Very High,78,High,89.0,Very High
+06073008346,95,Very High,89,Very High,81,Very High,97.0,Very High
+06073008347,81,Very High,80,High,66,High,82.0,Very High
+06073008348,86,Very High,78,High,71,High,90.0,Very High
+06073008349,84,Very High,89,Very High,90,Very High,76.0,High
+06073008350,84,Very High,85,Very High,82,Very High,80.0,High
+06073008351,85,Very High,85,Very High,82,Very High,84.0,Very High
+06073008352,78,High,81,Very High,67,High,76.0,High
+06073008353,88,Very High,79,High,76,High,92.0,Very High
+06073008355,84,Very High,76,High,84,Very High,86.0,Very High
+06073008356,82,Very High,77,High,90,Very High,82.0,Very High
+06073008357,76,High,76,High,87,Very High,71.0,High
+06073008358,72,High,72,High,69,High,70.0,High
+06073008359,54,Moderate,58,Moderate,60,Moderate,49.0,Moderate
+06073008360,76,High,83,Very High,81,Very High,67.0,High
+06073008361,90,Very High,93,Very High,86,Very High,87.0,Very High
+06073008362,96,Very High,100,Very High,76,High,89.0,Very High
+06073008363,83,Very High,99,Very High,93,Very High,58.0,Moderate
+06073008364,96,Very High,99,Very High,84,Very High,92.0,Very High
+06073008365,99,Very High,95,Very High,93,Very High,99.0,Very High
+06073008366,99,Very High,100,Very High,80,High,99.0,Very High
+06073008367,90,Very High,98,Very High,45,Moderate,84.0,Very High
+06073008368,97,Very High,94,Very High,84,Very High,98.0,Very High
+06073008369,98,Very High,100,Very High,89,Very High,96.0,Very High
+06073008370,99,Very High,100,Very High,77,High,96.0,Very High
+06073008371,99,Very High,100,Very High,87,Very High,94.0,Very High
+06073008372,99,Very High,100,Very High,84,Very High,99.0,Very High
+06073008373,100,Very High,100,Very High,98,Very High,99.0,Very High
+06073008374,100,Very High,100,Very High,96,Very High,100.0,Very High
+06073008375,96,Very High,100,Very High,100,Very High,84.0,Very High
+06073008376,87,Very High,93,Very High,87,Very High,80.0,High
+06073008377,91,Very High,99,Very High,75,High,83.0,Very High
+06073008378,87,Very High,99,Very High,62,High,76.0,High
+06073008379,87,Very High,100,Very High,59,Moderate,68.0,High
+06073008380,80,High,85,Very High,56,Moderate,78.0,High
+06073008381,95,Very High,94,Very High,84,Very High,95.0,Very High
+06073008501,86,Very High,82,Very High,83,Very High,86.0,Very High
+06073008502,75,High,72,High,82,Very High,73.0,High
+06073008503,82,Very High,85,Very High,91,Very High,76.0,High
+06073008504,81,Very High,75,High,79,High,83.0,Very High
+06073008505,74,High,74,High,73,High,71.0,High
+06073008506,78,High,72,High,88,Very High,76.0,High
+06073008507,70,High,71,High,74,High,65.0,High
+06073008509,76,High,72,High,80,High,76.0,High
+06073008510,70,High,67,High,91,Very High,65.0,High
+06073008511,84,Very High,80,High,85,Very High,84.0,Very High
+06073008512,81,Very High,69,High,90,Very High,84.0,Very High
+06073008513,85,Very High,74,High,94,Very High,87.0,Very High
+06073008600,48,Moderate,43,Moderate,81,Very High,43.0,Moderate
+06073008701,65,High,74,High,84,Very High,54.0,Moderate
+06073008702,70,High,69,High,69,High,68.0,High
+06073008800,45,Moderate,39,Low,77,High,40.0,Low
+06073008901,70,High,52,Moderate,79,High,73.0,High
+06073008902,85,Very High,61,High,84,Very High,93.0,Very High
+06073009000,71,High,57,Moderate,70,High,75.0,High
+06073009101,87,Very High,79,High,75,High,89.0,Very High
+06073009102,69,High,84,Very High,60,Moderate,57.0,Moderate
+06073009103,91,Very High,79,High,90,Very High,94.0,Very High
+06073009104,93,Very High,86,Very High,83,Very High,95.0,Very High
+06073009107,65,High,59,Moderate,92,Very High,61.0,High
+06073009108,79,High,69,High,96,Very High,78.0,High
+06073009109,92,Very High,73,High,99,Very High,95.0,Very High
+06073009201,64,High,65,High,66,High,62.0,High
+06073009203,91,Very High,85,Very High,83,Very High,93.0,Very High
+06073009204,88,Very High,78,High,95,Very High,90.0,Very High
+06073009301,73,High,70,High,75,High,72.0,High
+06073009305,76,High,62,High,76,High,82.0,Very High
+06073009306,79,High,72,High,82,Very High,79.0,High
+06073009307,84,Very High,70,High,98,Very High,83.0,Very High
+06073009308,70,High,57,Moderate,88,Very High,71.0,High
+06073009400,54,Moderate,68,High,79,High,40.0,Low
+06073009502,86,Very High,72,High,93,Very High,90.0,Very High
+06073009504,98,Very High,93,Very High,64,High,100.0,Very High
+06073009505,93,Very High,93,Very High,89,Very High,91.0,Very High
+06073009506,89,Very High,79,High,89,Very High,92.0,Very High
+06073009507,85,Very High,84,Very High,80,High,84.0,Very High
+06073009509,74,High,60,Moderate,82,Very High,77.0,High
+06073009510,49,Moderate,49,Moderate,76,High,43.0,Moderate
+06073009511,53,Moderate,54,Moderate,76,High,47.0,Moderate
+06073009602,87,Very High,75,High,82,Very High,91.0,Very High
+06073009603,56,Moderate,53,Moderate,84,Very High,50.0,Moderate
+06073009604,85,Very High,84,Very High,62,High,86.0,Very High
+06073009703,92,Very High,91,Very High,96,Very High,90.0,Very High
+06073009704,88,Very High,88,Very High,82,Very High,86.0,Very High
+06073009705,92,Very High,91,Very High,97,Very High,89.0,Very High
+06073009706,93,Very High,93,Very High,78,High,93.0,Very High
+06073009801,91,Very High,90,Very High,68,High,93.0,Very High
+06073009802,79,High,81,Very High,86,Very High,75.0,High
+06073009804,86,Very High,79,High,86,Very High,88.0,Very High
+06073009805,91,Very High,94,Very High,73,High,89.0,Very High
+06073009901,86,Very High,83,Very High,97,Very High,83.0,Very High
+06073009902,86,Very High,71,High,100,Very High,,
+06073010001,44,Moderate,31,Low,45,Moderate,49.0,Moderate
+06073010003,51,Moderate,29,Low,73,High,55.0,Moderate
+06073010004,39,Low,25,Low,48,Moderate,43.0,Moderate
+06073010005,11,Very Low,17,Very Low,56,Moderate,6.0,Very Low
+06073010009,22,Low,16,Very Low,46,Moderate,21.0,Low
+06073010010,28,Low,20,Very Low,49,Moderate,28.0,Low
+06073010011,46,Moderate,20,Very Low,62,High,54.0,Moderate
+06073010012,21,Low,43,Moderate,14,Very Low,18.0,Very Low
+06073010013,13,Very Low,15,Very Low,35,Low,11.0,Very Low
+06073010015,54,Moderate,47,Moderate,39,Low,59.0,Moderate
+06073010016,17,Very Low,47,Moderate,12,Very Low,,
+06073010017,48,Moderate,44,Moderate,32,Low,53.0,Moderate
+06073010018,63,High,48,Moderate,69,High,67.0,High
+06073010019,73,High,76,High,80,High,66.0,High
+06073010103,21,Low,20,Very Low,48,Moderate,18.0,Very Low
+06073010104,50,Moderate,31,Low,63,High,55.0,Moderate
+06073010106,21,Low,36,Low,55,Moderate,12.0,Very Low
+06073010107,44,Moderate,35,Low,41,Moderate,48.0,Moderate
+06073010109,50,Moderate,44,Moderate,43,Moderate,53.0,Moderate
+06073010110,26,Low,36,Low,52,Moderate,19.0,Very Low
+06073010111,19,Very Low,33,Low,29,Low,14.0,Very Low
+06073010112,18,Very Low,37,Low,58,Moderate,9.0,Very Low
+06073010201,53,Moderate,55,Moderate,31,Low,55.0,Moderate
+06073010202,52,Moderate,44,Moderate,37,Low,56.0,Moderate
+06073010300,39,Low,40,Low,67,High,33.0,Low
+06073010401,35,Low,25,Low,45,Moderate,38.0,Low
+06073010402,24,Low,26,Low,40,Low,21.0,Low
+06073010501,72,High,66,High,59,Moderate,74.0,High
+06073010502,15,Very Low,19,Very Low,28,Low,14.0,Very Low
+06073010601,96,Very High,90,Very High,31,Low,99.0,Very High
+06073010800,95,Very High,96,Very High,74,High,94.0,Very High
+06073010900,93,Very High,86,Very High,52,Moderate,97.0,Very High
+06073011000,89,Very High,83,Very High,90,Very High,91.0,Very High
+06073011100,91,Very High,85,Very High,90,Very High,92.0,Very High
+06073011300,75,High,70,High,100,Very High,69.0,High
+06073011601,11,Very Low,7,Very Low,37,Low,12.0,Very Low
+06073011602,11,Very Low,10,Very Low,45,Moderate,10.0,Very Low
+06073011700,12,Very Low,8,Very Low,39,Low,12.0,Very Low
+06073011801,16,Very Low,14,Very Low,18,Very Low,19.0,Very Low
+06073011802,11,Very Low,8,Very Low,32,Low,12.0,Very Low
+06073011902,27,Low,9,Very Low,68,High,29.0,Low
+06073012002,10,Very Low,12,Very Low,62,High,7.0,Very Low
+06073012003,29,Low,12,Very Low,28,Low,40.0,Low
+06073012101,30,Low,9,Very Low,31,Low,42.0,Moderate
+06073012102,28,Low,12,Very Low,38,Low,35.0,Low
+06073012200,21,Low,14,Very Low,35,Low,23.0,Low
+06073012302,35,Low,39,Low,48,Moderate,30.0,Low
+06073012303,40,Low,60,Moderate,33,Low,31.0,Low
+06073012304,56,Moderate,47,Moderate,57,Moderate,59.0,Moderate
+06073012401,26,Low,42,Moderate,17,Very Low,24.0,Low
+06073012402,25,Low,30,Low,35,Low,23.0,Low
+06073012501,11,Very Low,21,Low,45,Moderate,6.0,Very Low
+06073012502,31,Low,42,Moderate,66,High,21.0,Low
+06073012600,26,Low,26,Low,46,Moderate,23.0,Low
+06073012700,32,Low,52,Moderate,42,Moderate,22.0,Low
+06073012800,49,Moderate,45,Moderate,46,Moderate,50.0,Moderate
+06073012900,59,Moderate,64,High,73,High,51.0,Moderate
+06073013000,28,Low,43,Moderate,29,Low,23.0,Low
+06073013102,20,Very Low,27,Low,31,Low,17.0,Very Low
+06073013103,20,Very Low,24,Low,27,Low,19.0,Very Low
+06073013104,18,Very Low,17,Very Low,44,Moderate,16.0,Very Low
+06073013203,14,Very Low,12,Very Low,48,Moderate,12.0,Very Low
+06073013204,21,Low,16,Very Low,31,Low,23.0,Low
+06073013205,18,Very Low,17,Very Low,35,Low,18.0,Very Low
+06073013206,17,Very Low,17,Very Low,51,Moderate,15.0,Very Low
+06073013301,52,Moderate,33,Low,60,Moderate,57.0,Moderate
+06073013302,40,Low,19,Very Low,63,High,44.0,Moderate
+06073013303,28,Low,18,Very Low,40,Low,29.0,Low
+06073013306,32,Low,20,Very Low,28,Low,40.0,Low
+06073013307,27,Low,14,Very Low,22,Low,35.0,Low
+06073013308,35,Low,23,Low,42,Moderate,39.0,Low
+06073013309,64,High,45,Moderate,54,Moderate,72.0,High
+06073013312,44,Moderate,33,Low,51,Moderate,46.0,Moderate
+06073013315,87,Very High,89,Very High,87,Very High,84.0,Very High
+06073013316,84,Very High,88,Very High,82,Very High,80.0,High
+06073013317,83,Very High,92,Very High,62,High,76.0,High
+06073013318,83,Very High,85,Very High,76,High,80.0,High
+06073013319,84,Very High,87,Very High,68,High,82.0,Very High
+06073013320,84,Very High,91,Very High,92,Very High,75.0,High
+06073013321,78,High,83,Very High,73,High,73.0,High
+06073013322,90,Very High,92,Very High,90,Very High,86.0,Very High
+06073013323,84,Very High,86,Very High,82,Very High,81.0,Very High
+06073013324,79,High,94,Very High,61,High,70.0,High
+06073013325,63,High,83,Very High,60,Moderate,48.0,Moderate
+06073013326,88,Very High,81,Very High,37,Low,94.0,Very High
+06073013327,80,High,78,High,73,High,80.0,High
+06073013401,69,High,54,Moderate,90,Very High,70.0,High
+06073013409,65,High,65,High,65,High,62.0,High
+06073013411,91,Very High,83,Very High,82,Very High,93.0,Very High
+06073013412,76,High,80,High,68,High,72.0,High
+06073013414,81,Very High,82,Very High,69,High,80.0,High
+06073013415,86,Very High,84,Very High,55,Moderate,88.0,Very High
+06073013416,76,High,75,High,82,Very High,73.0,High
+06073013417,91,Very High,92,Very High,80,High,89.0,Very High
+06073013418,80,High,94,Very High,77,High,65.0,High
+06073013420,71,High,79,High,57,Moderate,66.0,High
+06073013421,78,High,83,Very High,75,High,73.0,High
+06073013422,84,Very High,78,High,51,Moderate,88.0,Very High
+06073013423,92,Very High,97,Very High,78,High,88.0,Very High
+06073013424,86,Very High,90,Very High,89,Very High,80.0,High
+06073013425,98,Very High,98,Very High,94,Very High,98.0,Very High
+06073013503,45,Moderate,30,Low,64,High,48.0,Moderate
+06073013504,73,High,54,Moderate,50,Moderate,83.0,Very High
+06073013505,59,Moderate,56,Moderate,58,Moderate,59.0,Moderate
+06073013506,57,Moderate,67,High,58,Moderate,49.0,Moderate
+06073013601,67,High,58,Moderate,53,Moderate,71.0,High
+06073013604,63,High,64,High,24,Low,69.0,High
+06073013605,86,Very High,72,High,67,High,92.0,Very High
+06073013607,66,High,66,High,63,High,66.0,High
+06073013608,57,Moderate,69,High,43,Moderate,52.0,Moderate
+06073013701,80,High,74,High,84,Very High,80.0,High
+06073013702,44,Moderate,45,Moderate,39,Low,44.0,Moderate
+06073013801,57,Moderate,48,Moderate,70,High,57.0,Moderate
+06073013802,29,Low,18,Very Low,46,Moderate,31.0,Low
+06073013903,55,Moderate,32,Low,70,High,61.0,High
+06073013905,64,High,52,Moderate,54,Moderate,69.0,High
+06073013906,35,Low,31,Low,64,High,31.0,Low
+06073013907,15,Very Low,34,Low,17,Very Low,12.0,Very Low
+06073013908,42,Moderate,32,Low,62,High,42.0,Moderate
+06073013909,52,Moderate,30,Low,38,Low,62.0,High
+06073014001,44,Moderate,37,Low,52,Moderate,44.0,Moderate
+06073014002,35,Low,26,Low,43,Moderate,38.0,Low
+06073014101,55,Moderate,28,Low,67,High,62.0,High
+06073014102,57,Moderate,29,Low,79,High,60.0,Moderate
+06073014200,58,Moderate,32,Low,81,Very High,63.0,High
+06073014300,38,Low,30,Low,56,Moderate,38.0,Low
+06073014400,25,Low,36,Low,73,High,14.0,Very Low
+06073014500,55,Moderate,51,Moderate,85,Very High,50.0,Moderate
+06073014601,55,Moderate,61,High,71,High,48.0,Moderate
+06073014602,77,High,66,High,73,High,81.0,Very High
+06073014701,77,High,75,High,80,High,75.0,High
+06073014702,79,High,78,High,90,Very High,75.0,High
+06073014803,71,High,82,Very High,58,Moderate,62.0,High
+06073014804,82,Very High,74,High,86,Very High,82.0,Very High
+06073014805,69,High,70,High,72,High,65.0,High
+06073014806,44,Moderate,58,Moderate,72,High,31.0,Low
+06073014901,66,High,75,High,55,Moderate,61.0,High
+06073014902,73,High,69,High,87,Very High,70.0,High
+06073015001,64,High,66,High,94,Very High,54.0,Moderate
+06073015002,44,Moderate,53,Moderate,91,Very High,30.0,Low
+06073015100,68,High,62,High,56,Moderate,72.0,High
+06073015200,90,Very High,76,High,75,High,94.0,Very High
+06073015301,33,Low,42,Moderate,67,High,24.0,Low
+06073015302,75,High,74,High,55,Moderate,76.0,High
+06073015403,81,Very High,61,High,71,High,88.0,Very High
+06073015405,75,High,40,Low,80,High,86.0,Very High
+06073015406,88,Very High,78,High,50,Moderate,93.0,Very High
+06073015407,21,Low,28,Low,33,Low,18.0,Very Low
+06073015408,61,High,24,Low,82,Very High,70.0,High
+06073015501,59,Moderate,31,Low,61,High,69.0,High
+06073015502,70,High,70,High,44,Moderate,72.0,High
+06073015601,42,Moderate,39,Low,74,High,36.0,Low
+06073015602,70,High,33,Low,64,High,82.0,Very High
+06073015701,9,Very Low,8,Very Low,59,Moderate,7.0,Very Low
+06073015704,21,Low,17,Very Low,67,High,17.0,Very Low
+06073015705,15,Very Low,5,Very Low,56,Moderate,17.0,Very Low
+06073015706,7,Very Low,20,Very Low,53,Moderate,3.0,Very Low
+06073015801,14,Very Low,15,Very Low,64,High,10.0,Very Low
+06073015802,14,Very Low,13,Very Low,33,Low,14.0,Very Low
+06073015901,11,Very Low,13,Very Low,52,Moderate,8.0,Very Low
+06073015902,26,Low,35,Low,74,High,16.0,Very Low
+06073016000,47,Moderate,38,Low,47,Moderate,50.0,Moderate
+06073016100,66,High,55,Moderate,79,High,67.0,High
+06073016201,78,High,55,Moderate,83,Very High,85.0,Very High
+06073016202,25,Low,18,Very Low,31,Low,28.0,Low
+06073016301,18,Very Low,9,Very Low,35,Low,22.0,Low
+06073016302,12,Very Low,6,Very Low,27,Low,16.0,Very Low
+06073016401,50,Moderate,17,Very Low,68,High,62.0,High
+06073016403,46,Moderate,21,Low,60,Moderate,54.0,Moderate
+06073016404,9,Very Low,10,Very Low,70,High,6.0,Very Low
+06073016502,20,Very Low,10,Very Low,61,High,20.0,Very Low
+06073016503,37,Low,18,Very Low,42,Moderate,45.0,Moderate
+06073016504,15,Very Low,4,Very Low,34,Low,21.0,Low
+06073016606,77,High,59,Moderate,70,High,84.0,Very High
+06073016607,77,High,68,High,71,High,80.0,High
+06073016608,72,High,48,Moderate,69,High,80.0,High
+06073016609,70,High,50,Moderate,71,High,76.0,High
+06073016610,68,High,64,High,75,High,67.0,High
+06073016613,83,Very High,87,Very High,77,High,79.0,High
+06073016614,77,High,77,High,61,High,76.0,High
+06073016615,68,High,62,High,82,Very High,67.0,High
+06073016616,61,High,57,Moderate,81,Very High,58.0,Moderate
+06073016617,36,Low,48,Moderate,42,Moderate,30.0,Low
+06073016618,76,High,70,High,46,Moderate,81.0,Very High
+06073016619,65,High,59,Moderate,83,Very High,62.0,High
+06073016620,77,High,77,High,76,High,75.0,High
+06073016621,81,Very High,64,High,70,High,88.0,Very High
+06073016703,61,High,56,Moderate,76,High,60.0,Moderate
+06073016704,71,High,66,High,66,High,72.0,High
+06073016705,43,Moderate,32,Low,76,High,41.0,Moderate
+06073016706,45,Moderate,32,Low,66,High,46.0,Moderate
+06073016804,43,Moderate,41,Moderate,48,Moderate,42.0,Moderate
+06073016806,38,Low,27,Low,50,Moderate,40.0,Low
+06073016807,61,High,29,Low,54,Moderate,74.0,High
+06073016809,53,Moderate,43,Moderate,60,Moderate,55.0,Moderate
+06073016810,65,High,25,Low,58,Moderate,79.0,High
+06073016811,62,High,35,Low,71,High,70.0,High
+06073016812,64,High,30,Low,63,High,75.0,High
+06073016813,67,High,38,Low,67,High,76.0,High
+06073016901,73,High,54,Moderate,60,Moderate,81.0,Very High
+06073016902,44,Moderate,22,Low,43,Moderate,54.0,Moderate
+06073017006,98,Very High,97,Very High,87,Very High,97.0,Very High
+06073017009,78,High,80,High,86,Very High,73.0,High
+06073017010,90,Very High,82,Very High,72,High,94.0,Very High
+06073017014,90,Very High,96,Very High,81,Very High,85.0,Very High
+06073017018,81,Very High,88,Very High,80,High,75.0,High
+06073017020,97,Very High,92,Very High,92,Very High,97.0,Very High
+06073017021,94,Very High,83,Very High,66,High,97.0,Very High
+06073017022,92,Very High,91,Very High,91,Very High,91.0,Very High
+06073017031,94,Very High,95,Very High,91,Very High,93.0,Very High
+06073017033,97,Very High,97,Very High,72,High,97.0,Very High
+06073017034,86,Very High,90,Very High,82,Very High,81.0,Very High
+06073017035,84,Very High,92,Very High,84,Very High,76.0,High
+06073017036,93,Very High,93,Very High,70,High,94.0,Very High
+06073017037,90,Very High,92,Very High,78,High,88.0,Very High
+06073017039,90,Very High,90,Very High,83,Very High,89.0,Very High
+06073017040,89,Very High,79,High,92,Very High,91.0,Very High
+06073017041,85,Very High,78,High,74,High,89.0,Very High
+06073017043,95,Very High,89,Very High,94,Very High,96.0,Very High
+06073017044,98,Very High,98,Very High,88,Very High,98.0,Very High
+06073017045,100,Very High,100,Very High,81,Very High,100.0,Very High
+06073017046,98,Very High,95,Very High,92,Very High,99.0,Very High
+06073017047,99,Very High,100,Very High,90,Very High,97.0,Very High
+06073017048,69,High,74,High,74,High,62.0,High
+06073017049,72,High,67,High,81,Very High,71.0,High
+06073017050,75,High,79,High,79,High,71.0,High
+06073017051,95,Very High,93,Very High,97,Very High,94.0,Very High
+06073017052,93,Very High,94,Very High,81,Very High,91.0,Very High
+06073017053,96,Very High,88,Very High,92,Very High,98.0,Very High
+06073017054,92,Very High,86,Very High,89,Very High,93.0,Very High
+06073017055,94,Very High,90,Very High,78,High,95.0,Very High
+06073017056,88,Very High,93,Very High,86,Very High,82.0,Very High
+06073017057,97,Very High,93,Very High,94,Very High,98.0,Very High
+06073017058,91,Very High,92,Very High,90,Very High,89.0,Very High
+06073017059,95,Very High,96,Very High,96,Very High,93.0,Very High
+06073017060,98,Very High,99,Very High,94,Very High,96.0,Very High
+06073017061,98,Very High,97,Very High,56,Moderate,99.0,Very High
+06073017062,100,Very High,100,Very High,51,Moderate,100.0,Very High
+06073017063,89,Very High,91,Very High,85,Very High,86.0,Very High
+06073017064,98,Very High,97,Very High,84,Very High,98.0,Very High
+06073017065,97,Very High,97,Very High,81,Very High,96.0,Very High
+06073017066,98,Very High,93,Very High,91,Very High,99.0,Very High
+06073017067,96,Very High,90,Very High,87,Very High,97.0,Very High
+06073017068,92,Very High,92,Very High,78,High,93.0,Very High
+06073017069,99,Very High,100,Very High,97,Very High,97.0,Very High
+06073017070,96,Very High,98,Very High,78,High,94.0,Very High
+06073017071,98,Very High,99,Very High,89,Very High,97.0,Very High
+06073017104,93,Very High,88,Very High,89,Very High,94.0,Very High
+06073017106,99,Very High,100,Very High,48,Moderate,100.0,Very High
+06073017107,98,Very High,97,Very High,96,Very High,98.0,Very High
+06073017108,98,Very High,98,Very High,98,Very High,97.0,Very High
+06073017109,98,Very High,92,Very High,93,Very High,99.0,Very High
+06073017111,97,Very High,97,Very High,76,High,97.0,Very High
+06073017112,96,Very High,92,Very High,78,High,97.0,Very High
+06073017113,87,Very High,92,Very High,85,Very High,81.0,Very High
+06073017201,100,Very High,100,Very High,63,High,100.0,Very High
+06073017202,100,Very High,100,Very High,52,Moderate,100.0,Very High
+06073017303,97,Very High,99,Very High,95,Very High,94.0,Very High
+06073017305,99,Very High,99,Very High,94,Very High,98.0,Very High
+06073017306,100,Very High,100,Very High,87,Very High,100.0,Very High
+06073017307,94,Very High,96,Very High,26,Low,96.0,Very High
+06073017308,95,Very High,100,Very High,84,Very High,90.0,Very High
+06073017403,97,Very High,96,Very High,94,Very High,97.0,Very High
+06073017405,85,Very High,89,Very High,67,High,83.0,Very High
+06073017406,98,Very High,96,Very High,94,Very High,98.0,Very High
+06073017407,98,Very High,96,Very High,89,Very High,99.0,Very High
+06073017408,94,Very High,96,Very High,77,High,93.0,Very High
+06073017501,96,Very High,98,Very High,61,High,95.0,Very High
+06073017502,92,Very High,94,Very High,90,Very High,88.0,Very High
+06073017601,98,Very High,97,Very High,81,Very High,99.0,Very High
+06073017603,98,Very High,96,Very High,96,Very High,97.0,Very High
+06073017605,92,Very High,96,Very High,58,Moderate,90.0,Very High
+06073017606,90,Very High,94,Very High,92,Very High,84.0,Very High
+06073017701,94,Very High,99,Very High,52,Moderate,91.0,Very High
+06073017702,94,Very High,97,Very High,62,High,93.0,Very High
+06073017801,86,Very High,82,Very High,97,Very High,83.0,Very High
+06073017808,99,Very High,99,Very High,88,Very High,98.0,Very High
+06073017809,91,Very High,87,Very High,93,Very High,92.0,Very High
+06073017810,94,Very High,89,Very High,88,Very High,96.0,Very High
+06073017811,95,Very High,98,Very High,66,High,93.0,Very High
+06073017813,89,Very High,93,Very High,34,Low,89.0,Very High
+06073017901,81,Very High,93,Very High,73,High,67.0,High
+06073017902,58,Moderate,76,High,12,Very Low,58.0,Moderate
+06073018000,88,Very High,89,Very High,46,Moderate,89.0,Very High
+06073018101,69,High,42,Moderate,67,High,78.0,High
+06073018102,63,High,30,Low,61,High,75.0,High
+06073018201,44,Moderate,22,Low,47,Moderate,53.0,Moderate
+06073018202,38,Low,50,Moderate,7,Very Low,45.0,Moderate
+06073018301,67,High,38,Low,8,Very Low,86.0,Very High
+06073018302,35,Low,21,Low,7,Very Low,55.0,Moderate
+06073018400,37,Low,16,Very Low,28,Low,51.0,Moderate
+06073018504,48,Moderate,32,Low,23,Low,60.0,Moderate
+06073018509,19,Very Low,15,Very Low,29,Low,21.0,Low
+06073018510,37,Low,19,Very Low,64,High,40.0,Low
+06073018511,39,Low,21,Low,57,Moderate,44.0,Moderate
+06073018512,48,Moderate,20,Very Low,72,High,54.0,Moderate
+06073018515,71,High,40,Low,63,High,82.0,Very High
+06073018516,64,High,52,Moderate,69,High,67.0,High
+06073018517,68,High,49,Moderate,78,High,72.0,High
+06073018518,39,Low,15,Very Low,68,High,44.0,Moderate
+06073018519,28,Low,13,Very Low,42,Moderate,34.0,Low
+06073018520,42,Moderate,23,Low,45,Moderate,50.0,Moderate
+06073018521,60,Moderate,30,Low,83,Very High,67.0,High
+06073018522,77,High,66,High,87,Very High,78.0,High
+06073018523,65,High,47,Moderate,80,High,68.0,High
+06073018524,66,High,74,High,69,High,57.0,Moderate
+06073018525,77,High,39,Low,72,High,89.0,Very High
+06073018601,68,High,35,Low,59,Moderate,80.0,High
+06073018608,60,Moderate,24,Low,68,High,72.0,High
+06073018609,32,Low,15,Very Low,63,High,33.0,Low
+06073018612,67,High,47,Moderate,70,High,72.0,High
+06073018613,42,Moderate,19,Very Low,65,High,47.0,Moderate
+06073018615,27,Low,11,Very Low,20,Very Low,39.0,Low
+06073018616,33,Low,17,Very Low,87,Very High,29.0,Low
+06073018617,56,Moderate,16,Very Low,58,Moderate,71.0,High
+06073018618,25,Low,15,Very Low,48,Moderate,26.0,Low
+06073018619,82,Very High,76,High,48,Moderate,88.0,Very High
+06073018620,47,Moderate,49,Moderate,70,High,39.0,Low
+06073018621,44,Moderate,49,Moderate,24,Low,45.0,Moderate
+06073018622,26,Low,15,Very Low,55,Moderate,26.0,Low
+06073018700,36,Low,34,Low,55,Moderate,33.0,Low
+06073018801,68,High,40,Low,83,Very High,71.0,High
+06073018803,68,High,61,High,57,Moderate,70.0,High
+06073018804,85,Very High,57,Moderate,75,High,92.0,Very High
+06073018805,83,Very High,80,High,89,Very High,81.0,Very High
+06073018903,35,Low,35,Low,48,Moderate,33.0,Low
+06073018904,33,Low,36,Low,50,Moderate,28.0,Low
+06073018905,42,Moderate,40,Low,80,High,35.0,Low
+06073018906,38,Low,45,Moderate,23,Low,38.0,Low
+06073019001,65,High,41,Moderate,49,Moderate,72.0,High
+06073019002,68,High,50,Moderate,83,Very High,71.0,High
+06073019103,62,High,36,Low,58,Moderate,72.0,High
+06073019105,69,High,37,Low,50,Moderate,82.0,Very High
+06073019107,66,High,55,Moderate,73,High,66.0,High
+06073019108,36,Low,36,Low,5,Very Low,51.0,Moderate
+06073019109,64,High,60,Moderate,39,Low,68.0,High
+06073019110,46,Moderate,34,Low,13,Very Low,60.0,Moderate
+06073019111,47,Moderate,28,Low,35,Low,57.0,Moderate
+06073019203,62,High,40,Low,57,Moderate,70.0,High
+06073019205,23,Low,10,Very Low,21,Low,32.0,Low
+06073019206,24,Low,7,Very Low,40,Low,32.0,Low
+06073019208,68,High,31,Low,57,Moderate,81.0,Very High
+06073019209,70,High,36,Low,76,High,77.0,High
+06073019210,28,Low,10,Very Low,66,High,30.0,Low
+06073019301,74,High,47,Moderate,85,Very High,81.0,Very High
+06073019303,60,Moderate,36,Low,59,Moderate,69.0,High
+06073019304,56,Moderate,20,Very Low,74,High,67.0,High
+06073019305,43,Moderate,25,Low,64,High,45.0,Moderate
+06073019403,48,Moderate,16,Very Low,52,Moderate,60.0,Moderate
+06073019404,23,Low,4,Very Low,40,Low,33.0,Low
+06073019405,37,Low,12,Very Low,61,High,46.0,Moderate
+06073019406,39,Low,9,Very Low,72,High,48.0,Moderate
+06073019501,10,Very Low,3,Very Low,33,Low,14.0,Very Low
+06073019502,14,Very Low,5,Very Low,45,Moderate,16.0,Very Low
+06073019503,26,Low,13,Very Low,38,Low,31.0,Low
+06073019601,41,Moderate,14,Very Low,53,Moderate,51.0,Moderate
+06073019602,44,Moderate,26,Low,64,High,48.0,Moderate
+06073019701,51,Moderate,34,Low,43,Moderate,59.0,Moderate
+06073019702,58,Moderate,28,Low,64,High,68.0,High
+06073019803,75,High,75,High,88,Very High,70.0,High
+06073019804,91,Very High,88,Very High,70,High,93.0,Very High
+06073019805,59,Moderate,71,High,60,Moderate,50.0,Moderate
+06073019808,85,Very High,59,Moderate,66,High,93.0,Very High
+06073019809,72,High,34,Low,77,High,84.0,Very High
+06073019810,74,High,66,High,89,Very High,73.0,High
+06073019811,88,Very High,82,Very High,70,High,91.0,Very High
+06073019902,46,Moderate,47,Moderate,47,Moderate,44.0,Moderate
+06073019903,49,Moderate,29,Low,49,Moderate,57.0,Moderate
+06073019904,69,High,49,Moderate,68,High,75.0,High
+06073019905,63,High,52,Moderate,48,Moderate,69.0,High
+06073020015,98,Very High,97,Very High,95,Very High,97.0,Very High
+06073020017,29,Low,42,Moderate,38,Low,23.0,Low
+06073020019,65,High,56,Moderate,64,High,67.0,High
+06073020021,52,Moderate,61,High,68,High,43.0,Moderate
+06073020023,70,High,67,High,82,Very High,67.0,High
+06073020024,67,High,63,High,65,High,67.0,High
+06073020025,65,High,68,High,85,Very High,57.0,Moderate
+06073020026,84,Very High,76,High,83,Very High,86.0,Very High
+06073020028,16,Very Low,61,High,21,Low,7.0,Very Low
+06073020029,33,Low,58,Moderate,28,Low,24.0,Low
+06073020030,90,Very High,86,Very High,76,High,92.0,Very High
+06073020031,86,Very High,88,Very High,79,High,84.0,Very High
+06073020032,96,Very High,95,Very High,68,High,97.0,Very High
+06073020033,84,Very High,85,Very High,90,Very High,79.0,High
+06073020034,100,Very High,97,Very High,99,Very High,100.0,Very High
+06073020035,97,Very High,94,Very High,91,Very High,97.0,Very High
+06073020036,34,Low,53,Moderate,41,Moderate,25.0,Low
+06073020037,53,Moderate,45,Moderate,56,Moderate,54.0,Moderate
+06073020038,82,Very High,88,Very High,72,High,76.0,High
+06073020039,78,High,67,High,77,High,81.0,Very High
+06073020040,84,Very High,85,Very High,85,Very High,80.0,High
+06073020041,55,Moderate,60,Moderate,28,Low,56.0,Moderate
+06073020042,83,Very High,83,Very High,76,High,81.0,Very High
+06073020043,97,Very High,99,Very High,88,Very High,94.0,Very High
+06073020044,94,Very High,90,Very High,90,Very High,94.0,Very High
+06073020105,56,Moderate,38,Low,43,Moderate,65.0,High
+06073020106,48,Moderate,20,Very Low,49,Moderate,59.0,Moderate
+06073020107,48,Moderate,48,Moderate,56,Moderate,45.0,Moderate
+06073020108,22,Low,22,Low,41,Moderate,20.0,Very Low
+06073020109,43,Moderate,19,Very Low,57,Moderate,50.0,Moderate
+06073020110,69,High,45,Moderate,70,High,75.0,High
+06073020111,78,High,39,Low,76,High,90.0,Very High
+06073020202,8,Very Low,12,Very Low,22,Low,7.0,Very Low
+06073020206,18,Very Low,33,Low,21,Low,15.0,Very Low
+06073020207,12,Very Low,32,Low,15,Very Low,9.0,Very Low
+06073020208,38,Low,34,Low,38,Low,40.0,Low
+06073020209,26,Low,44,Moderate,52,Moderate,16.0,Very Low
+06073020210,30,Low,33,Low,34,Low,29.0,Low
+06073020211,23,Low,27,Low,44,Moderate,19.0,Very Low
+06073020213,13,Very Low,25,Low,21,Low,10.0,Very Low
+06073020214,10,Very Low,14,Very Low,35,Low,7.0,Very Low
+06073020304,77,High,64,High,62,High,83.0,Very High
+06073020305,71,High,58,Moderate,71,High,74.0,High
+06073020308,27,Low,21,Low,64,High,24.0,Low
+06073020309,50,Moderate,48,Moderate,58,Moderate,48.0,Moderate
+06073020310,77,High,85,Very High,59,Moderate,72.0,High
+06073020311,83,Very High,74,High,71,High,86.0,Very High
+06073020312,71,High,57,Moderate,85,Very High,73.0,High
+06073020313,56,Moderate,74,High,78,High,38.0,Low
+06073020401,91,Very High,73,High,75,High,96.0,Very High
+06073020403,66,High,55,Moderate,77,High,66.0,High
+06073020404,64,High,50,Moderate,60,Moderate,69.0,High
+06073020405,91,Very High,74,High,85,Very High,95.0,Very High
+06073020500,32,Low,37,Low,40,Low,28.0,Low
+06073020601,20,Very Low,24,Low,49,Moderate,15.0,Very Low
+06073020602,28,Low,23,Low,39,Low,29.0,Low
+06073020705,60,Moderate,37,Low,56,Moderate,68.0,High
+06073020706,84,Very High,68,High,58,Moderate,92.0,Very High
+06073020707,36,Low,30,Low,43,Moderate,37.0,Low
+06073020708,76,High,58,Moderate,59,Moderate,84.0,Very High
+06073020710,77,High,67,High,68,High,81.0,Very High
+06073020711,78,High,65,High,76,High,82.0,Very High
+06073020712,72,High,40,Low,77,High,81.0,Very High
+06073020801,74,High,56,Moderate,53,Moderate,83.0,Very High
+06073020805,60,Moderate,48,Moderate,53,Moderate,64.0,High
+06073020806,54,Moderate,46,Moderate,79,High,51.0,Moderate
+06073020807,64,High,47,Moderate,48,Moderate,72.0,High
+06073020810,78,High,53,Moderate,90,Very High,84.0,Very High
+06073020811,77,High,61,High,81,Very High,81.0,Very High
+06073020812,43,Moderate,42,Moderate,94,Very High,32.0,Low
+06073020813,55,Moderate,43,Moderate,72,High,55.0,Moderate
+06073020902,55,Moderate,32,Low,27,Low,67.0,High
+06073020903,30,Low,20,Very Low,15,Very Low,41.0,Moderate
+06073020904,57,Moderate,48,Moderate,8,Very Low,74.0,High
+06073021001,43,Moderate,20,Very Low,2,Very Low,70.0,High
+06073021002,46,Moderate,24,Low,6,Very Low,65.0,High
+06073021101,26,Low,29,Low,29,Low,25.0,Low
+06073021102,13,Very Low,16,Very Low,13,Very Low,15.0,Very Low
+06073021202,45,Moderate,41,Moderate,20,Very Low,54.0,Moderate
+06073021204,79,High,62,High,85,Very High,84.0,Very High
+06073021205,59,Moderate,50,Moderate,70,High,60.0,Moderate
+06073021206,77,High,54,Moderate,60,Moderate,87.0,Very High
+06073021302,48,Moderate,58,Moderate,43,Moderate,43.0,Moderate
+06073021304,85,Very High,79,High,65,High,88.0,Very High
+06073021305,77,High,62,High,74,High,82.0,Very High
+06073021306,87,Very High,84,Very High,80,High,87.0,Very High
+06073021401,84,Very High,74,High,100,Very High,82.0,Very High
+06073021402,75,High,69,High,96,Very High,71.0,High
+06073021501,100,Very High,100,Very High,94,Very High,100.0,Very High
+06073021502,95,Very High,99,Very High,66,High,93.0,Very High
+06073021600,64,High,68,High,5,Very Low,76.0,High
+06073021800,98,Very High,94,Very High,57,Moderate,99.0,Very High
+06073021900,8,Very Low,7,Very Low,36,Low,7.0,Very Low
+06073022000,14,Very Low,8,Very Low,54,Moderate,14.0,Very Low
+06073022101,91,Very High,86,Very High,61,High,94.0,Very High
+06073022102,93,Very High,97,Very High,83,Very High,89.0,Very High

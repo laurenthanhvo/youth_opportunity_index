@@ -323,52 +323,69 @@ def pick_col(df, candidates):
     return None
 
 # 1) Use CalEnviroScreen shapefile as the base tract list + geometry
-ces_gdf = load_calenviroscreen_sd_geo()
-if ces_gdf is not None and len(ces_gdf) > 0:
-    print("Anchoring tracts from CalEnviroScreen:", ces_gdf.shape)
+# ces_gdf = load_calenviroscreen_sd_geo()
+# if ces_gdf is not None and len(ces_gdf) > 0:
+#     print("Anchoring tracts from CalEnviroScreen:", ces_gdf.shape)
 
-    # Save geometry for dashboard
-    geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
-    ces_gdf[["tract_geoid", "geometry"]].to_file(geo_out, driver="GeoJSON")
-    print("Saved SD tract boundaries:", geo_out)
+#     # Save geometry for dashboard
+#     geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
+#     ces_gdf[["tract_geoid", "geometry"]].to_file(geo_out, driver="GeoJSON")
+#     print("Saved SD tract boundaries:", geo_out)
 
-    # Base tracts table (always one row per tract)
-    tracts = pd.DataFrame({
-        "tract_geoid": ces_gdf["tract_geoid"].astype(str),
-        # optional environmental field if present
-        "env_burden": pd.to_numeric(ces_gdf.get("env_burden", np.nan), errors="coerce"),
-    }).drop_duplicates("tract_geoid")
+#     # Base tracts table (always one row per tract)
+#     tracts = pd.DataFrame({
+#         "tract_geoid": ces_gdf["tract_geoid"].astype(str),
+#         # optional environmental field if present
+#         "env_burden": pd.to_numeric(ces_gdf.get("env_burden", np.nan), errors="coerce"),
+#     }).drop_duplicates("tract_geoid")
 
-    pop_col = None  
-else:
-    print("WARNING: CalEnviroScreen anchor not found. Falling back to GEOIDs from raw tables.")
+#     pop_col = None  
+# else:
+#     print("WARNING: CalEnviroScreen anchor not found. Falling back to GEOIDs from raw tables.")
 
-    # 2) Fallback: build tract list from whatever raw ACS tables exist
-    geoid_sets = []
+#     # 2) Fallback: build tract list from whatever raw ACS tables exist
+#     geoid_sets = []
 
-    for domain, prefix in [
-        ("economic", "ACSST5Y2024.S1701"),
-        ("economic", "ACSDT5Y2024.B19013"),
-        ("economic", "ACSST5Y2024.S2301"),
-        ("education", "ACSST5Y2024.S1501"),
-        ("education", "ACSST5Y2024.S1401"),
-        ("health", "ACSST5Y2024.S2701"),
-        ("housing", "ACSDT5Y2024.B25003"),
-        ("mobility", "ACSDT5Y2024.B08201"),
-    ]:
-        df_tmp = load_census_table(domain, prefix)
-        if df_tmp is not None and "tract_geoid" in df_tmp.columns:
-            geoid_sets.append(df_tmp["tract_geoid"].dropna().astype(str).unique())
+#     for domain, prefix in [
+#         ("economic", "ACSST5Y2024.S1701"),
+#         ("economic", "ACSDT5Y2024.B19013"),
+#         ("economic", "ACSST5Y2024.S2301"),
+#         ("education", "ACSST5Y2024.S1501"),
+#         ("education", "ACSST5Y2024.S1401"),
+#         ("health", "ACSST5Y2024.S2701"),
+#         ("housing", "ACSDT5Y2024.B25003"),
+#         ("mobility", "ACSDT5Y2024.B08201"),
+#     ]:
+#         df_tmp = load_census_table(domain, prefix)
+#         if df_tmp is not None and "tract_geoid" in df_tmp.columns:
+#             geoid_sets.append(df_tmp["tract_geoid"].dropna().astype(str).unique())
 
-    if not geoid_sets:
-        raise FileNotFoundError(
-            "Could not find ANY tract GEOIDs to anchor the index. "
-            "Make sure CalEnviroScreen shapefile exists under data/rawdomains/safety/..."
-        )
+#     if not geoid_sets:
+#         raise FileNotFoundError(
+#             "Could not find ANY tract GEOIDs to anchor the index. "
+#             "Make sure CalEnviroScreen shapefile exists under data/rawdomains/safety/..."
+#         )
 
-    all_geoids = sorted(set(np.concatenate(geoid_sets)))
-    tracts = pd.DataFrame({"tract_geoid": all_geoids})
-    pop_col = None
+#     all_geoids = sorted(set(np.concatenate(geoid_sets)))
+#     tracts = pd.DataFrame({"tract_geoid": all_geoids})
+#     pop_col = None
+
+# 1) Use already-built boundary GeoJSON as the base tract list
+anchor_geo_path = OUT_BOUNDS_DIR / "sd_tracts.geojson"
+
+if not anchor_geo_path.exists():
+    raise FileNotFoundError(
+        f"Missing {anchor_geo_path}. Run: python scripts/build_sd_tracts_geojson_2025.py"
+    )
+
+anchor_gdf = gpd.read_file(anchor_geo_path)
+anchor_gdf["tract_geoid"] = anchor_gdf["tract_geoid"].astype(str)
+
+print("Anchoring tracts from boundary GeoJSON:", anchor_gdf.shape)
+
+tracts = anchor_gdf[["tract_geoid"]].drop_duplicates("tract_geoid").copy()
+tracts["env_burden"] = np.nan
+pop_col = None
 
 print("Base SD tracts:", tracts.shape)
 
@@ -722,26 +739,59 @@ if crime is not None:
 else:
     tracts["crime_rate_per_1k"] = np.nan
 
+# ces_gdf = load_calenviroscreen_sd_geo()
+# if ces_gdf is not None and len(ces_gdf) > 0:
+#     # save geometry for dashboard map
+#     geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
+#     ces_gdf[["tract_geoid", "geometry"]].to_file(
+#     OUT_BOUNDS_DIR / "sd_tracts.geojson",
+#     driver="GeoJSON"
+#     )
+#     print("Saved SD tract boundaries:", geo_out)
+
+#     # IMPORTANT:
+#     # If we anchored from CalEnviroScreen earlier, tracts already has env_burden.
+#     # So do NOT merge env_burden again (it creates env_burden_x/env_burden_y).
+#     if "env_burden" not in tracts.columns:
+#         env = ces_gdf[["tract_geoid", "env_burden"]].copy()
+#         env["tract_geoid"] = env["tract_geoid"].astype(str)
+#         tracts["tract_geoid"] = tracts["tract_geoid"].astype(str)
+#         tracts = tracts.merge(env, on="tract_geoid", how="left")
+
+#     # ensure numeric
+#     tracts["env_burden"] = pd.to_numeric(tracts["env_burden"], errors="coerce")
+
+#     add_indicator(
+#         tracts,
+#         "env_burden",
+#         "safety_env",
+#         tracts["env_burden"],
+#         False,
+#         "CalEnviroScreen 4.0",
+#         "CalEnviroScreen percentile/score (higher burden = worse)"
+#     )
+# else:
+#     if "env_burden" not in tracts.columns:
+#         tracts["env_burden"] = np.nan
+
 ces_gdf = load_calenviroscreen_sd_geo()
 if ces_gdf is not None and len(ces_gdf) > 0:
-    # save geometry for dashboard map
-    geo_out = OUT_BOUNDS_DIR / "sd_tracts.geojson"
-    ces_gdf[["tract_geoid", "geometry"]].to_file(
-    OUT_BOUNDS_DIR / "sd_tracts.geojson",
-    driver="GeoJSON"
-    )
-    print("Saved SD tract boundaries:", geo_out)
-
-    # IMPORTANT:
-    # If we anchored from CalEnviroScreen earlier, tracts already has env_burden.
-    # So do NOT merge env_burden again (it creates env_burden_x/env_burden_y).
+    # Only merge environmental burden as data.
+    # Do NOT overwrite sd_tracts.geojson here.
     if "env_burden" not in tracts.columns:
         env = ces_gdf[["tract_geoid", "env_burden"]].copy()
         env["tract_geoid"] = env["tract_geoid"].astype(str)
         tracts["tract_geoid"] = tracts["tract_geoid"].astype(str)
         tracts = tracts.merge(env, on="tract_geoid", how="left")
+    else:
+        env = ces_gdf[["tract_geoid", "env_burden"]].copy()
+        env["tract_geoid"] = env["tract_geoid"].astype(str)
+        tracts["tract_geoid"] = tracts["tract_geoid"].astype(str)
+        tracts = tracts.merge(env, on="tract_geoid", how="left", suffixes=("", "_ces"))
+        if "env_burden_ces" in tracts.columns:
+            tracts["env_burden"] = tracts["env_burden"].fillna(tracts["env_burden_ces"])
+            tracts = tracts.drop(columns=["env_burden_ces"])
 
-    # ensure numeric
     tracts["env_burden"] = pd.to_numeric(tracts["env_burden"], errors="coerce")
 
     add_indicator(

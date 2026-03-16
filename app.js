@@ -34,6 +34,9 @@ const state = {
   rawWeights: Object.fromEntries(DOMAINS.map(d => [d, 1])),
   normalizedWeights: Object.fromEntries(DOMAINS.map(d => [d, 1 / DOMAINS.length])),
   hasInitialFit: false,
+  coiRows: [],
+  coiMap: new Map(),
+  showCoiOverlay: false,
 };
 
 let tractLayer = null;
@@ -47,8 +50,20 @@ const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionCon
 
 map.getContainer().style.opacity = '0';
 map.getContainer().style.transition = 'opacity 120ms ease';
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+// base map without labels
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
+  maxZoom: 19,
+}).addTo(map);
+
+// pane for labels above polygons
+map.createPane('labels');
+map.getPane('labels').style.zIndex = 650;
+map.getPane('labels').style.pointerEvents = 'none';
+
+// label-only tiles on top
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+  pane: 'labels',
   maxZoom: 19,
 }).addTo(map);
 
@@ -286,6 +301,20 @@ function currentValue(row) {
   return row ? +row[metric] : NaN;
 }
 
+function currentCoiRow(geoid) {
+  return state.coiMap.get(normalizeGeoid(geoid)) || null;
+}
+
+function currentCoiValue(geoid) {
+  const row = currentCoiRow(geoid);
+  return row ? +row.coi_score : NaN;
+}
+
+function currentCoiCategory(geoid) {
+  const row = currentCoiRow(geoid);
+  return row ? row.coi_level : 'N/A';
+}
+
 function colorForValue(v) {
   if (!isFiniteNumber(v)) return '#eef2f7';
 
@@ -306,7 +335,7 @@ function colorForValue(v) {
 function styleFeature(feature) {
   const geoid = normalizeGeoid(feature.properties?.tract_geoid);
   const row = state.tractMap.get(geoid);
-  const value = currentValue(row);
+  const value = state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(row);
   const isSelected = geoid === normalizeGeoid(state.selectedGeoid);
   return {
     color: isSelected ? '#ffffff' : (state.showBounds ? 'rgba(27,51,75,0.34)' : 'transparent'),
@@ -317,8 +346,10 @@ function styleFeature(feature) {
 }
 
 function popupHtml(row, geoid) {
-  const value = currentValue(row);
-  const badge = state.scoreMode === 'score' ? scoreDisplayValue(value) : valueToCategory(value);
+  const value = state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(row);
+  const badge = state.showCoiOverlay
+    ? (state.scoreMode === 'score' ? `${Math.round(value)}/100` : currentCoiCategory(geoid))
+    : (state.scoreMode === 'score' ? scoreDisplayValue(value) : valueToCategory(value));
   return `
     <div class="popup-card">
       <div class="popup-title">${tractLabelFromGeoid(geoid)}</div>
@@ -327,8 +358,8 @@ function popupHtml(row, geoid) {
       <div class="popup-divider"></div>
       <div class="popup-row">
         <div>
-          <div class="popup-label">${state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle()}</div>
-          <div class="popup-context">Compared to county</div>
+          <div class="popup-label">${state.showCoiOverlay ? 'Child Opportunity Index' : (state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle())}</div>
+          <div class="popup-context">${state.showCoiOverlay ? 'Compared to nation' : 'Compared to county'}</div>
         </div>
         <div class="popup-badge ${state.scoreMode === 'score' ? 'score-badge' : ''}">${badge}</div>
       </div>
@@ -342,8 +373,13 @@ function updateLegendCard() {
   const scale = document.getElementById('legendScale');
   const labels = document.getElementById('legendLabels');
 
-  titleEl.textContent = state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels';
-  subtitleEl.textContent = `${activeLayerTitle()} by Census Tract, county-normalized for 2024`;
+  titleEl.textContent = state.showCoiOverlay
+  ? (state.scoreMode === 'score' ? 'Child Opportunity Scores' : 'Child Opportunity Levels')
+  : (state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels');
+
+  subtitleEl.textContent = state.showCoiOverlay
+    ? 'Child Opportunity Index by Census Tract, nationally normalized for 2023'
+    : `${activeLayerTitle()} by Census Tract, county-normalized for 2024`;
 
   if (state.scoreMode === 'score') {
     scale.classList.add('continuous');
@@ -695,6 +731,10 @@ function bindControls() {
   });
   searchInput.addEventListener('focus', () => setSearchStatus(''));
   document.querySelector('.search-shell i')?.addEventListener('click', runSearch);
+  document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
+  state.showCoiOverlay = e.target.checked;
+  updateAll();
+});
 }
 
 async function loadCsv(path) {
@@ -745,10 +785,11 @@ function applyInitialMapView() {
     const bounds = tractLayer.getBounds();
     if (bounds.isValid()) {
       map.fitBounds(bounds, {
-        animate: false,
-        paddingTopLeft: [390, 110],
-        paddingBottomRight: [310, 70],
-      });
+  animate: false,
+  paddingTopLeft: [400, 50],
+  paddingBottomRight: [140, 30],
+  maxZoom: 11,
+});
       fitted = true;
     }
   }
@@ -775,6 +816,8 @@ async function init() {
   state.geojson = await loadJson('./data/processed/boundaries/sd_tracts.geojson');
   state.routesGeojson = await loadJson('./data/processed/boundaries/transit_routes.geojson').catch(() => null);
   state.stopsGeojson = await loadJson('./data/processed/boundaries/transit_stops.geojson').catch(() => null);
+  state.coiRows = await loadCsv('./data/processed/overlays/sd_coi_2023.csv').catch(() => []);
+  state.coiMap = new Map(state.coiRows.map(r => [normalizeGeoid(r.tract_geoid), r]));
 
   initGeojsonProps();
   updateTransitAvailabilityNote();

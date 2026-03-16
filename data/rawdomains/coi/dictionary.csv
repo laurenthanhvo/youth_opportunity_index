@@ -1,0 +1,48 @@
+column,type,label,description
+geoid20,text,2020 census tract code,""
+year,text,Year of observation,""
+state_fips,text,State FIPS code,""
+state_usps,text,State USPS code,""
+state_name,text,State name,""
+county_fips,text,County FIPS code,""
+county_name,text,County name,""
+metro_fips,text,Metro- or micropolitan area FIPS code (2023 OMB definition),""
+metro_name,text,Metro- or micropolitan area name (2023 OMB definition),""
+metro_type,text,Metro- or micropolitan area type (2023 OMB definition),Either metropolitan or micropolitan area. Missing for census tracts outside metro- or micropolitan areas.
+in100,text,In one of the 100 largest metro areas,"This variable is equal to 1 if the census tract is located in one of the 100 largest metro areas (2023 OMB definition), zero if located in a metro- or micropolitan area that does not belong to the 100 largest metro areas, and blank if it is located outside a metro- or micropolitan area."
+c5_COI_nat,text,"Child Opportunity Levels, Child Opportunity Index, nationally normed",Nationally normed Child Opportunity Levels (from very low to very high) for the Child Opportunity Index
+c5_COI_stt,text,"Child Opportunity Levels, Child Opportunity Index, state normed",State normed Child Opportunity Levels (from very low to very high) for the Child Opportunity Index
+c5_COI_met,text,"Child Opportunity Levels, Child Opportunity Index, metro normed",Metro normed Child Opportunity Levels (from very low to very high) for the Child Opportunity Index
+r_COI_nat,text,"Child Opportunity Scores, Child Opportunity Index, nationally normed",Nationally normed Child Opportunity Scores (from 1 to 100) for the Child Opportunity Index
+r_COI_stt,text,"Child Opportunity Scores, Child Opportunity Index, state normed",State normed Child Opportunity Scores (from 1 to 100) for the Child Opportunity Index
+r_COI_met,text,"Child Opportunity Scores, Child Opportunity Index, metro normed",Metro normed Child Opportunity Scores (from 1 to 100) for the Child Opportunity Index
+z_COI_nat,numeric,"z-scores, Child Opportunity Index, nationally normed","Weighted average of Child Opportunity Index component subdomain z-scores, nationally normed"
+z_COI_stt,numeric,"z-scores, Child Opportunity Index, state normed","Weighted average of Child Opportunity Index component subdomain z-scores, state normed"
+z_COI_met,numeric,"z-scores, Child Opportunity Index, metro normed","Weighted average of Child Opportunity Index component subdomain z-scores, metro normed"
+c5_ED_nat,text,"Child Opportunity Levels, education domain, nationally normed",Nationally normed Child Opportunity Levels (from very low to very high) for the education domain
+c5_ED_stt,text,"Child Opportunity Levels, education domain, state normed",State normed Child Opportunity Levels (from very low to very high) for the education domain
+c5_ED_met,text,"Child Opportunity Levels, education domain, metro normed",Metro normed Child Opportunity Levels (from very low to very high) for the education domain
+r_ED_nat,text,"Child Opportunity Scores, education domain, nationally normed",Nationally normed Child Opportunity Scores (from 1 to 100) for the education domain
+r_ED_stt,text,"Child Opportunity Scores, education domain, state normed",State normed Child Opportunity Scores (from 1 to 100) for the education domain
+r_ED_met,text,"Child Opportunity Scores, education domain, metro normed",Metro normed Child Opportunity Scores (from 1 to 100) for the education domain
+z_ED_nat,numeric,"z-scores, education domain, nationally normed","Weighted average of education domain component subdomain z-scores, nationally normed"
+z_ED_stt,numeric,"z-scores, education domain, state normed","Weighted average of education domain component subdomain z-scores, state normed"
+z_ED_met,numeric,"z-scores, education domain, metro normed","Weighted average of education domain component subdomain z-scores, metro normed"
+c5_HE_nat,text,"Child Opportunity Levels, health and environment domain, nationally normed",Nationally normed Child Opportunity Levels (from very low to very high) for the health and environment domain
+c5_HE_stt,text,"Child Opportunity Levels, health and environment domain, state normed",State normed Child Opportunity Levels (from very low to very high) for the health and environment domain
+c5_HE_met,text,"Child Opportunity Levels, health and environment domain, metro normed",Metro normed Child Opportunity Levels (from very low to very high) for the health and environment domain
+r_HE_nat,text,"Child Opportunity Scores, health and environment domain, nationally normed",Nationally normed Child Opportunity Scores (from 1 to 100) for the health and environment domain
+r_HE_stt,text,"Child Opportunity Scores, health and environment domain, state normed",State normed Child Opportunity Scores (from 1 to 100) for the health and environment domain
+r_HE_met,text,"Child Opportunity Scores, health and environment domain, metro normed",Metro normed Child Opportunity Scores (from 1 to 100) for the health and environment domain
+z_HE_nat,numeric,"z-scores, health and environment domain, nationally normed","Weighted average of health and environment domain component subdomain z-scores, nationally normed"
+z_HE_stt,numeric,"z-scores, health and environment domain, state normed","Weighted average of health and environment domain component subdomain z-scores, state normed"
+z_HE_met,numeric,"z-scores, health and environment domain, metro normed","Weighted average of health and environment domain component subdomain z-scores, metro normed"
+c5_SE_nat,text,"Child Opportunity Levels, social and economic domain, nationally normed",Nationally normed Child Opportunity Levels (from very low to very high) for the social and economic domain
+c5_SE_stt,text,"Child Opportunity Levels, social and economic domain, state normed",State normed Child Opportunity Levels (from very low to very high) for the social and economic domain
+c5_SE_met,text,"Child Opportunity Levels, social and economic domain, metro normed",Metro normed Child Opportunity Levels (from very low to very high) for the social and economic domain
+r_SE_nat,text,"Child Opportunity Scores, social and economic domain, nationally normed",Nationally normed Child Opportunity Scores (from 1 to 100) for the social and economic domain
+r_SE_stt,text,"Child Opportunity Scores, social and economic domain, state normed",State normed Child Opportunity Scores (from 1 to 100) for the social and economic domain
+r_SE_met,text,"Child Opportunity Scores, social and economic domain, metro normed",Metro normed Child Opportunity Scores (from 1 to 100) for the social and economic domain
+z_SE_nat,numeric,"z-scores, social and economic domain, nationally normed","Weighted average of social and economic domain component subdomain z-scores, nationally normed"
+z_SE_stt,numeric,"z-scores, social and economic domain, state normed","Weighted average of social and economic domain component subdomain z-scores, state normed"
+z_SE_met,numeric,"z-scores, social and economic domain, metro normed","Weighted average of social and economic domain component subdomain z-scores, metro normed"
