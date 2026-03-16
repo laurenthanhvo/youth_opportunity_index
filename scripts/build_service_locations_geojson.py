@@ -155,7 +155,7 @@ if stops_geojson.exists():
         gdf["closest_stop_name"] = nearest["stop_label"].values
         gdf["closest_stop_dist_m"] = nearest["dist_m"].round().astype("Int64").astype(str).replace("<NA>", None)
 
-# final display fields
+# Final display fields
 gdf["name"] = gdf[name_col].map(clean_text) if name_col else None
 gdf["type"] = gdf[type_col].map(clean_text) if type_col else None
 gdf["programs"] = gdf[programs_col].map(clean_text) if programs_col else None
