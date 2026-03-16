@@ -37,6 +37,8 @@ const state = {
   coiRows: [],
   coiMap: new Map(),
   showCoiOverlay: false,
+  servicesGeojson: null,
+  showServices: false,
 };
 
 let tractLayer = null;
@@ -45,6 +47,7 @@ let stopsLayer = null;
 let legendControl = null;
 let chartTooltip = null;
 let popupRef = null;
+let serviceLayer = null;
 
 const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
 
@@ -367,6 +370,38 @@ function popupHtml(row, geoid) {
     </div>`;
 }
 
+function serviceDisplay(v, fallback = 'N/A') {
+  if (v == null) return fallback;
+  const s = String(v).trim();
+  return s ? s : fallback;
+}
+
+function servicePopupHtml(props) {
+  const closestStop = props.closest_stop_name
+    ? `${props.closest_stop_name}${props.closest_stop_dist_m ? ` (${props.closest_stop_dist_m} m)` : ''}`
+    : 'N/A';
+
+  const tractPop = props.total_population != null && props.total_population !== ''
+    ? Number(props.total_population).toLocaleString()
+    : 'N/A';
+
+  return `
+    <div class="popup-card service-popup-card">
+      <div class="popup-title">${serviceDisplay(props.name, 'Service Location')}</div>
+      <div class="service-popup-list">
+        <div><strong>Type:</strong> ${serviceDisplay(props.type)}</div>
+        <div><strong>Programs:</strong> ${serviceDisplay(props.programs)}</div>
+        <div><strong>Address:</strong> ${serviceDisplay(props.address)}</div>
+        <div><strong>City:</strong> ${serviceDisplay(props.city)}</div>
+        <div><strong>Tract:</strong> ${serviceDisplay(props.tract_geoid)}</div>
+        <div><strong>Tract population:</strong> ${tractPop}</div>
+        <div><strong>Closest transit stop:</strong> ${closestStop}</div>
+        <div><strong>Source:</strong> ${serviceDisplay(props.source, 'services_master')}</div>
+      </div>
+    </div>
+  `;
+}
+
 function updateLegendCard() {
   const titleEl = document.querySelector('.legend-title');
   const subtitleEl = document.getElementById('legendSubtitle');
@@ -472,6 +507,38 @@ layer.on({
       },
     }).addTo(map);
   }
+
+  if (serviceLayer) serviceLayer.remove();
+serviceLayer = null;
+
+if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
+  serviceLayer = L.geoJSON(state.servicesGeojson, {
+    pointToLayer: (_, latlng) => L.circleMarker(latlng, {
+      radius: 5,
+      weight: 2,
+      color: '#0b5b96',
+      fillColor: '#f59e0b',
+      fillOpacity: 0.96,
+    }),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties || {};
+
+      if (state.showHover && p.name) {
+        layer.bindTooltip(String(p.name), {
+          direction: 'top',
+          offset: [0, -6],
+          opacity: 0.96,
+        });
+      }
+
+      layer.bindPopup(servicePopupHtml(p), {
+        closeButton: false,
+        autoPan: true,
+        offset: [0, -4],
+      });
+    },
+  }).addTo(map);
+}
 
   updateLegendCard();
 }
@@ -735,6 +802,10 @@ function bindControls() {
   state.showCoiOverlay = e.target.checked;
   updateAll();
 });
+document.getElementById('toggleServices').addEventListener('change', e => {
+  state.showServices = e.target.checked;
+  updateAll();
+});
 }
 
 async function loadCsv(path) {
@@ -818,6 +889,7 @@ async function init() {
   state.stopsGeojson = await loadJson('./data/processed/boundaries/transit_stops.geojson').catch(() => null);
   state.coiRows = await loadCsv('./data/processed/overlays/sd_coi_2023.csv').catch(() => []);
   state.coiMap = new Map(state.coiRows.map(r => [normalizeGeoid(r.tract_geoid), r]));
+  state.servicesGeojson = await loadJson('./data/processed/overlays/service_locations.geojson').catch(() => null);
 
   initGeojsonProps();
   updateTransitAvailabilityNote();

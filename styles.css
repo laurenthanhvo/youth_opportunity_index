@@ -459,3 +459,26 @@ body { overflow: hidden; }
   .leaflet-top.leaflet-left { left: 340px; }
 }
 
+.service-popup-card {
+  padding: 14px 16px;
+}
+
+.service-popup-card .popup-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.service-popup-list {
+  display: grid;
+  gap: 4px;
+  font-size: 0.86rem;
+  line-height: 1.42;
+  color: #334155;
+}
+
+.service-popup-list strong {
+  color: #0f172a;
+  font-weight: 700;
+}
