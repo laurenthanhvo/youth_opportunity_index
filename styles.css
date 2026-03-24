@@ -482,3 +482,29 @@ body { overflow: hidden; }
   color: #0f172a;
   font-weight: 700;
 }
+
+.legend-card.inactive {
+  border-color: rgba(10,94,168,0.18);
+  box-shadow: 0 10px 24px rgba(4,22,39,0.10);
+}
+
+.legend-card.inactive .legend-title {
+  color: #0f172a;
+}
+
+.legend-card.inactive .legend-subtitle {
+  color: #475569;
+}
+
+.legend-card.inactive .legend-scale,
+.legend-card.inactive .legend-labels {
+  display: none;
+}
+
+.overlay-quick-toggle {
+  width: 100%;
+}
+
+.quick-overlay-note {
+  margin-top: 8px;
+}

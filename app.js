@@ -39,15 +39,19 @@ const state = {
   showCoiOverlay: false,
   servicesGeojson: null,
   showServices: false,
+  supervisorDistrictsGeojson: null,
+  showSupervisorDistricts: false,
 };
 
 let tractLayer = null;
 let routesLayer = null;
+let routesHaloLayer = null;
 let stopsLayer = null;
 let legendControl = null;
 let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
+let supervisorDistrictsLayer = null;
 
 const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
 
@@ -318,16 +322,105 @@ function currentCoiCategory(geoid) {
   return row ? row.coi_level : 'N/A';
 }
 
+function activeOverlayMode() {
+  if (state.showCoiOverlay) return 'coi';
+  if (state.showChoro) return 'yoi';
+  return 'none';
+}
+
+function hasThematicOverlay() {
+  return activeOverlayMode() !== 'none';
+}
+
+function setThematicOverlayMode(mode) {
+  if (mode === 'coi') {
+    state.showCoiOverlay = true;
+    state.showChoro = false;
+  } else if (mode === 'none') {
+    state.showCoiOverlay = false;
+    state.showChoro = false;
+  } else {
+    state.showCoiOverlay = false;
+    state.showChoro = true;
+  }
+}
+
+function syncOverlayControls() {
+  const choroToggle = document.getElementById('toggleChoro');
+  const coiToggle = document.getElementById('toggleCoiOverlay');
+  if (choroToggle) choroToggle.checked = !!state.showChoro;
+  if (coiToggle) coiToggle.checked = !!state.showCoiOverlay;
+
+  document.querySelectorAll('#overlayQuickToggle .seg-btn').forEach(btn => {
+    const isActive = btn.dataset.overlayMode === activeOverlayMode();
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function overlayMetricDomain() {
+  if (state.showCoiOverlay) return [0, 100];
+  return metricDomain();
+}
+
+function overlayLevelBins() {
+  const [min, max] = overlayMetricDomain();
+  const step = (max - min) / 5;
+  return [min + step, min + 2 * step, min + 3 * step, min + 4 * step];
+}
+
+function valueToCategoryWithBins(v, bins) {
+  if (!isFiniteNumber(v)) return 'N/A';
+  if (v < bins[0]) return 'Very Low';
+  if (v < bins[1]) return 'Low';
+  if (v < bins[2]) return 'Moderate';
+  if (v < bins[3]) return 'High';
+  return 'Very High';
+}
+
+function overlayValueToCategory(v, geoid) {
+  if (state.showCoiOverlay) {
+    const category = currentCoiCategory(geoid);
+    if (category && category !== 'N/A') return category;
+  }
+  return valueToCategoryWithBins(v, overlayLevelBins());
+}
+
+function overlayScoreDisplayValue(v) {
+  if (!isFiniteNumber(v)) return 'N/A';
+  if (state.showCoiOverlay) return `${Math.round(v)}/100`;
+  return scoreDisplayValue(v);
+}
+
+function overlayScorePercent(v) {
+  if (!isFiniteNumber(v)) return 0;
+  const [min, max] = overlayMetricDomain();
+  return Math.max(0, Math.min(100, ((v - min) / (max - min || 1)) * 100));
+}
+
+function overlayLayerTitle() {
+  return state.showCoiOverlay ? 'Child Opportunity Index' : activeLayerTitle();
+}
+
+function overlayContextLabel() {
+  return state.showCoiOverlay ? 'Compared to nation' : 'Compared to county';
+}
+
+function thematicValueForGeoid(geoid, row = null) {
+  const tractRow = row || state.tractMap.get(normalizeGeoid(geoid));
+  return state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(tractRow);
+}
+
 function colorForValue(v) {
   if (!isFiniteNumber(v)) return '#eef2f7';
 
   if (state.scoreMode === 'score') {
-    const [min, max] = metricDomain();
+    const [min, max] = overlayMetricDomain();
     const t = Math.max(0, Math.min(1, (v - min) / (max - min || 1)));
     return d3.interpolateRgbBasis(BLUES)(t);
   }
 
-  const bins = levelBins();
+  const bins = overlayLevelBins();
   if (v < bins[0]) return BLUES[0];
   if (v < bins[1]) return BLUES[1];
   if (v < bins[2]) return BLUES[2];
@@ -335,24 +428,28 @@ function colorForValue(v) {
   return BLUES[4];
 }
 
+
 function styleFeature(feature) {
   const geoid = normalizeGeoid(feature.properties?.tract_geoid);
   const row = state.tractMap.get(geoid);
-  const value = state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(row);
+  const value = thematicValueForGeoid(geoid, row);
   const isSelected = geoid === normalizeGeoid(state.selectedGeoid);
+  const showFill = hasThematicOverlay();
   return {
     color: isSelected ? '#ffffff' : (state.showBounds ? 'rgba(27,51,75,0.34)' : 'transparent'),
     weight: isSelected ? 3.2 : (state.showBounds ? 0.6 : 0),
-    fillColor: state.showChoro ? colorForValue(value) : '#ffffff',
-    fillOpacity: state.showChoro ? (isSelected ? 0.92 : 0.92) : 0.02,
+    fillColor: showFill ? colorForValue(value) : '#ffffff',
+    fillOpacity: showFill ? 0.92 : 0.02,
   };
 }
 
+
 function popupHtml(row, geoid) {
-  const value = state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(row);
-  const badge = state.showCoiOverlay
-    ? (state.scoreMode === 'score' ? `${Math.round(value)}/100` : currentCoiCategory(geoid))
-    : (state.scoreMode === 'score' ? scoreDisplayValue(value) : valueToCategory(value));
+  const value = thematicValueForGeoid(geoid, row);
+  const badge = state.scoreMode === 'score'
+    ? overlayScoreDisplayValue(value)
+    : overlayValueToCategory(value, geoid);
+  const scoreWidth = overlayScorePercent(value);
   return `
     <div class="popup-card">
       <div class="popup-title">${tractLabelFromGeoid(geoid)}</div>
@@ -361,14 +458,15 @@ function popupHtml(row, geoid) {
       <div class="popup-divider"></div>
       <div class="popup-row">
         <div>
-          <div class="popup-label">${state.showCoiOverlay ? 'Child Opportunity Index' : (state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle())}</div>
-          <div class="popup-context">${state.showCoiOverlay ? 'Compared to nation' : 'Compared to county'}</div>
+          <div class="popup-label">${overlayLayerTitle()}</div>
+          <div class="popup-context">${overlayContextLabel()}</div>
         </div>
         <div class="popup-badge ${state.scoreMode === 'score' ? 'score-badge' : ''}">${badge}</div>
       </div>
-      ${state.scoreMode === 'score' && isFiniteNumber(value) ? `<div class="popup-score-track"><div class="popup-score-fill" style="width:${state.mapLayer === 'YOI (0–100)' ? Math.max(0, Math.min(100, value)) : Math.max(0, Math.min(100, value * 100))}%"></div></div>` : ''}
+      ${state.scoreMode === 'score' && isFiniteNumber(value) ? `<div class="popup-score-track"><div class="popup-score-fill" style="width:${scoreWidth}%"></div></div>` : ''}
     </div>`;
 }
+
 
 function serviceDisplay(v, fallback = 'N/A') {
   if (v == null) return fallback;
@@ -403,14 +501,28 @@ function servicePopupHtml(props) {
 }
 
 function updateLegendCard() {
+  const legendCard = document.querySelector('.legend-card');
   const titleEl = document.querySelector('.legend-title');
   const subtitleEl = document.getElementById('legendSubtitle');
   const scale = document.getElementById('legendScale');
   const labels = document.getElementById('legendLabels');
 
+  if (!hasThematicOverlay()) {
+    legendCard?.classList.add('inactive');
+    titleEl.textContent = 'Map overlay is off';
+    subtitleEl.textContent = 'Turn on YOI Choropleth or Child Opportunity Index in Overlays to restore tract shading.';
+    scale.classList.remove('continuous');
+    labels.classList.remove('continuous');
+    scale.innerHTML = '';
+    labels.innerHTML = '';
+    return;
+  }
+
+  legendCard?.classList.remove('inactive');
+
   titleEl.textContent = state.showCoiOverlay
-  ? (state.scoreMode === 'score' ? 'Child Opportunity Scores' : 'Child Opportunity Levels')
-  : (state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels');
+    ? (state.scoreMode === 'score' ? 'Child Opportunity Scores' : 'Child Opportunity Levels')
+    : (state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels');
 
   subtitleEl.textContent = state.showCoiOverlay
     ? 'Child Opportunity Index by Census Tract, nationally normalized for 2023'
@@ -429,6 +541,7 @@ function updateLegendCard() {
   }
 }
 
+
 function updateMapStatus() {
   document.getElementById('mapStatusPill').textContent = `${state.rawYoi.length.toLocaleString()} tracts loaded`;
 }
@@ -442,34 +555,30 @@ function renderMap() {
     onEachFeature: (feature, layer) => {
       const geoid = normalizeGeoid(feature.properties.tract_geoid);
       const row = state.tractMap.get(geoid);
-      if (state.showHover) {
-        layer.bindTooltip(`<strong>${tractLabelFromGeoid(geoid)}</strong><br>${activeLayerTitle()}: ${state.scoreMode === 'score' ? scoreDisplayValue(currentValue(row)) : valueToCategory(currentValue(row))}`, { sticky: false, opacity: 0.94 });
-      }
-      if (state.showHover) {
-  layer.bindTooltip(
-    `<strong>${tractLabelFromGeoid(geoid)}</strong><br>${activeLayerTitle()}: ${
-      state.scoreMode === 'score'
-        ? scoreDisplayValue(currentValue(row))
-        : valueToCategory(currentValue(row))
-    }`,
-    { sticky: false, opacity: 0.94 }
-  );
-}
+      const value = thematicValueForGeoid(geoid, row);
+      const tooltipLabel = state.showCoiOverlay ? 'Child Opportunity Index' : activeLayerTitle();
+      const tooltipValue = state.scoreMode === 'score'
+        ? overlayScoreDisplayValue(value)
+        : overlayValueToCategory(value, geoid);
 
-layer.on({
-  mouseover: e => {
-    if (normalizeGeoid(state.selectedGeoid) !== geoid) {
-      e.target.setStyle({ color: '#ffffff', weight: 1.8 });
-    }
-  },
-  mouseout: e => {
-    tractLayer.resetStyle(e.target);
-  },
+      if (state.showHover) {
+        layer.bindTooltip(
+          `<strong>${tractLabelFromGeoid(geoid)}</strong><br>${tooltipLabel}: ${tooltipValue}`,
+          { sticky: false, opacity: 0.94 }
+        );
+      }
+
+      layer.on({
+        mouseover: e => {
+          if (normalizeGeoid(state.selectedGeoid) !== geoid) {
+            e.target.setStyle({ color: '#ffffff', weight: 1.8 });
+          }
+        },
+        mouseout: e => {
+          tractLayer.resetStyle(e.target);
+        },
         click: e => {
           state.selectedGeoid = geoid;
-
-          // Re-render tract styles so the previous selection is cleared
-          // and only the newly selected tract keeps the selected outline.
           updateAll(true);
 
           if (popupRef) popupRef.remove();
@@ -482,11 +591,32 @@ layer.on({
     },
   }).addTo(map);
 
+  if (routesHaloLayer) routesHaloLayer.remove();
+  routesHaloLayer = null;
+
   if (routesLayer) routesLayer.remove();
   routesLayer = null;
+
   if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson) > 0) {
+    routesHaloLayer = L.geoJSON(state.routesGeojson, {
+      interactive: false,
+      style: {
+        color: '#ffffff',
+        weight: 7.2,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+      },
+    }).addTo(map);
+
     routesLayer = L.geoJSON(state.routesGeojson, {
-      style: { color: '#e8f2ff', weight: 3.2, opacity: 0.95 },
+      style: {
+        color: '#0b5b96',
+        weight: 4.4,
+        opacity: 0.98,
+        lineCap: 'round',
+        lineJoin: 'round',
+      },
     }).addTo(map);
   }
 
@@ -509,36 +639,76 @@ layer.on({
   }
 
   if (serviceLayer) serviceLayer.remove();
-serviceLayer = null;
+  serviceLayer = null;
+  if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
+    serviceLayer = L.geoJSON(state.servicesGeojson, {
+      pointToLayer: (_, latlng) => L.circleMarker(latlng, {
+        radius: 5,
+        weight: 2,
+        color: '#0b5b96',
+        fillColor: '#f59e0b',
+        fillOpacity: 0.96,
+      }),
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties || {};
 
-if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
-  serviceLayer = L.geoJSON(state.servicesGeojson, {
-    pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-      radius: 5,
-      weight: 2,
-      color: '#0b5b96',
-      fillColor: '#f59e0b',
-      fillOpacity: 0.96,
-    }),
-    onEachFeature: (feature, layer) => {
-      const p = feature.properties || {};
+        if (state.showHover && p.name) {
+          layer.bindTooltip(String(p.name), {
+            direction: 'top',
+            offset: [0, -6],
+            opacity: 0.96,
+          });
+        }
 
-      if (state.showHover && p.name) {
-        layer.bindTooltip(String(p.name), {
-          direction: 'top',
-          offset: [0, -6],
-          opacity: 0.96,
+        layer.bindPopup(servicePopupHtml(p), {
+          closeButton: false,
+          autoPan: true,
+          offset: [0, -4],
         });
-      }
+      },
+    }).addTo(map);
+  }
 
-      layer.bindPopup(servicePopupHtml(p), {
-        closeButton: false,
-        autoPan: true,
-        offset: [0, -4],
-      });
-    },
-  }).addTo(map);
-}
+  if (supervisorDistrictsLayer) supervisorDistrictsLayer.remove();
+  supervisorDistrictsLayer = null;
+  if (state.showSupervisorDistricts && state.supervisorDistrictsGeojson && featureCount(state.supervisorDistrictsGeojson) > 0) {
+    supervisorDistrictsLayer = L.geoJSON(state.supervisorDistrictsGeojson, {
+      style: {
+        color: '#275c81',
+        weight: 2.4,
+        opacity: 0.95,
+        fillOpacity: 0,
+      },
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties || {};
+        const districtNo = p.distno ?? p.DISTNO ?? p.district ?? p.District ?? 'N/A';
+        const supervisor = p.supervisor || p.SUPERVISOR || p.name || p.NAME || 'N/A';
+        const website = p.website || p.WEBSITE || '';
+
+        if (state.showHover) {
+          layer.bindTooltip(`<strong>Supervisor District ${districtNo}</strong><br>${supervisor}`, {
+            sticky: false,
+            opacity: 0.94,
+          });
+        }
+
+        layer.bindPopup(`
+          <div class="popup-card">
+            <div class="popup-title">Supervisor District ${districtNo}</div>
+            <div class="service-popup-list">
+              <div><strong>Supervisor:</strong> ${supervisor}</div>
+              ${p.phone || p.PHONE ? `<div><strong>Phone:</strong> ${p.phone || p.PHONE}</div>` : ''}
+              ${website ? `<div><strong>Website:</strong> ${website}</div>` : ''}
+            </div>
+          </div>
+        `, {
+          closeButton: false,
+          autoPan: true,
+          offset: [0, -4],
+        });
+      },
+    }).addTo(map);
+  }
 
   updateLegendCard();
 }
@@ -720,6 +890,7 @@ function updateAll(reRenderMap = true) {
   updateWeightsUi();
   updateFeatureProperties();
   updateMapStatus();
+  syncOverlayControls();
   renderPanelContent();
   if (reRenderMap) renderMap();
   updateLegendCard();
@@ -758,11 +929,23 @@ function buildWeightSliders() {
 }
 
 function bindControls() {
-  document.getElementById('toggleChoro').addEventListener('change', e => { state.showChoro = e.target.checked; updateAll(); });
+  document.getElementById('toggleChoro').addEventListener('change', e => {
+    state.showChoro = e.target.checked;
+    syncOverlayControls();
+    updateAll();
+  });
   document.getElementById('toggleBounds').addEventListener('change', e => { state.showBounds = e.target.checked; updateAll(); });
   document.getElementById('toggleRoutes').addEventListener('change', e => { state.showRoutes = e.target.checked; updateAll(); });
   document.getElementById('toggleStops').addEventListener('change', e => { state.showStops = e.target.checked; updateAll(); });
   document.getElementById('hoverToggle').addEventListener('change', e => { state.showHover = e.target.checked; updateAll(); });
+
+  document.querySelectorAll('#overlayQuickToggle .seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setThematicOverlayMode(btn.dataset.overlayMode);
+      syncOverlayControls();
+      updateAll();
+    });
+  });
   document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(b => b.classList.remove('active'));
@@ -799,13 +982,18 @@ function bindControls() {
   searchInput.addEventListener('focus', () => setSearchStatus(''));
   document.querySelector('.search-shell i')?.addEventListener('click', runSearch);
   document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
-  state.showCoiOverlay = e.target.checked;
-  updateAll();
-});
-document.getElementById('toggleServices').addEventListener('change', e => {
-  state.showServices = e.target.checked;
-  updateAll();
-});
+    state.showCoiOverlay = e.target.checked;
+    syncOverlayControls();
+    updateAll();
+  });
+  document.getElementById('toggleServices').addEventListener('change', e => {
+    state.showServices = e.target.checked;
+    updateAll();
+  });
+  document.getElementById('toggleSupervisorDistricts').addEventListener('change', e => {
+    state.showSupervisorDistricts = e.target.checked;
+    updateAll();
+  });
 }
 
 async function loadCsv(path) {
@@ -890,6 +1078,7 @@ async function init() {
   state.coiRows = await loadCsv('./data/processed/overlays/sd_coi_2023.csv').catch(() => []);
   state.coiMap = new Map(state.coiRows.map(r => [normalizeGeoid(r.tract_geoid), r]));
   state.servicesGeojson = await loadJson('./data/processed/overlays/service_locations.geojson').catch(() => null);
+  state.supervisorDistrictsGeojson = await loadJson('./data/processed/overlays/supervisor_districts.geojson').catch(() => null);
 
   initGeojsonProps();
   updateTransitAvailabilityNote();

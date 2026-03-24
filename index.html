@@ -73,10 +73,10 @@
 
         <div class="control-section">
           <label class="control-label">Level of comparison</label>
-          <div class="segmented three-up">
-            <button class="seg-btn active">County</button>
-            <button class="seg-btn ghost" disabled>State</button>
-            <button class="seg-btn ghost" disabled>Nation</button>
+          <div class="segmented" style="width: 100%;">
+            <button class="seg-btn active" type="button" style="width: 100%; border-right: 0;">
+              County
+            </button>
           </div>
         </div>
 
@@ -92,6 +92,16 @@
         <div class="control-section switch-row">
           <label class="switch-label">Show data on hover</label>
           <label class="toggle-switch"><input id="hoverToggle" type="checkbox" checked><span></span></label>
+        </div>
+
+        <div class="control-section">
+          <label class="control-label">Map overlay</label>
+          <div class="segmented three-up overlay-quick-toggle" id="overlayQuickToggle">
+            <button class="seg-btn active" type="button" data-overlay-mode="yoi">YOI</button>
+            <button class="seg-btn" type="button" data-overlay-mode="coi">COI</button>
+            <button class="seg-btn" type="button" data-overlay-mode="none">Off</button>
+          </div>
+          <div class="helper-text quick-overlay-note">Quickly switch between Youth Opportunity, Child Opportunity, or no thematic overlay.</div>
         </div>
 
         <div class="section-divider"></div>
@@ -164,6 +174,16 @@
             <div>
               <div class="overlay-title">Service Locations</div>
               <div class="overlay-desc">Show youth-support and wraparound service sites from services_master.csv.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleSupervisorDistricts" type="checkbox"><span></span></label>
+            <div>
+              <div class="overlay-title">Supervisor Districts</div>
+              <div class="overlay-desc">Overlay County of San Diego supervisorial district boundaries if available.</div>
             </div>
           </label>
         </div>
