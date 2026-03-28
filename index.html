@@ -17,7 +17,7 @@
 
   <header class="top-header">
     <div class="brand-wrap">
-      <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>.org</div>
+      <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>dashboard</div>
       <div class="brand-subtitle">data for equitable youth opportunity in San Diego County</div>
     </div>
     <div class="top-actions">
@@ -174,19 +174,90 @@
       </div>
 
       <div class="panel-view" id="panel-faqs">
-        <div class="faq-item open">
-          <button class="faq-btn">What does this map show?<i class="bi bi-chevron-down"></i></button>
-          <div class="faq-body">This dashboard displays a tract-level Youth Opportunity Index for San Diego County. The choropleth updates as you change domain weights, and each tract can be inspected for its score breakdown.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-btn">How should I read the colors?<i class="bi bi-chevron-down"></i></button>
-          <div class="faq-body">Lighter blue represents lower opportunity and darker blue represents higher opportunity. Switch to a domain layer to inspect a single domain score instead of the overall index.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-btn">Why are some populations unavailable?<i class="bi bi-chevron-down"></i></button>
-          <div class="faq-body">Some tracts in the geometry layer do not match the ACS population source exactly. When that happens, the map still displays the tract but population-dependent statistics can appear as unavailable.</div>
-        </div>
-      </div>
+  <div class="faq-item open">
+    <button class="faq-btn">What does this map show?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      This dashboard maps the Youth Opportunity Index for San Diego County. You can compare places by census tract, ZIP code, or supervisor district, inspect overall opportunity or single domains, and explore transit, services, and related overlays.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">How should I read the colors?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      Lighter blue represents lower opportunity and darker blue represents higher opportunity. In Level mode, the map is grouped into Very Low through Very High categories. In Score mode, the color scale behaves more continuously from lower to higher values.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What do the custom domain weights do?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      The weight sliders re-balance how much each domain contributes to the overall Youth Opportunity Index. When you are viewing Overall Youth Opportunity, changing the sliders immediately recomputes and recolors the map. When you are viewing a single domain layer, the sliders still affect the overall index and the profile diagnostics, but not that domain’s raw score.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What is the difference between census tracts, ZIP codes, and supervisor districts?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      Census tracts provide the most detailed neighborhood-level view. ZIP codes are broader and may be easier for general audiences to recognize. Supervisor districts are much larger policy geographies that are useful for county planning and stakeholder conversations. The map, selected feature, and profile/location details update to match whichever geography you choose.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">How should I use the Domain Profile panel?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      The Domain Profile helps explain why a place scores the way it does. It shows domain scores, county-relative context such as percentile and rank, and highlights domains that may be acting as major opportunity gaps. You can click a domain entry to switch the map to that domain layer, and hover profile content for more detailed statistics.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What counts as a likely youth opportunity desert?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      A likely youth opportunity desert is a place with low overall opportunity and multiple weak domains, especially when youth supports, education, mobility, or health/environment are notably below the county pattern. The Domain Profile and Location Details panels are meant to help identify whether a place has broad deficits or only one or two concentrated weaknesses.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What do the overlays do?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      Overlays let you turn supporting map layers on and off. These include the YOI choropleth, tract boundaries, supervisor district view, transit routes, transit stops, service locations, and the Child Opportunity Index overlay. Use them to compare opportunity patterns with mobility access, services, and alternate reference layers.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">How should I interpret the Child Opportunity Index overlay?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      The Child Opportunity Index overlay is a reference layer you can use to compare your YOI patterns with an existing child-focused measure. It is most useful for checking where your local index agrees with or differs from the external benchmark.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What do the transit routes, transit stops, and service points mean?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      Transit routes and stops help show whether lower-opportunity places may also face mobility barriers. Service locations highlight where youth-support and wraparound resources are currently located. Together, these overlays can help identify places where need appears high but reachable infrastructure or supports may be limited.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">What does “Show data on hover” do?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      When hover is enabled, moving over map features and some overlays shows quick tooltips without needing to click. If you want a cleaner browsing experience, you can turn hover off and rely only on click selection.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">How do the Share tools work?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      “Copy current view link” copies a URL for the current dashboard state, including the selected geography when available and the active layer. “Copy selected tract GEOID” copies the currently selected tract identifier so you can paste it elsewhere for notes, documentation, or follow-up analysis.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn">Why are some populations unavailable?<i class="bi bi-chevron-down"></i></button>
+    <div class="faq-body">
+      Some geographies in the boundary layer do not perfectly match the population source used in the processed data. When that happens, the map can still display the feature, but some population-dependent statistics may appear as unavailable.
+    </div>
+  </div>
+</div>
 
       <div class="panel-view" id="panel-share">
         <div class="share-stack">
