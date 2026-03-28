@@ -42,7 +42,7 @@
     <div class="drawer-header">
       <div>
         <div class="drawer-title" id="drawerTitle">Data Controls</div>
-        <div class="drawer-subtitle" id="drawerSubtitle">Adjust the map and comparison view.</div>
+        <div class="drawer-subtitle" id="drawerSubtitle">Explore youth opportunity across San Diego County.</div>
       </div>
       <button id="closeDrawerBtn" class="drawer-close"><i class="bi bi-x-lg"></i></button>
     </div>
@@ -63,45 +63,17 @@
         </div>
 
         <div class="control-section">
-          <label class="control-label">Show data for</label>
-          <div class="segmented three-up">
-            <button class="seg-btn active">Census tracts</button>
-            <button class="seg-btn ghost" disabled>ZIP codes</button>
-            <button class="seg-btn ghost" disabled>Counties</button>
-          </div>
-        </div>
-
-        <div class="control-section">
           <label class="control-label">Level of comparison</label>
-          <div class="segmented" style="width: 100%;">
-            <button class="seg-btn active" type="button" style="width: 100%; border-right: 0;">
-              County
-            </button>
-          </div>
-        </div>
-
-        <div class="control-section">
-          <label class="control-label">Year</label>
           <div class="segmented three-up">
-            <button class="seg-btn ghost" disabled>2021</button>
-            <button class="seg-btn ghost" disabled>2023</button>
-            <button class="seg-btn active">2024</button>
+            <button class="seg-btn active" type="button" data-show-data-for="tracts">Census tracts</button>
+            <button class="seg-btn" type="button" data-show-data-for="zips">ZIP codes</button>
+            <button class="seg-btn" type="button" data-show-data-for="supervisor_districts">Supervisor districts</button>
           </div>
         </div>
 
         <div class="control-section switch-row">
           <label class="switch-label">Show data on hover</label>
           <label class="toggle-switch"><input id="hoverToggle" type="checkbox" checked><span></span></label>
-        </div>
-
-        <div class="control-section">
-          <label class="control-label">Map overlay</label>
-          <div class="segmented three-up overlay-quick-toggle" id="overlayQuickToggle">
-            <button class="seg-btn active" type="button" data-overlay-mode="yoi">YOI</button>
-            <button class="seg-btn" type="button" data-overlay-mode="coi">COI</button>
-            <button class="seg-btn" type="button" data-overlay-mode="none">Off</button>
-          </div>
-          <div class="helper-text quick-overlay-note">Quickly switch between Youth Opportunity, Child Opportunity, or no thematic overlay.</div>
         </div>
 
         <div class="section-divider"></div>
@@ -134,6 +106,16 @@
             <div>
               <div class="overlay-title">Child Opportunity Index (COI)</div>
               <div class="overlay-desc">Replace the YOI choropleth with the San Diego County COI 3.0-2023 overlay.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleSupervisorDistricts" type="checkbox"><span></span></label>
+            <div>
+              <div class="overlay-title">Supervisor Districts</div>
+              <div class="overlay-desc">Show the Youth Opportunity Index aggregated by supervisor district instead of census tract.</div>
             </div>
           </label>
         </div>
@@ -178,24 +160,14 @@
           </label>
         </div>
 
-        <div class="overlay-item">
-          <label class="toggle-line">
-            <label class="toggle-switch"><input id="toggleSupervisorDistricts" type="checkbox"><span></span></label>
-            <div>
-              <div class="overlay-title">Supervisor Districts</div>
-              <div class="overlay-desc">Overlay County of San Diego supervisorial district boundaries if available.</div>
-            </div>
-          </label>
-        </div>
-
         <div id="transitAvailabilityNote" class="callout-note mt-3"></div>
       </div>
 
       <div class="panel-view" id="panel-profile">
-        <div class="helper-text mb-3">Weighted domain contribution under the current slider settings.</div>
-        <div id="profileChart"></div>
-        <div class="helper-text mt-3">Click a bar to switch the map layer to that domain.</div>
-      </div>
+  <div class="helper-text mb-3">Domain scores for the selected area, shown out of 100.</div>
+  <div id="profileChart"></div>
+  <div class="helper-text mt-3">Click a bar to switch the map layer to that domain. Smaller text shows weighted contribution.</div>
+</div>
 
       <div class="panel-view" id="panel-location">
         <div id="locationDetails"></div>
@@ -226,6 +198,45 @@
       </div>
     </div>
   </section>
+
+    <div id="menuBackdrop" class="menu-backdrop"></div>
+
+  <aside id="siteMenuDrawer" class="site-menu-drawer" aria-hidden="true">
+    <div class="site-menu-header">
+      <div class="site-menu-heading">
+        <div class="site-menu-title">Menu</div>
+        <div class="site-menu-subtitle">Navigate to related pages</div>
+      </div>
+      <button id="closeSiteMenuBtn" class="site-menu-close" aria-label="Close menu">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="site-menu-body">
+      <!-- <div class="site-menu-group">
+        <div class="site-menu-group-label">Pages</div> -->
+        <a class="site-menu-link" href="./datasets.html">
+  <span>Datasets</span>
+  <i class="bi bi-arrow-right"></i>
+</a>
+
+<a class="site-menu-link" href="https://diversitydatakids.org/child-opportunity-index/">
+  <span>Child Opportunity Index</span>
+  <i class="bi bi-arrow-right"></i>
+</a>
+
+<a class="site-menu-link" href="./about.html">
+  <span>About Us</span>
+  <i class="bi bi-arrow-right"></i>
+</a>
+
+<a class="site-menu-link" href="./contact.html">
+  <span>Contact Us</span>
+  <i class="bi bi-arrow-right"></i>
+</a>
+      </div>
+    </div>
+  </aside>
 
   <section class="legend-card">
     <div class="legend-head">

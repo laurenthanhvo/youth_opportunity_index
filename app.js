@@ -13,6 +13,8 @@ const DOMAIN_LABELS = {
   youth_supports: 'Youth Supports',
 };
 
+const EXCLUDED_TRACT_GEOIDS = new Set(['06073990100']);
+
 const BLUES = ['#eaf3fb', '#b6d3e9', '#6da3c9', '#275c81', '#0a2f4a'];
 
 const state = {
@@ -21,11 +23,18 @@ const state = {
   geojson: null,
   routesGeojson: null,
   stopsGeojson: null,
+  zipGeojson: null,
+  zipRows: [],
+  zipMap: new Map(),
+  supervisorDistrictsGeojson: null,
+  supervisorDistrictRows: [],
+  supervisorDistrictMap: new Map(),
   meta: [],
   selectedGeoid: null,
   activePanel: 'controls',
   mapLayer: 'YOI (0–100)',
   scoreMode: 'level',
+  showDataFor: 'tracts',
   showChoro: true,
   showBounds: true,
   showRoutes: false,
@@ -39,19 +48,16 @@ const state = {
   showCoiOverlay: false,
   servicesGeojson: null,
   showServices: false,
-  supervisorDistrictsGeojson: null,
-  showSupervisorDistricts: false,
+  profileSort: 'desert',
 };
 
 let tractLayer = null;
 let routesLayer = null;
-let routesHaloLayer = null;
 let stopsLayer = null;
 let legendControl = null;
 let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
-let supervisorDistrictsLayer = null;
 
 const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
 
@@ -68,6 +74,9 @@ map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;
 map.getPane('labels').style.pointerEvents = 'none';
 
+map.createPane('routes');
+map.getPane('routes').style.zIndex = 640;
+
 // label-only tiles on top
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
   pane: 'labels',
@@ -81,6 +90,83 @@ function normalizeGeoid(v) {
   return digits.padStart(11, '0').slice(-11);
 }
 
+
+function normalizeZip(v) {
+  if (v == null) return '';
+  const digits = String(v).replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.length >= 5) return digits.slice(0, 5);
+  return digits.padStart(5, '0');
+}
+
+function normalizeDistrict(v) {
+  if (v == null) return '';
+  const digits = String(v).replace(/\D/g, '');
+  return digits || String(v).trim();
+}
+
+function effectiveShowCoiOverlay() {
+  return state.showCoiOverlay && state.showDataFor === 'tracts';
+}
+
+function featureTractGeoid(feature) {
+  const p = feature?.properties || {};
+  return normalizeGeoid(p.tract_geoid ?? p.GEOID ?? p.geoid ?? p.Tract ?? p.TRACT ?? p.GEOIDFQ);
+}
+
+function featureZipCode(feature) {
+  const p = feature?.properties || {};
+  return normalizeZip(p.zip ?? p.ZIP ?? p.zip_code ?? p.ZIPCODE ?? p.ZCTA5CE20 ?? p.GEOID20 ?? p.geoid ?? p.GEOID);
+}
+
+function featureSupervisorDistrictKey(feature) {
+  const p = feature?.properties || {};
+  return normalizeDistrict(p.distno ?? p.DISTNO ?? p.district ?? p.District ?? p.DISTRICT ?? p.id ?? p.ID);
+}
+
+function currentFeatureKey(feature) {
+  if (state.showDataFor === 'zips') return featureZipCode(feature);
+  if (state.showDataFor === 'supervisor_districts') return featureSupervisorDistrictKey(feature);
+  return featureTractGeoid(feature);
+}
+
+function currentFeatureLabel(key) {
+  if (state.showDataFor === 'zips') return `ZIP code ${normalizeZip(key)}`;
+  if (state.showDataFor === 'supervisor_districts') return `Supervisor District ${normalizeDistrict(key)}`;
+  return tractLabelFromGeoid(key);
+}
+
+function currentDataMap() {
+  if (state.showDataFor === 'zips') return state.zipMap;
+  if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictMap;
+  return state.tractMap;
+}
+
+function currentRows() {
+  if (state.showDataFor === 'zips') return state.zipRows;
+  if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictRows;
+  return state.rawYoi;
+}
+
+function currentIdForRow(row) {
+  if (!row) return '';
+  if (state.showDataFor === 'zips') return normalizeZip(row.zip ?? row.ZIP ?? row.zcta ?? row.zip_code);
+  if (state.showDataFor === 'supervisor_districts') return normalizeDistrict(row.distno ?? row.DISTNO ?? row.district ?? row.District ?? row.supervisor_district ?? row.id ?? row.ID);
+  return normalizeGeoid(row.tract_geoid);
+}
+
+function currentFeatureCollection() {
+  if (state.showDataFor === 'zips') return state.zipGeojson;
+  if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictsGeojson;
+  return state.geojson;
+}
+
+function currentAreaLabelPlural() {
+  if (state.showDataFor === 'zips') return 'ZIP codes';
+  if (state.showDataFor === 'supervisor_districts') return 'supervisor districts';
+  return 'tracts';
+}
+
 function isFiniteNumber(v) {
   return Number.isFinite(+v);
 }
@@ -90,6 +176,8 @@ function coerceCsvRows(rows) {
     const out = {};
     Object.entries(row).forEach(([k, v]) => {
       if (k === 'tract_geoid') out[k] = normalizeGeoid(v);
+      else if (k.toLowerCase() === 'zip' || k.toLowerCase() === 'zip_code' || k.toLowerCase() === 'zcta') out[k] = normalizeZip(v);
+      else if (['distno','district','supervisor_district','id'].includes(k.toLowerCase())) out[k] = normalizeDistrict(v);
       else if (v == null || String(v).trim() === '') out[k] = null;
       else if (!Number.isNaN(Number(v))) out[k] = Number(v);
       else out[k] = v;
@@ -291,12 +379,22 @@ function recomputeCustomScores() {
     row.yoi_custom_0_1 = total;
     row.yoi_custom_0_100 = total * 100;
   });
+  [state.zipRows, state.supervisorDistrictRows].forEach(rows => {
+    rows.forEach(row => {
+      if (!isFiniteNumber(row.yoi_custom_0_100) && isFiniteNumber(row.yoi_0_100)) row.yoi_custom_0_100 = +row.yoi_0_100;
+      if (!isFiniteNumber(row.yoi_custom_0_1) && isFiniteNumber(row.yoi_raw_0_1)) row.yoi_custom_0_1 = +row.yoi_raw_0_1;
+    });
+  });
   state.tractMap = new Map(state.rawYoi.map(r => [normalizeGeoid(r.tract_geoid), r]));
+  state.zipMap = new Map(state.zipRows.map(r => [normalizeZip(r.zip ?? r.ZIP ?? r.zcta ?? r.zip_code), r]));
+  state.supervisorDistrictMap = new Map(state.supervisorDistrictRows.map(r => [normalizeDistrict(r.distno ?? r.DISTNO ?? r.district ?? r.District ?? r.supervisor_district ?? r.id ?? r.ID), r]));
 }
 
 function percentileForRow(row) {
-  const ranked = [...state.rawYoi].sort((a, b) => (+b.yoi_custom_0_100 || 0) - (+a.yoi_custom_0_100 || 0));
-  const idx = ranked.findIndex(r => normalizeGeoid(r.tract_geoid) === normalizeGeoid(row.tract_geoid));
+  const rows = currentRows();
+  const ranked = [...rows].sort((a, b) => (+b.yoi_custom_0_100 || 0) - (+a.yoi_custom_0_100 || 0));
+  const selectedId = currentIdForRow(row);
+  const idx = ranked.findIndex(r => currentIdForRow(r) === selectedId);
   if (idx < 0) return { rank: null, total: ranked.length, percentile: null };
   const rank = idx + 1;
   const pct = Math.round((1 - idx / ranked.length) * 100);
@@ -322,105 +420,16 @@ function currentCoiCategory(geoid) {
   return row ? row.coi_level : 'N/A';
 }
 
-function activeOverlayMode() {
-  if (state.showCoiOverlay) return 'coi';
-  if (state.showChoro) return 'yoi';
-  return 'none';
-}
-
-function hasThematicOverlay() {
-  return activeOverlayMode() !== 'none';
-}
-
-function setThematicOverlayMode(mode) {
-  if (mode === 'coi') {
-    state.showCoiOverlay = true;
-    state.showChoro = false;
-  } else if (mode === 'none') {
-    state.showCoiOverlay = false;
-    state.showChoro = false;
-  } else {
-    state.showCoiOverlay = false;
-    state.showChoro = true;
-  }
-}
-
-function syncOverlayControls() {
-  const choroToggle = document.getElementById('toggleChoro');
-  const coiToggle = document.getElementById('toggleCoiOverlay');
-  if (choroToggle) choroToggle.checked = !!state.showChoro;
-  if (coiToggle) coiToggle.checked = !!state.showCoiOverlay;
-
-  document.querySelectorAll('#overlayQuickToggle .seg-btn').forEach(btn => {
-    const isActive = btn.dataset.overlayMode === activeOverlayMode();
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-  });
-}
-
-function overlayMetricDomain() {
-  if (state.showCoiOverlay) return [0, 100];
-  return metricDomain();
-}
-
-function overlayLevelBins() {
-  const [min, max] = overlayMetricDomain();
-  const step = (max - min) / 5;
-  return [min + step, min + 2 * step, min + 3 * step, min + 4 * step];
-}
-
-function valueToCategoryWithBins(v, bins) {
-  if (!isFiniteNumber(v)) return 'N/A';
-  if (v < bins[0]) return 'Very Low';
-  if (v < bins[1]) return 'Low';
-  if (v < bins[2]) return 'Moderate';
-  if (v < bins[3]) return 'High';
-  return 'Very High';
-}
-
-function overlayValueToCategory(v, geoid) {
-  if (state.showCoiOverlay) {
-    const category = currentCoiCategory(geoid);
-    if (category && category !== 'N/A') return category;
-  }
-  return valueToCategoryWithBins(v, overlayLevelBins());
-}
-
-function overlayScoreDisplayValue(v) {
-  if (!isFiniteNumber(v)) return 'N/A';
-  if (state.showCoiOverlay) return `${Math.round(v)}/100`;
-  return scoreDisplayValue(v);
-}
-
-function overlayScorePercent(v) {
-  if (!isFiniteNumber(v)) return 0;
-  const [min, max] = overlayMetricDomain();
-  return Math.max(0, Math.min(100, ((v - min) / (max - min || 1)) * 100));
-}
-
-function overlayLayerTitle() {
-  return state.showCoiOverlay ? 'Child Opportunity Index' : activeLayerTitle();
-}
-
-function overlayContextLabel() {
-  return state.showCoiOverlay ? 'Compared to nation' : 'Compared to county';
-}
-
-function thematicValueForGeoid(geoid, row = null) {
-  const tractRow = row || state.tractMap.get(normalizeGeoid(geoid));
-  return state.showCoiOverlay ? currentCoiValue(geoid) : currentValue(tractRow);
-}
-
 function colorForValue(v) {
   if (!isFiniteNumber(v)) return '#eef2f7';
 
   if (state.scoreMode === 'score') {
-    const [min, max] = overlayMetricDomain();
+    const [min, max] = metricDomain();
     const t = Math.max(0, Math.min(1, (v - min) / (max - min || 1)));
     return d3.interpolateRgbBasis(BLUES)(t);
   }
 
-  const bins = overlayLevelBins();
+  const bins = levelBins();
   if (v < bins[0]) return BLUES[0];
   if (v < bins[1]) return BLUES[1];
   if (v < bins[2]) return BLUES[2];
@@ -428,45 +437,45 @@ function colorForValue(v) {
   return BLUES[4];
 }
 
-
 function styleFeature(feature) {
-  const geoid = normalizeGeoid(feature.properties?.tract_geoid);
-  const row = state.tractMap.get(geoid);
-  const value = thematicValueForGeoid(geoid, row);
-  const isSelected = geoid === normalizeGeoid(state.selectedGeoid);
-  const showFill = hasThematicOverlay();
+  const featureKey = currentFeatureKey(feature);
+  const row = currentDataMap().get(featureKey);
+  const value = effectiveShowCoiOverlay() ? currentCoiValue(featureKey) : currentValue(row);
+  const selectedKey = state.showDataFor === 'zips'
+    ? normalizeZip(state.selectedGeoid)
+    : state.showDataFor === 'supervisor_districts'
+      ? normalizeDistrict(state.selectedGeoid)
+      : normalizeGeoid(state.selectedGeoid);
+  const isSelected = featureKey === selectedKey;
   return {
     color: isSelected ? '#ffffff' : (state.showBounds ? 'rgba(27,51,75,0.34)' : 'transparent'),
     weight: isSelected ? 3.2 : (state.showBounds ? 0.6 : 0),
-    fillColor: showFill ? colorForValue(value) : '#ffffff',
-    fillOpacity: showFill ? 0.92 : 0.02,
+    fillColor: state.showChoro ? colorForValue(value) : '#ffffff',
+    fillOpacity: state.showChoro ? (isSelected ? 0.92 : 0.92) : 0.02,
   };
 }
 
-
 function popupHtml(row, geoid) {
-  const value = thematicValueForGeoid(geoid, row);
-  const badge = state.scoreMode === 'score'
-    ? overlayScoreDisplayValue(value)
-    : overlayValueToCategory(value, geoid);
-  const scoreWidth = overlayScorePercent(value);
+  const value = effectiveShowCoiOverlay() ? currentCoiValue(geoid) : currentValue(row);
+  const badge = effectiveShowCoiOverlay()
+    ? (state.scoreMode === 'score' ? `${Math.round(value)}/100` : currentCoiCategory(geoid))
+    : (state.scoreMode === 'score' ? scoreDisplayValue(value) : valueToCategory(value));
   return `
     <div class="popup-card">
-      <div class="popup-title">${tractLabelFromGeoid(geoid)}</div>
-      <div class="popup-subtitle">San Diego-Chula Vista-Carlsbad, CA</div>
-      <div class="popup-note">Click census tract for details</div>
+      <div class="popup-title">${currentFeatureLabel(geoid)}</div>
+      <div class="popup-subtitle">San Diego County, CA</div>
+      <div class="popup-note">Click ${state.showDataFor === 'zips' ? 'ZIP code' : state.showDataFor === 'supervisor_districts' ? 'supervisor district' : 'census tract'} for details</div>
       <div class="popup-divider"></div>
       <div class="popup-row">
         <div>
-          <div class="popup-label">${overlayLayerTitle()}</div>
-          <div class="popup-context">${overlayContextLabel()}</div>
+          <div class="popup-label">${effectiveShowCoiOverlay() ? 'Child Opportunity Index' : (state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle())}</div>
+          <div class="popup-context">${effectiveShowCoiOverlay() ? 'Compared to nation' : 'Compared to county'}</div>
         </div>
         <div class="popup-badge ${state.scoreMode === 'score' ? 'score-badge' : ''}">${badge}</div>
       </div>
-      ${state.scoreMode === 'score' && isFiniteNumber(value) ? `<div class="popup-score-track"><div class="popup-score-fill" style="width:${scoreWidth}%"></div></div>` : ''}
+      ${state.scoreMode === 'score' && isFiniteNumber(value) ? `<div class="popup-score-track"><div class="popup-score-fill" style="width:${state.mapLayer === 'YOI (0–100)' ? Math.max(0, Math.min(100, value)) : Math.max(0, Math.min(100, value * 100))}%"></div></div>` : ''}
     </div>`;
 }
-
 
 function serviceDisplay(v, fallback = 'N/A') {
   if (v == null) return fallback;
@@ -501,32 +510,19 @@ function servicePopupHtml(props) {
 }
 
 function updateLegendCard() {
-  const legendCard = document.querySelector('.legend-card');
   const titleEl = document.querySelector('.legend-title');
   const subtitleEl = document.getElementById('legendSubtitle');
   const scale = document.getElementById('legendScale');
   const labels = document.getElementById('legendLabels');
 
-  if (!hasThematicOverlay()) {
-    legendCard?.classList.add('inactive');
-    titleEl.textContent = 'Map overlay is off';
-    subtitleEl.textContent = 'Turn on YOI Choropleth or Child Opportunity Index in Overlays to restore tract shading.';
-    scale.classList.remove('continuous');
-    labels.classList.remove('continuous');
-    scale.innerHTML = '';
-    labels.innerHTML = '';
-    return;
-  }
+  titleEl.textContent = effectiveShowCoiOverlay()
+  ? (state.scoreMode === 'score' ? 'Child Opportunity Scores' : 'Child Opportunity Levels')
+  : (state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels');
 
-  legendCard?.classList.remove('inactive');
-
-  titleEl.textContent = state.showCoiOverlay
-    ? (state.scoreMode === 'score' ? 'Child Opportunity Scores' : 'Child Opportunity Levels')
-    : (state.scoreMode === 'score' ? 'Youth Opportunity Scores' : 'Youth Opportunity Levels');
-
-  subtitleEl.textContent = state.showCoiOverlay
+  const areaLabel = state.showDataFor === 'zips' ? 'ZIP Code' : state.showDataFor === 'supervisor_districts' ? 'Supervisor District' : 'Census Tract';
+  subtitleEl.textContent = effectiveShowCoiOverlay()
     ? 'Child Opportunity Index by Census Tract, nationally normalized for 2023'
-    : `${activeLayerTitle()} by Census Tract, county-normalized for 2024`;
+    : `${activeLayerTitle()} by ${areaLabel}, county-normalized for 2024`;
 
   if (state.scoreMode === 'score') {
     scale.classList.add('continuous');
@@ -541,36 +537,36 @@ function updateLegendCard() {
   }
 }
 
-
 function updateMapStatus() {
-  document.getElementById('mapStatusPill').textContent = `${state.rawYoi.length.toLocaleString()} tracts loaded`;
+  const count = state.showDataFor === 'zips' ? state.zipRows.length : state.showDataFor === 'supervisor_districts' ? state.supervisorDistrictRows.length : state.rawYoi.length;
+  const noun = state.showDataFor === 'zips' ? 'ZIP codes' : state.showDataFor === 'supervisor_districts' ? 'supervisor districts' : 'tracts';
+  document.getElementById('mapStatusPill').textContent = `${count.toLocaleString()} ${noun} loaded`;
 }
 
 function renderMap() {
-  if (!state.geojson) return;
+  const activeGeojson = currentFeatureCollection();
+  if (!activeGeojson) return;
 
   if (tractLayer) tractLayer.remove();
-  tractLayer = L.geoJSON(state.geojson, {
+  tractLayer = L.geoJSON(activeGeojson, {
     style: styleFeature,
     onEachFeature: (feature, layer) => {
-      const geoid = normalizeGeoid(feature.properties.tract_geoid);
-      const row = state.tractMap.get(geoid);
-      const value = thematicValueForGeoid(geoid, row);
-      const tooltipLabel = state.showCoiOverlay ? 'Child Opportunity Index' : activeLayerTitle();
-      const tooltipValue = state.scoreMode === 'score'
-        ? overlayScoreDisplayValue(value)
-        : overlayValueToCategory(value, geoid);
+      const featureKey = currentFeatureKey(feature);
+      const row = currentDataMap().get(featureKey);
+      const valueText = state.scoreMode === 'score' ? scoreDisplayValue(currentValue(row)) : valueToCategory(currentValue(row));
 
       if (state.showHover) {
-        layer.bindTooltip(
-          `<strong>${tractLabelFromGeoid(geoid)}</strong><br>${tooltipLabel}: ${tooltipValue}`,
-          { sticky: false, opacity: 0.94 }
-        );
+        layer.bindTooltip(`<strong>${currentFeatureLabel(featureKey)}</strong><br>${activeLayerTitle()}: ${valueText}`, { sticky: false, opacity: 0.94 });
       }
 
       layer.on({
         mouseover: e => {
-          if (normalizeGeoid(state.selectedGeoid) !== geoid) {
+          const selectedKey = state.showDataFor === 'zips'
+            ? normalizeZip(state.selectedGeoid)
+            : state.showDataFor === 'supervisor_districts'
+              ? normalizeDistrict(state.selectedGeoid)
+              : normalizeGeoid(state.selectedGeoid);
+          if (selectedKey !== featureKey) {
             e.target.setStyle({ color: '#ffffff', weight: 1.8 });
           }
         },
@@ -578,47 +574,75 @@ function renderMap() {
           tractLayer.resetStyle(e.target);
         },
         click: e => {
-          state.selectedGeoid = geoid;
+          state.selectedGeoid = featureKey;
           updateAll(true);
 
           if (popupRef) popupRef.remove();
           popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
             .setLatLng(e.latlng)
-            .setContent(popupHtml(row, geoid))
+            .setContent(popupHtml(row, featureKey))
             .openOn(map);
         },
       });
     },
   }).addTo(map);
 
-  if (routesHaloLayer) routesHaloLayer.remove();
-  routesHaloLayer = null;
-
   if (routesLayer) routesLayer.remove();
-  routesLayer = null;
+routesLayer = null;
 
-  if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson) > 0) {
-    routesHaloLayer = L.geoJSON(state.routesGeojson, {
-      interactive: false,
-      style: {
-        color: '#ffffff',
-        weight: 7.2,
-        opacity: 0.9,
-        lineCap: 'round',
-        lineJoin: 'round',
-      },
-    }).addTo(map);
+if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson) > 0) {
+  const routeOutlineLayer = L.geoJSON(state.routesGeojson, {
+    style: () => ({
+      color: 'rgba(7, 40, 67, 0.55)',
+      weight: 6.6,
+      opacity: 1,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }),
+    interactive: false,
+  });
 
-    routesLayer = L.geoJSON(state.routesGeojson, {
-      style: {
-        color: '#0b5b96',
-        weight: 4.4,
-        opacity: 0.98,
-        lineCap: 'round',
-        lineJoin: 'round',
-      },
-    }).addTo(map);
-  }
+  const routeCenterLayer = L.geoJSON(state.routesGeojson, {
+    style: () => ({
+      color: '#e8f2ff',
+      weight: 3.2,
+      opacity: 0.98,
+      lineCap: 'round',
+      lineJoin: 'round',
+    }),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties || {};
+      const label =
+        p.route_name ||
+        p.route_short_name ||
+        p.route_long_name ||
+        p.route_id ||
+        p.name ||
+        'Transit route';
+
+      if (state.showHover) {
+        layer.bindTooltip(String(label), {
+          sticky: true,
+          opacity: 0.96,
+        });
+      }
+
+      layer.on({
+        mouseover: e => {
+          e.target.setStyle({
+            weight: 4.2,
+            opacity: 1,
+          });
+        },
+        mouseout: e => {
+          routeCenterLayer.resetStyle(e.target);
+        },
+      });
+    },
+  });
+
+  routesLayer = L.layerGroup([routeOutlineLayer, routeCenterLayer]).addTo(map);
+}
 
   if (stopsLayer) stopsLayer.remove();
   stopsLayer = null;
@@ -639,76 +663,36 @@ function renderMap() {
   }
 
   if (serviceLayer) serviceLayer.remove();
-  serviceLayer = null;
-  if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
-    serviceLayer = L.geoJSON(state.servicesGeojson, {
-      pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-        radius: 5,
-        weight: 2,
-        color: '#0b5b96',
-        fillColor: '#f59e0b',
-        fillOpacity: 0.96,
-      }),
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties || {};
+serviceLayer = null;
 
-        if (state.showHover && p.name) {
-          layer.bindTooltip(String(p.name), {
-            direction: 'top',
-            offset: [0, -6],
-            opacity: 0.96,
-          });
-        }
+if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
+  serviceLayer = L.geoJSON(state.servicesGeojson, {
+    pointToLayer: (_, latlng) => L.circleMarker(latlng, {
+      radius: 5,
+      weight: 2,
+      color: '#0b5b96',
+      fillColor: '#f59e0b',
+      fillOpacity: 0.96,
+    }),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties || {};
 
-        layer.bindPopup(servicePopupHtml(p), {
-          closeButton: false,
-          autoPan: true,
-          offset: [0, -4],
+      if (state.showHover && p.name) {
+        layer.bindTooltip(String(p.name), {
+          direction: 'top',
+          offset: [0, -6],
+          opacity: 0.96,
         });
-      },
-    }).addTo(map);
-  }
+      }
 
-  if (supervisorDistrictsLayer) supervisorDistrictsLayer.remove();
-  supervisorDistrictsLayer = null;
-  if (state.showSupervisorDistricts && state.supervisorDistrictsGeojson && featureCount(state.supervisorDistrictsGeojson) > 0) {
-    supervisorDistrictsLayer = L.geoJSON(state.supervisorDistrictsGeojson, {
-      style: {
-        color: '#275c81',
-        weight: 2.4,
-        opacity: 0.95,
-        fillOpacity: 0,
-      },
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties || {};
-        const districtNo = p.distno ?? p.DISTNO ?? p.district ?? p.District ?? 'N/A';
-        const supervisor = p.supervisor || p.SUPERVISOR || p.name || p.NAME || 'N/A';
-        const website = p.website || p.WEBSITE || '';
-
-        if (state.showHover) {
-          layer.bindTooltip(`<strong>Supervisor District ${districtNo}</strong><br>${supervisor}`, {
-            sticky: false,
-            opacity: 0.94,
-          });
-        }
-
-        layer.bindPopup(`
-          <div class="popup-card">
-            <div class="popup-title">Supervisor District ${districtNo}</div>
-            <div class="service-popup-list">
-              <div><strong>Supervisor:</strong> ${supervisor}</div>
-              ${p.phone || p.PHONE ? `<div><strong>Phone:</strong> ${p.phone || p.PHONE}</div>` : ''}
-              ${website ? `<div><strong>Website:</strong> ${website}</div>` : ''}
-            </div>
-          </div>
-        `, {
-          closeButton: false,
-          autoPan: true,
-          offset: [0, -4],
-        });
-      },
-    }).addTo(map);
-  }
+      layer.bindPopup(servicePopupHtml(p), {
+        closeButton: false,
+        autoPan: true,
+        offset: [0, -4],
+      });
+    },
+  }).addTo(map);
+}
 
   updateLegendCard();
 }
@@ -723,49 +707,281 @@ function domainRows(row) {
   }));
 }
 
+function scoreOutOf100(v) {
+  if (!isFiniteNumber(v)) return 'N/A';
+  return `${Math.round(+v * 100)}/100`;
+}
+
+function meanValue(values) {
+  if (!values.length) return NaN;
+  return values.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
+function medianValue(sortedValues) {
+  if (!sortedValues.length) return NaN;
+  const mid = Math.floor(sortedValues.length / 2);
+  return sortedValues.length % 2
+    ? sortedValues[mid]
+    : (sortedValues[mid - 1] + sortedValues[mid]) / 2;
+}
+
+function domainDistributionStats(domainKey) {
+  const values = currentRows()
+    .map(r => +r[`${domainKey}_score`])
+    .filter(v => Number.isFinite(v))
+    .sort((a, b) => a - b);
+
+  if (!values.length) {
+    return { min: NaN, median: NaN, mean: NaN, max: NaN };
+  }
+
+  return {
+    min: values[0],
+    median: medianValue(values),
+    mean: meanValue(values),
+    max: values[values.length - 1],
+  };
+}
+
+function quantileSorted(sortedValues, q) {
+  if (!sortedValues.length) return NaN;
+  const pos = (sortedValues.length - 1) * q;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  if (sortedValues[base + 1] !== undefined) {
+    return sortedValues[base] + rest * (sortedValues[base + 1] - sortedValues[base]);
+  }
+  return sortedValues[base];
+}
+
+function ordinalSuffix(n) {
+  if (!Number.isFinite(+n)) return 'N/A';
+  const v = Math.round(+n);
+  const mod10 = v % 10;
+  const mod100 = v % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${v}st`;
+  if (mod10 === 2 && mod100 !== 12) return `${v}nd`;
+  if (mod10 === 3 && mod100 !== 13) return `${v}rd`;
+  return `${v}th`;
+}
+
+function domainProfileStats(domainKey, selectedScore) {
+  const values = currentRows()
+    .map(r => +r[`${domainKey}_score`])
+    .filter(v => Number.isFinite(v))
+    .sort((a, b) => a - b);
+
+  if (!values.length) {
+    return {
+      total: 0,
+      rank: null,
+      percentile: null,
+      min: NaN,
+      q1: NaN,
+      median: NaN,
+      mean: NaN,
+      q3: NaN,
+      max: NaN,
+      signedGap: NaN,
+      deficit: NaN,
+    };
+  }
+
+  const total = values.length;
+  const rank = values.filter(v => v > selectedScore).length + 1;
+  const percentile = Math.round((values.filter(v => v <= selectedScore).length / total) * 100);
+  const min = values[0];
+  const q1 = quantileSorted(values, 0.25);
+  const median = medianValue(values);
+  const mean = meanValue(values);
+  const q3 = quantileSorted(values, 0.75);
+  const max = values[values.length - 1];
+  const signedGap = selectedScore - median;
+  const deficit = Math.max(0, median - selectedScore);
+
+  return {
+    total,
+    rank,
+    percentile,
+    min,
+    q1,
+    median,
+    mean,
+    q3,
+    max,
+    signedGap,
+    deficit,
+  };
+}
+
+function profileBadgeForDomain(stats) {
+  if (!Number.isFinite(stats.percentile)) {
+    return { label: 'No data', tone: 'neutral' };
+  }
+
+  if (stats.percentile <= 20 || stats.deficit >= 0.18) {
+    return { label: 'Primary driver', tone: 'driver' };
+  }
+
+  if (stats.percentile <= 40 || stats.deficit >= 0.08) {
+    return { label: 'Secondary gap', tone: 'watch' };
+  }
+
+  if (stats.percentile >= 75) {
+    return { label: 'Relative strength', tone: 'strength' };
+  }
+
+  return { label: 'Near county avg', tone: 'neutral' };
+}
+
+function buildProfileSummaryText(domainData) {
+  const drivers = [...domainData]
+    .sort((a, b) => b.deficit - a.deficit)
+    .filter(d => d.deficit > 0.001)
+    .slice(0, 3);
+
+  const belowMedianCount = domainData.filter(d => d.signedGap < 0).length;
+  const pattern =
+    belowMedianCount >= 5
+      ? 'broad desert pattern'
+      : belowMedianCount >= 3
+        ? 'mixed opportunity gaps'
+        : belowMedianCount >= 1
+          ? 'targeted domain gap'
+          : 'relative county strength';
+
+  if (!drivers.length) {
+    return `This area shows ${pattern} and is at or above the county median across all domains.`;
+  }
+
+  return `This area shows a ${pattern}. The largest county-relative deficits are in ${drivers.map(d => d.label).join(', ')}.`;
+}
+
 function renderLocationDetails() {
   const el = document.getElementById('locationDetails');
+
   if (!state.selectedGeoid) {
-    el.innerHTML = '<div class="helper-text">Select a tract on the map to view detailed information here.</div>';
+    el.innerHTML = `<div class="helper-text">Select a ${state.showDataFor === 'zips' ? 'ZIP code' : state.showDataFor === 'supervisor_districts' ? 'supervisor district' : 'tract'} on the map to view detailed information here.</div>`;
     return;
   }
-  const row = state.tractMap.get(normalizeGeoid(state.selectedGeoid));
+
+  const row = currentDataMap().get(
+    state.showDataFor === 'zips'
+      ? normalizeZip(state.selectedGeoid)
+      : state.showDataFor === 'supervisor_districts'
+        ? normalizeDistrict(state.selectedGeoid)
+        : normalizeGeoid(state.selectedGeoid)
+  );
+
   if (!row) {
-    el.innerHTML = '<div class="helper-text">Selected tract was not found in the processed CSV.</div>';
+    el.innerHTML = `<div class="helper-text">Selected ${state.showDataFor === 'zips' ? 'ZIP code' : state.showDataFor === 'supervisor_districts' ? 'supervisor district' : 'tract'} was not found in the processed CSV.</div>`;
     return;
   }
 
   const popMissing = row.total_population == null;
   const pop = popMissing ? 'N/A' : Number(row.total_population).toLocaleString();
   const { rank, total, percentile } = percentileForRow(row);
-  const rows = domainRows(row).sort((a,b)=>b.score-a.score);
-  const best = rows[0];
-  const worst = rows[rows.length-1];
+
+  const domainData = domainRows(row).sort((a, b) => b.score - a.score);
+  const best = domainData[0];
+  const worst = domainData[domainData.length - 1];
+
+  const domainMarkup = domainData.map(d => {
+    const stats = domainDistributionStats(d.key);
+
+    return `
+      <div class="domain-row domain-row-card">
+        <div class="domain-row-head">
+          <span>${d.label}</span>
+          <span>${scoreOutOf100(d.score)}</span>
+        </div>
+
+        <div class="domain-bar">
+          <div class="domain-bar-fill" style="width:${d.score * 100}%"></div>
+        </div>
+
+        <div class="domain-compare-label">Compared with county</div>
+
+        <div class="domain-stats-grid">
+          <div class="domain-stat-chip">
+            <div class="domain-stat-label">Selected</div>
+            <div class="domain-stat-value">${scoreOutOf100(d.score)}</div>
+          </div>
+
+          <div class="domain-stat-chip">
+            <div class="domain-stat-label">Median</div>
+            <div class="domain-stat-value">${scoreOutOf100(stats.median)}</div>
+          </div>
+
+          <div class="domain-stat-chip">
+            <div class="domain-stat-label">Mean</div>
+            <div class="domain-stat-value">${scoreOutOf100(stats.mean)}</div>
+          </div>
+
+          <div class="domain-stat-chip">
+            <div class="domain-stat-label">Min</div>
+            <div class="domain-stat-value">${scoreOutOf100(stats.min)}</div>
+          </div>
+
+          <div class="domain-stat-chip">
+            <div class="domain-stat-label">Max</div>
+            <div class="domain-stat-value">${scoreOutOf100(stats.max)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
   el.innerHTML = `
     <div class="location-header">
-      <div class="loc-tract">${tractLabelFromGeoid(row.tract_geoid)}</div>
-      <div class="loc-sub">San Diego-Chula Vista-Carlsbad, CA</div>
+      <div class="loc-tract">${
+        state.showDataFor === 'zips'
+          ? `ZIP code ${normalizeZip(row.zip ?? row.ZIP ?? row.zcta ?? row.zip_code)}`
+          : state.showDataFor === 'supervisor_districts'
+            ? `Supervisor District ${normalizeDistrict(row.distno ?? row.DISTNO ?? row.district ?? row.District ?? row.supervisor_district ?? row.id ?? row.ID)}`
+            : tractLabelFromGeoid(row.tract_geoid)
+      }</div>
+      <div class="loc-sub">San Diego County, CA</div>
       ${popMissing ? '<div class="warning-badge">Population unavailable</div>' : ''}
     </div>
 
     <div class="loc-metric-grid">
-      <div class="loc-metric"><div class="loc-metric-label">Overall YOI</div><div class="loc-metric-value">${(+row.yoi_custom_0_100).toFixed(1)}</div></div>
-      <div class="loc-metric"><div class="loc-metric-label">Population</div><div class="loc-metric-value">${pop}</div></div>
-      <div class="loc-metric"><div class="loc-metric-label">Rank</div><div class="loc-metric-value">${rank ? `${rank}/${total}` : 'N/A'}</div></div>
-      <div class="loc-metric"><div class="loc-metric-label">Percentile</div><div class="loc-metric-value">${percentile ? `${percentile}th` : 'N/A'}</div></div>
-      <div class="loc-metric"><div class="loc-metric-label">Best domain</div><div class="loc-metric-value">${best.label}</div></div>
-      <div class="loc-metric"><div class="loc-metric-label">Lowest domain</div><div class="loc-metric-value">${worst.label}</div></div>
+      <div class="loc-metric">
+        <div class="loc-metric-label">Overall YOI</div>
+        <div class="loc-metric-value">${(+row.yoi_custom_0_100).toFixed(1)}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Population</div>
+        <div class="loc-metric-value">${pop}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Rank</div>
+        <div class="loc-metric-value">${rank ? `${rank}/${total}` : 'N/A'}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Percentile</div>
+        <div class="loc-metric-value">${percentile ? `${percentile}th` : 'N/A'}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Best domain</div>
+        <div class="loc-metric-value">${best.label}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Lowest domain</div>
+        <div class="loc-metric-value">${worst.label}</div>
+      </div>
     </div>
 
-    <div class="control-label">Child Opportunity Levels and Scores</div>
+    <div class="control-label">Domain scores</div>
     <div class="domain-list">
-      ${rows.map(d => `
-        <div class="domain-row">
-          <div class="domain-row-head"><span>${d.label}</span><span>${(d.score * 100).toFixed(0)}/100</span></div>
-          <div class="domain-bar"><div class="domain-bar-fill" style="width:${d.score * 100}%"></div></div>
-        </div>`).join('')}
-    </div>`;
+      ${domainMarkup}
+    </div>
+  `;
 }
 
 function ensureChartTooltip() {
@@ -775,60 +991,123 @@ function ensureChartTooltip() {
 function renderProfileChart() {
   const wrap = d3.select('#profileChart');
   wrap.selectAll('*').remove();
-  const row = state.selectedGeoid ? state.tractMap.get(normalizeGeoid(state.selectedGeoid)) : null;
+
+  const row = state.selectedGeoid
+    ? currentDataMap().get(
+        state.showDataFor === 'zips'
+          ? normalizeZip(state.selectedGeoid)
+          : state.showDataFor === 'supervisor_districts'
+            ? normalizeDistrict(state.selectedGeoid)
+            : normalizeGeoid(state.selectedGeoid)
+      )
+    : null;
+
   if (!row) {
-    wrap.append('div').attr('class', 'helper-text').text('Select a tract on the map to view its weighted domain contribution.');
+    wrap
+      .append('div')
+      .attr('class', 'helper-text')
+      .text(
+        `Select a ${state.showDataFor === 'zips'
+          ? 'ZIP code'
+          : state.showDataFor === 'supervisor_districts'
+            ? 'supervisor district'
+            : 'tract'} on the map to view its domain scores.`
+      );
     return;
   }
+
   ensureChartTooltip();
 
-  const data = domainRows(row).sort((a,b)=>a.weighted-b.weighted);
-  const margin = { top: 10, right: 54, bottom: 26, left: 128 };
-  const width = 268;
-  const barH = 34;
+  // Sort by raw domain score, highest first, so the most important scores are easiest to scan
+  const data = domainRows(row).sort((a, b) => b.score - a.score);
+
+  const margin = { top: 10, right: 82, bottom: 30, left: 128 };
+  const width = 300;
+  const barH = 42;
   const height = margin.top + margin.bottom + data.length * barH;
 
-  const svg = wrap.append('svg').attr('viewBox', `0 0 ${width} ${height}`).style('width', '100%').style('height', 'auto');
-  const x = d3.scaleLinear().domain([0, Math.max(d3.max(data, d => d.weighted) || 0.12, 0.12) * 1.15]).range([margin.left, width - margin.right]);
-  const y = d3.scaleBand().domain(data.map(d => d.label)).range([margin.top, height - margin.bottom]).padding(0.22);
+  const svg = wrap
+    .append('svg')
+    .attr('viewBox', `0 0 ${width} ${height}`)
+    .style('width', '100%')
+    .style('height', 'auto');
 
+  // Use raw score for the bar scale so bars visually match the /100 labels
+  const x = d3.scaleLinear()
+    .domain([0, 1])
+    .range([margin.left, width - margin.right]);
+
+  const y = d3.scaleBand()
+    .domain(data.map(d => d.label))
+    .range([margin.top, height - margin.bottom])
+    .padding(0.24);
+
+  // Bottom axis in score units
   svg.append('g')
     .attr('transform', `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.2f')))
+    .call(
+      d3.axisBottom(x)
+        .tickValues([0, 0.25, 0.5, 0.75, 1])
+        .tickFormat(d => `${Math.round(d * 100)}`)
+    )
     .call(g => g.select('.domain').remove())
     .call(g => g.selectAll('text').attr('fill', '#64748b').style('font-size', '11px'))
     .call(g => g.selectAll('line').attr('stroke', 'rgba(148,163,184,0.35)'));
 
+  // Left labels
   svg.append('g')
     .attr('transform', `translate(${margin.left},0)`)
     .call(d3.axisLeft(y).tickSize(0))
     .call(g => g.select('.domain').remove())
     .call(g => g.selectAll('text').attr('class', 'bar-label'));
 
+  // Background tracks
+  svg.selectAll('.bar-track')
+    .data(data, d => d.key)
+    .join('rect')
+    .attr('class', 'bar-track')
+    .attr('x', x(0))
+    .attr('y', d => y(d.label))
+    .attr('height', y.bandwidth())
+    .attr('width', x(1) - x(0))
+    .attr('rx', 6)
+    .attr('fill', '#e7eef5');
+
+  // Filled score bars
   svg.selectAll('.bar')
     .data(data, d => d.key)
     .join('rect')
+    .attr('class', 'bar')
     .attr('x', x(0))
     .attr('y', d => y(d.label))
     .attr('height', y.bandwidth())
-    .attr('rx', 4)
+    .attr('rx', 6)
     .attr('fill', '#5a8bb1')
     .attr('width', 0)
-    .transition().duration(350)
-    .attr('width', d => x(d.weighted) - x(0));
+    .transition()
+    .duration(350)
+    .attr('width', d => x(d.score) - x(0));
 
+  // Full-row hit area so clicking is easy
   svg.selectAll('.bar-hit')
     .data(data, d => d.key)
     .join('rect')
+    .attr('class', 'bar-hit')
     .attr('x', x(0))
     .attr('y', d => y(d.label))
     .attr('height', y.bandwidth())
-    .attr('width', d => Math.max(2, x(d.weighted) - x(0)))
+    .attr('width', x(1) - x(0))
     .attr('fill', 'transparent')
     .style('cursor', 'pointer')
     .on('mousemove', (event, d) => {
-      chartTooltip.style('opacity', 1)
-        .html(`<strong>${d.label}</strong><br>Raw score: ${(d.score * 100).toFixed(0)}/100<br>Weight: ${(d.weight * 100).toFixed(1)}%<br>Contribution: ${d.weighted.toFixed(3)}`)
+      chartTooltip
+        .style('opacity', 1)
+        .html(
+          `<strong>${d.label}</strong>` +
+          `<br>Domain score: ${Math.round(d.score * 100)}/100` +
+          `<br>Current weight: ${(d.weight * 100).toFixed(1)}%` +
+          `<br>Weighted contribution: ${d.weighted.toFixed(3)}`
+        )
         .style('left', `${event.pageX + 12}px`)
         .style('top', `${event.pageY - 28}px`);
     })
@@ -839,13 +1118,218 @@ function renderProfileChart() {
       updateAll();
     });
 
+  // Main visible label: score out of 100
   svg.selectAll('.bar-value')
-    .data(data)
+    .data(data, d => d.key)
     .join('text')
     .attr('class', 'bar-value')
-    .attr('x', d => x(d.weighted) + 6)
-    .attr('y', d => y(d.label) + y.bandwidth()/2 + 4)
-    .text(d => d.weighted.toFixed(3));
+    .attr('x', width - margin.right + 8)
+    .attr('y', d => y(d.label) + y.bandwidth() / 2 - 2)
+    .text(d => `${Math.round(d.score * 100)}/100`);
+
+  // Small supporting text: contribution
+  svg.selectAll('.bar-subvalue')
+    .data(data, d => d.key)
+    .join('text')
+    .attr('class', 'bar-subvalue')
+    .attr('x', width - margin.right + 8)
+    .attr('y', d => y(d.label) + y.bandwidth() / 2 + 11)
+    .text(d => `contrib. ${d.weighted.toFixed(3)}`);
+}
+
+function renderProfileChart() {
+  const wrap = d3.select('#profileChart');
+  wrap.selectAll('*').remove();
+
+  const row = state.selectedGeoid
+    ? currentDataMap().get(
+        state.showDataFor === 'zips'
+          ? normalizeZip(state.selectedGeoid)
+          : state.showDataFor === 'supervisor_districts'
+            ? normalizeDistrict(state.selectedGeoid)
+            : normalizeGeoid(state.selectedGeoid)
+      )
+    : null;
+
+  if (!row) {
+    wrap
+      .append('div')
+      .attr('class', 'helper-text')
+      .text(
+        `Select a ${state.showDataFor === 'zips'
+          ? 'ZIP code'
+          : state.showDataFor === 'supervisor_districts'
+            ? 'supervisor district'
+            : 'tract'} on the map to view its domain diagnostics.`
+      );
+    return;
+  }
+
+  ensureChartTooltip();
+
+  const areaId = currentIdForRow(row);
+  const areaLabel = currentFeatureLabel(areaId);
+  const overallYoi = Number.isFinite(+row.yoi_custom_0_100) ? +row.yoi_custom_0_100 : +row.yoi_0_100;
+  const overallRank = percentileForRow(row);
+
+  const diagnostics = domainRows(row).map(d => {
+    const stats = domainProfileStats(d.key, d.score);
+    const badge = profileBadgeForDomain(stats);
+    return { ...d, ...stats, badge };
+  });
+
+  const belowMedianCount = diagnostics.filter(d => d.signedGap < 0).length;
+  const primaryDriverCount = diagnostics.filter(d => d.badge.tone === 'driver').length;
+
+  const patternLabel =
+    primaryDriverCount >= 3 || belowMedianCount >= 5
+      ? 'Broad desert'
+      : belowMedianCount >= 3
+        ? 'Mixed deficits'
+        : belowMedianCount >= 1
+          ? 'Targeted gap'
+          : 'Relative strength';
+
+  const sortMode = state.profileSort || 'desert';
+
+  const sorted = [...diagnostics].sort(
+    sortMode === 'strength'
+      ? (a, b) => (b.score - a.score) || (a.rank - b.rank)
+      : (a, b) => (b.deficit - a.deficit) || (a.percentile - b.percentile) || (b.score - a.score)
+  );
+
+  const narrative = buildProfileSummaryText(diagnostics);
+  const byKey = new Map(diagnostics.map(d => [d.key, d]));
+
+  wrap.html(`
+    <div class="profile-summary-grid">
+      <div class="profile-summary-card">
+        <div class="profile-summary-label">Overall YOI</div>
+        <div class="profile-summary-value">${Number.isFinite(overallYoi) ? `${Math.round(overallYoi)}/100` : 'N/A'}</div>
+      </div>
+
+      <div class="profile-summary-card">
+        <div class="profile-summary-label">County percentile</div>
+        <div class="profile-summary-value">
+          ${overallRank.percentile != null ? ordinalSuffix(overallRank.percentile) : 'N/A'}
+        </div>
+      </div>
+
+      <div class="profile-summary-card">
+        <div class="profile-summary-label">Domains below median</div>
+        <div class="profile-summary-value">${belowMedianCount}/${diagnostics.length}</div>
+      </div>
+
+      <div class="profile-summary-card">
+        <div class="profile-summary-label">Pattern</div>
+        <div class="profile-summary-value profile-summary-value-sm">${patternLabel}</div>
+      </div>
+    </div>
+
+    <div class="profile-narrative">
+      <div class="profile-narrative-title">${areaLabel}</div>
+      <div class="profile-narrative-text">${narrative}</div>
+    </div>
+
+    <div class="profile-toolbar">
+      <div class="profile-toolbar-label">Sort domains by</div>
+      <div class="profile-sort-group">
+        <button class="profile-sort-btn ${sortMode === 'desert' ? 'active' : ''}" data-sort="desert">
+          Desert drivers
+        </button>
+        <button class="profile-sort-btn ${sortMode === 'strength' ? 'active' : ''}" data-sort="strength">
+          Strongest domains
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-domain-list">
+      ${sorted.map(d => `
+        <div class="profile-domain-card" data-domain="${d.key}">
+          <div class="profile-card-top">
+            <div>
+              <div class="profile-domain-title">${d.label}</div>
+              <div class="profile-domain-meta">${scoreOutOf100(d.score)} · ${ordinalSuffix(d.percentile)} percentile</div>
+            </div>
+            <div class="profile-driver-badge ${d.badge.tone}">${d.badge.label}</div>
+          </div>
+
+          <div class="profile-domain-track">
+            <div class="profile-domain-iqr" style="left:${d.q1 * 100}%; width:${Math.max(0, (d.q3 - d.q1) * 100)}%;"></div>
+            <div class="profile-domain-fill" style="width:${Math.max(0, Math.min(100, d.score * 100))}%"></div>
+            <div class="profile-domain-marker median" style="left:${d.median * 100}%"></div>
+            <div class="profile-domain-marker mean" style="left:${d.mean * 100}%"></div>
+          </div>
+
+          <div class="profile-track-legend">
+            <span><i class="swatch selected"></i>Selected</span>
+            <span><i class="swatch median"></i>Median</span>
+            <span><i class="swatch mean"></i>Mean</span>
+            <span><i class="swatch iqr"></i>IQR</span>
+          </div>
+
+          <div class="profile-domain-stats">
+            <div class="profile-domain-stat">
+              <span>Rank</span>
+              <strong>${d.rank}/${d.total}</strong>
+            </div>
+
+            <div class="profile-domain-stat">
+              <span>Gap vs median</span>
+              <strong>${Number.isFinite(d.signedGap) ? `${d.signedGap >= 0 ? '+' : ''}${Math.round(d.signedGap * 100)}` : 'N/A'}</strong>
+            </div>
+
+            <div class="profile-domain-stat">
+              <span>Mean</span>
+              <strong>${scoreOutOf100(d.mean)}</strong>
+            </div>
+
+            <div class="profile-domain-stat">
+              <span>Min–max</span>
+              <strong>${scoreOutOf100(d.min)}–${scoreOutOf100(d.max)}</strong>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="helper-text mt-3">
+      Click a domain card to recolor the map. Hover a card to inspect percentile, rank, county statistics, and desert-driver context.
+    </div>
+  `);
+
+  wrap.selectAll('.profile-sort-btn')
+    .on('click', function () {
+      state.profileSort = this.dataset.sort;
+      renderProfileChart();
+    });
+
+  wrap.selectAll('.profile-domain-card')
+    .on('click', function () {
+      const key = this.dataset.domain;
+      state.mapLayer = `${key} score`;
+      document.getElementById('mapLayerSelect').value = state.mapLayer;
+      updateAll();
+    })
+    .on('mousemove', function (event) {
+      const d = byKey.get(this.dataset.domain);
+      if (!d) return;
+
+      chartTooltip
+        .style('opacity', 1)
+        .html(
+          `<strong>${d.label}</strong>` +
+          `<br>Domain score: ${scoreOutOf100(d.score)}` +
+          `<br>County percentile: ${ordinalSuffix(d.percentile)}` +
+          `<br>Rank: ${d.rank}/${d.total}` +
+          `<br>Median: ${scoreOutOf100(d.median)} | Mean: ${scoreOutOf100(d.mean)}` +
+          `<br>Gap vs median: ${d.signedGap >= 0 ? '+' : ''}${Math.round(d.signedGap * 100)}` +
+          `<br>Weighted contribution: ${d.weighted.toFixed(3)}`
+        )
+        .style('left', `${event.pageX + 12}px`)
+        .style('top', `${event.pageY - 28}px`);
+    })
+    .on('mouseout', () => chartTooltip.style('opacity', 0));
 }
 
 function updateFeatureProperties() {
@@ -868,8 +1352,8 @@ function setPanel(panelName) {
   const titleMap = {
     controls: ['Data Controls', 'Adjust the map and comparison view.'],
     overlays: ['Overlays', 'Turn map layers on and off.'],
-    profile: ['Domain Profile', 'Weighted domain contribution for the current tract.'],
-    location: ['Location Details', 'Inspect the selected census tract in detail.'],
+    profile: ['Domain Profile', 'Domain scores for the selected area, shown out of 100.'],
+    location: ['Location Details', 'Inspect the selected area in detail.'],
     faqs: ['Frequently asked questions', 'Helpful context for interpreting the dashboard.'],
     share: ['Share', 'Copy the current state of the explorer.'],
   };
@@ -890,7 +1374,6 @@ function updateAll(reRenderMap = true) {
   updateWeightsUi();
   updateFeatureProperties();
   updateMapStatus();
-  syncOverlayControls();
   renderPanelContent();
   if (reRenderMap) renderMap();
   updateLegendCard();
@@ -928,24 +1411,45 @@ function buildWeightSliders() {
   });
 }
 
-function bindControls() {
-  document.getElementById('toggleChoro').addEventListener('change', e => {
-    state.showChoro = e.target.checked;
-    syncOverlayControls();
-    updateAll();
+function syncGeographyControls() {
+  document.querySelectorAll('[data-show-data-for]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.showDataFor === state.showDataFor);
   });
+
+  const supervisorToggle = document.getElementById('toggleSupervisorDistricts');
+  if (supervisorToggle) {
+    supervisorToggle.checked = state.showDataFor === 'supervisor_districts';
+  }
+}
+
+function openSiteMenu() {
+  const drawer = document.getElementById('siteMenuDrawer');
+  const backdrop = document.getElementById('menuBackdrop');
+
+  if (!drawer || !backdrop) return;
+
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden', 'false');
+  backdrop.classList.add('open');
+}
+
+function closeSiteMenu() {
+  const drawer = document.getElementById('siteMenuDrawer');
+  const backdrop = document.getElementById('menuBackdrop');
+
+  if (!drawer || !backdrop) return;
+
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  backdrop.classList.remove('open');
+}
+
+function bindControls() {
+  document.getElementById('toggleChoro').addEventListener('change', e => { state.showChoro = e.target.checked; updateAll(); });
   document.getElementById('toggleBounds').addEventListener('change', e => { state.showBounds = e.target.checked; updateAll(); });
   document.getElementById('toggleRoutes').addEventListener('change', e => { state.showRoutes = e.target.checked; updateAll(); });
   document.getElementById('toggleStops').addEventListener('change', e => { state.showStops = e.target.checked; updateAll(); });
   document.getElementById('hoverToggle').addEventListener('change', e => { state.showHover = e.target.checked; updateAll(); });
-
-  document.querySelectorAll('#overlayQuickToggle .seg-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setThematicOverlayMode(btn.dataset.overlayMode);
-      syncOverlayControls();
-      updateAll();
-    });
-  });
   document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(b => b.classList.remove('active'));
@@ -954,8 +1458,40 @@ function bindControls() {
       updateAll();
     });
   });
+  document.querySelectorAll('[data-show-data-for]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.showDataFor;
+
+      if (mode === 'zips' && (!state.zipGeojson || state.zipRows.length === 0)) {
+        console.warn('ZIP code mode requires ./data/processed/boundaries/sd_zip_codes.geojson and ./data/processed/yoi/yoi_zip_components.csv');
+        return;
+      }
+
+      if (mode === 'supervisor_districts' && (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0)) {
+        console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+        return;
+      }
+
+      state.showDataFor = mode;
+      state.selectedGeoid = null;
+      syncGeographyControls();
+      updateAll();
+    });
+  });
   document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
   document.getElementById('closeDrawerBtn').addEventListener('click', () => document.getElementById('drawerPanel').classList.toggle('collapsed'));
+    document.getElementById('menuBtn')?.addEventListener('click', () => {
+    const drawer = document.getElementById('siteMenuDrawer');
+    if (drawer?.classList.contains('open')) closeSiteMenu();
+    else openSiteMenu();
+  });
+
+  document.getElementById('closeSiteMenuBtn')?.addEventListener('click', closeSiteMenu);
+  document.getElementById('menuBackdrop')?.addEventListener('click', closeSiteMenu);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSiteMenu();
+  });
   document.querySelectorAll('.faq-btn').forEach(btn => btn.addEventListener('click', () => btn.parentElement.classList.toggle('open')));
   document.getElementById('copyLinkBtn').addEventListener('click', async () => {
     const url = new URL(window.location.href);
@@ -982,18 +1518,30 @@ function bindControls() {
   searchInput.addEventListener('focus', () => setSearchStatus(''));
   document.querySelector('.search-shell i')?.addEventListener('click', runSearch);
   document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
-    state.showCoiOverlay = e.target.checked;
-    syncOverlayControls();
+  state.showCoiOverlay = e.target.checked;
+  updateAll();
+});
+document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
+    if (e.target.checked) {
+      if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
+        console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+        e.target.checked = false;
+        return;
+      }
+
+      state.showDataFor = 'supervisor_districts';
+    } else if (state.showDataFor === 'supervisor_districts') {
+      state.showDataFor = 'tracts';
+    }
+
+    state.selectedGeoid = null;
+    syncGeographyControls();
     updateAll();
   });
-  document.getElementById('toggleServices').addEventListener('change', e => {
-    state.showServices = e.target.checked;
-    updateAll();
-  });
-  document.getElementById('toggleSupervisorDistricts').addEventListener('change', e => {
-    state.showSupervisorDistricts = e.target.checked;
-    updateAll();
-  });
+document.getElementById('toggleServices').addEventListener('change', e => {
+  state.showServices = e.target.checked;
+  updateAll();
+});
 }
 
 async function loadCsv(path) {
@@ -1011,12 +1559,29 @@ async function loadJson(path) {
 }
 
 function initGeojsonProps() {
-  if (!state.geojson?.features) return;
-  state.geojson.features.forEach(f => {
-    const p = f.properties || {};
-    p.tract_geoid = normalizeGeoid(p.tract_geoid ?? p.GEOID ?? p.geoid ?? p.Tract ?? p.TRACT);
-    f.properties = p;
-  });
+  if (state.geojson?.features) {
+    state.geojson.features.forEach(f => {
+      const p = f.properties || {};
+      p.tract_geoid = normalizeGeoid(p.tract_geoid ?? p.GEOID ?? p.geoid ?? p.Tract ?? p.TRACT);
+      f.properties = p;
+    });
+  }
+
+  if (state.zipGeojson?.features) {
+    state.zipGeojson.features.forEach(f => {
+      const p = f.properties || {};
+      p.zip = normalizeZip(p.zip ?? p.ZIP ?? p.zip_code ?? p.ZIPCODE ?? p.ZCTA5CE20 ?? p.GEOID20 ?? p.geoid ?? p.GEOID);
+      f.properties = p;
+    });
+  }
+
+  if (state.supervisorDistrictsGeojson?.features) {
+    state.supervisorDistrictsGeojson.features.forEach(f => {
+      const p = f.properties || {};
+      p.distno = normalizeDistrict(p.distno ?? p.DISTNO ?? p.district ?? p.District ?? p.DISTRICT ?? p.id ?? p.ID);
+      f.properties = p;
+    });
+  }
 }
 
 function applyInitialMapView() {
@@ -1065,14 +1630,41 @@ function applyInitialMapView() {
   }
 }
 
+function filterExcludedTracts() {
+  state.rawYoi = (state.rawYoi || []).filter(
+    row => !EXCLUDED_TRACT_GEOIDS.has(normalizeGeoid(row.tract_geoid))
+  );
+
+  if (state.geojson?.features) {
+    state.geojson.features = state.geojson.features.filter(feature => {
+      const geoid = normalizeGeoid(
+        feature.properties?.tract_geoid ??
+        feature.properties?.GEOID ??
+        feature.properties?.geoid ??
+        feature.properties?.Tract ??
+        feature.properties?.TRACT
+      );
+      return !EXCLUDED_TRACT_GEOIDS.has(geoid);
+    });
+  }
+
+  if (EXCLUDED_TRACT_GEOIDS.has(normalizeGeoid(state.selectedGeoid))) {
+    state.selectedGeoid = null;
+  }
+}
+
 async function init() {
   buildLayerSelect();
   buildWeightSliders();
   bindControls();
+  syncGeographyControls();
 
   state.rawYoi = await loadCsv('./data/processed/yoi/yoi_components.csv');
+  state.zipRows = await loadCsv('./data/processed/yoi/yoi_zip_components.csv').catch(() => []);
+  state.supervisorDistrictRows = await loadCsv('./data/processed/yoi/yoi_supervisor_district_components.csv').catch(() => []);
   state.meta = await loadCsv('./data/processed/yoi/yoi_indicator_meta.csv').catch(() => []);
   state.geojson = await loadJson('./data/processed/boundaries/sd_tracts.geojson');
+  state.zipGeojson = await loadJson('./data/processed/boundaries/sd_zip_codes.geojson').catch(() => null);
   state.routesGeojson = await loadJson('./data/processed/boundaries/transit_routes.geojson').catch(() => null);
   state.stopsGeojson = await loadJson('./data/processed/boundaries/transit_stops.geojson').catch(() => null);
   state.coiRows = await loadCsv('./data/processed/overlays/sd_coi_2023.csv').catch(() => []);
@@ -1081,6 +1673,7 @@ async function init() {
   state.supervisorDistrictsGeojson = await loadJson('./data/processed/overlays/supervisor_districts.geojson').catch(() => null);
 
   initGeojsonProps();
+  filterExcludedTracts();
   updateTransitAvailabilityNote();
 
   const params = new URLSearchParams(window.location.search);
