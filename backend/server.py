@@ -99,7 +99,7 @@ You are the assistant for the Youth Opportunity Desert Dashboard.
 Your job:
 1. Help users understand the dashboard.
 2. Help users navigate the dashboard.
-3. If the user asks a specific data question (like counts, highest/lowest), USE YOUR PROVIDED TOOLS to query the dataset and find the exact answer. Do not guess.
+3. If the user asks a specific data question, FIRST check the DASHBOARD_UI_CONTEXT. If the answer isn't there, USE YOUR PROVIDED TOOLS to query the dataset. Do not guess.
 4. If the user asks for a dashboard action, return one structured action.
 5. If the user only wants an explanation or data answer, return action = null.
 
@@ -163,6 +163,7 @@ def extract_json(text: str) -> Dict[str, Any]:
     except json.JSONDecodeError:
         return {"reply": text, "action": None}
 
+
 @app.get("/api/health")
 def health():
     return {"ok": True}
@@ -182,17 +183,47 @@ def chat(req: ChatRequest):
         temperature=0.2
     )
 
-    # By using client.chats.create, the SDK will automatically run the Python functions 
-    # if the LLM requests them, loop back, and generate the final answer for us!
-    chat_session = client.chats.create(
-        model="gemini-2.5-flash",
-        config=config
-    )
+    try:
+        # By using client.chats.create, the SDK will automatically run the Python functions 
+        # if the LLM requests them, loop back, and generate the final answer for us!
+        chat_session = client.chats.create(
+            model="gemini-2.5-flash",
+            config=config
+        )
 
-    response = chat_session.send_message(req.message)
-
-    parsed = extract_json(response.text or "")
-    return ChatResponse(
-        reply=parsed.get("reply", "Sorry, I could not answer that."),
-        action=parsed.get("action"),
-    )
+        response = chat_session.send_message(req.message)
+        parsed = extract_json(response.text or "")
+        
+        return ChatResponse(
+            reply=parsed.get("reply", "Sorry, I could not answer that."),
+            action=parsed.get("action"),
+        )
+        
+    except Exception as e:
+        error_msg = str(e)
+        
+        # Check if we hit the Google rate limit
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+            # Use RegEx to find the exact number of seconds Google wants us to wait
+            match = re.search(r"Please retry in ([\d\.]+)s", error_msg)
+            
+            if match:
+                # Convert the messy decimal (26.756...) into a clean whole number (27)
+                wait_time = int(float(match.group(1))) + 1
+                custom_reply = f"I'm receiving too many requests right now! Please try asking me again in {wait_time} seconds."
+            else:
+                # Fallback just in case Google changes their error message format
+                custom_reply = "I'm receiving too many requests right now! Please wait about a minute and try asking me again."
+                
+            return ChatResponse(
+                reply=custom_reply, 
+                action=None
+            )
+            
+        # If anything else breaks, show a generic fallback
+        else:
+            print(f"Backend Error: {error_msg}")
+            return ChatResponse(
+                reply="Sorry, my brain is currently offline. Please try again later!", 
+                action=None
+            )

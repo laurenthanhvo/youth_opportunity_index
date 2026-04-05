@@ -2188,6 +2188,19 @@ function buildAssistantContext() {
       )
     : null;
 
+  // 1. Calculate dynamic service counts for the map markers
+  let totalServices = 0;
+  let serviceCountsByType = {};
+
+  if (state.servicesGeojson && state.servicesGeojson.features) {
+    const features = state.servicesGeojson.features;
+    totalServices = features.length;
+    features.forEach(f => {
+      const type = (f.properties && f.properties.type) ? f.properties.type : 'Unknown';
+      serviceCountsByType[type] = (serviceCountsByType[type] || 0) + 1;
+    });
+  }
+
   return {
     selectedGeoid: state.selectedGeoid,
     selectedLabel: state.selectedGeoid ? currentFeatureLabel(state.selectedGeoid) : null,
@@ -2206,7 +2219,13 @@ function buildAssistantContext() {
           yoi_custom_0_100: selectedRow.yoi_custom_0_100 ?? null,
           total_population: selectedRow.total_population ?? null
         }
-      : null
+      : null,
+    
+    // 2. Feed the marker counts to the AI!
+    mapDataStats: {
+      totalServiceLocations: totalServices,
+      servicesBreakdownByType: serviceCountsByType
+    }
   };
 }
 
