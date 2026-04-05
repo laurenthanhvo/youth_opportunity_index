@@ -18,8 +18,8 @@
   <aside class="left-rail">
   <button class="rail-btn active" data-panel="controls"><i class="bi bi-sliders2"></i><span>Data<br>Controls</span></button>
   <button class="rail-btn" data-panel="overlays"><i class="bi bi-layers"></i><span>Overlays</span></button>
-  <!-- <button class="rail-btn" data-panel="profile"><i class="bi bi-bar-chart"></i><span>Domain<br>Profile</span></button> -->
   <button class="rail-btn" data-panel="location"><i class="bi bi-geo-alt"></i><span>Location<br>Details</span></button>
+  <button class="rail-btn" data-panel="assistant"><i class="bi bi-chat-dots"></i><span>Assistant</span></button>
   <button class="rail-btn" data-panel="faqs"><i class="bi bi-question-circle"></i><span>FAQs</span></button>
   <button class="rail-btn" data-panel="share"><i class="bi bi-share"></i><span>Share</span></button>
 </aside>
@@ -157,6 +157,28 @@
       <div class="panel-view" id="panel-location">
         <div id="locationDetails"></div>
       </div>
+
+      <div class="panel-view" id="panel-assistant">
+  <div class="assistant-shell">
+    <div id="assistantMessages" class="assistant-messages">
+      <div class="assistant-msg assistant-msg-bot">
+        Hi — I can help explain the dashboard, switch views, and turn layers on or off.
+      </div>
+    </div>
+
+    <div class="assistant-suggestions">
+      <button class="assistant-chip" data-assistant-prompt="Show supervisor districts">Show supervisor districts</button>
+      <button class="assistant-chip" data-assistant-prompt="Compare with COI">Compare with COI</button>
+      <button class="assistant-chip" data-assistant-prompt="Turn on service locations">Turn on service locations</button>
+      <button class="assistant-chip" data-assistant-prompt="Explain this map">Explain this map</button>
+    </div>
+
+    <div class="assistant-input-row">
+      <input id="assistantInput" type="text" placeholder="Ask about the dashboard..." />
+      <button id="assistantSendBtn" type="button" class="mini-btn">Send</button>
+    </div>
+  </div>
+</div>
 
       <div class="panel-view" id="panel-faqs">
   <div class="faq-item open">

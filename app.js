@@ -64,6 +64,8 @@ let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
 
+const ASSISTANT_API_URL = 'http://127.0.0.1:8001/api/chat';
+
 function clearTransientUi() {
   if (chartTooltip) chartTooltip.style('opacity', 0);
 
@@ -1770,6 +1772,7 @@ function setPanel(panelName) {
     location: ['Location Details', 'Inspect the selected area in detail.'],
     faqs: ['Frequently asked questions', 'Helpful context for interpreting the dashboard.'],
     share: ['Share', 'Copy the current state of the explorer.'],
+    assistant: ['Assistant', 'Ask questions to navigate and understand the data.'],
   };
 
   document.getElementById('drawerTitle').textContent = titleMap[panelName][0];
@@ -1869,7 +1872,54 @@ function closeSiteMenu() {
 }
 
 function bindControls() {
-  document.getElementById('toggleChoro').addEventListener('change', e => { state.showChoro = e.target.checked; updateAll(); });
+  // document.getElementById('toggleChoro').addEventListener('change', e => { state.showChoro = e.target.checked; updateAll(); });
+  document.getElementById('toggleChoro').addEventListener('change', e => {
+  state.showChoro = e.target.checked;
+
+  if (e.target.checked) {
+    state.showCoiOverlay = false;
+    const coiToggle = document.getElementById('toggleCoiOverlay');
+    if (coiToggle) coiToggle.checked = false;
+  }
+
+  clearTransientUi();
+  updateAll();
+});
+
+document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
+  state.showCoiOverlay = e.target.checked;
+
+  if (e.target.checked) {
+    state.showChoro = false;
+    const yoiToggle = document.getElementById('toggleChoro');
+    if (yoiToggle) yoiToggle.checked = false;
+  } else {
+    state.showChoro = true;
+    const yoiToggle = document.getElementById('toggleChoro');
+    if (yoiToggle) yoiToggle.checked = true;
+  }
+
+  clearTransientUi();
+  updateAll();
+});
+document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
+  if (e.target.checked) {
+    if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
+      console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+      e.target.checked = false;
+      return;
+    }
+
+    state.showDataFor = 'supervisor_districts';
+  } else if (state.showDataFor === 'supervisor_districts') {
+    state.showDataFor = 'tracts';
+  }
+
+  state.selectedGeoid = null;
+  clearTransientUi();
+  syncGeographyControls();
+  updateAll();
+});
   document.getElementById('toggleBounds').addEventListener('change', e => { state.showBounds = e.target.checked; updateAll(); });
   document.getElementById('toggleRoutes').addEventListener('change', e => { state.showRoutes = e.target.checked; updateAll(); });
   document.getElementById('toggleStops').addEventListener('change', e => { state.showStops = e.target.checked; updateAll(); });
@@ -1884,26 +1934,26 @@ function bindControls() {
     });
   });
     document.querySelectorAll('[data-show-data-for]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const mode = btn.dataset.showDataFor;
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.showDataFor;
 
-      if (mode === 'zips' && (!state.zipGeojson || state.zipRows.length === 0)) {
-        console.warn('ZIP code mode requires ./data/processed/boundaries/sd_zip_codes.geojson and ./data/processed/yoi/yoi_zip_components.csv');
-        return;
-      }
+    if (mode === 'zips' && (!state.zipGeojson || state.zipRows.length === 0)) {
+      console.warn('ZIP code mode requires ./data/processed/boundaries/sd_zip_codes.geojson and ./data/processed/yoi/yoi_zip_components.csv');
+      return;
+    }
 
-      if (mode === 'supervisor_districts' && (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0)) {
-        console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
-        return;
-      }
+    if (mode === 'supervisor_districts' && (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0)) {
+      console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+      return;
+    }
 
-      state.showDataFor = mode;
-      state.selectedGeoid = null;
-      clearTransientUi();
-      syncGeographyControls();
-      updateAll();
-    });
+    state.showDataFor = mode;
+    state.selectedGeoid = null;
+    clearTransientUi();
+    syncGeographyControls();
+    updateAll();
   });
+});
 
 
   document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
@@ -1970,29 +2020,12 @@ searchInput.addEventListener('keydown', e => {
 });
 searchInput.addEventListener('focus', () => setSearchStatus(''));
 document.querySelector('.rail-search-shell i')?.addEventListener('click', runSearch);
-  document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
-    state.showCoiOverlay = e.target.checked;
-    clearTransientUi();
-    updateAll();
-});
-document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
-    if (e.target.checked) {
-      if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
-        console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
-        e.target.checked = false;
-        return;
-      }
+//   document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
+//     state.showCoiOverlay = e.target.checked;
+//     clearTransientUi();
+//     updateAll();
+// });
 
-      state.showDataFor = 'supervisor_districts';
-    } else if (state.showDataFor === 'supervisor_districts') {
-      state.showDataFor = 'tracts';
-    }
-
-    state.selectedGeoid = null;
-    clearTransientUi();
-    syncGeographyControls();
-    updateAll();
-  });
 document.getElementById('toggleServices').addEventListener('change', e => {
   state.showServices = e.target.checked;
   updateAll();
@@ -2108,10 +2141,196 @@ function filterExcludedTracts() {
   }
 }
 
+function syncPrimaryViewToggles() {
+  const yoiToggle = document.getElementById('toggleChoro');
+  const coiToggle = document.getElementById('toggleCoiOverlay');
+  const supervisorToggle = document.getElementById('toggleSupervisorDistricts');
+
+  if (yoiToggle) yoiToggle.checked = state.showDataFor === 'tracts' && state.showChoro && !state.showCoiOverlay;
+  if (coiToggle) coiToggle.checked = state.showDataFor === 'tracts' && state.showCoiOverlay;
+  if (supervisorToggle) supervisorToggle.checked = state.showDataFor === 'supervisor_districts';
+}
+
+function setPrimaryView(view) {
+  if (view === 'supervisor') {
+    if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
+      console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+      return;
+    }
+    state.showDataFor = 'supervisor_districts';
+    state.showChoro = false;
+    state.showCoiOverlay = false;
+  } else if (view === 'coi') {
+    state.showDataFor = 'tracts';
+    state.showChoro = false;
+    state.showCoiOverlay = true;
+  } else {
+    state.showDataFor = 'tracts';
+    state.showChoro = true;
+    state.showCoiOverlay = false;
+  }
+
+  state.selectedGeoid = null;
+  clearTransientUi();
+  syncGeographyControls();
+  syncPrimaryViewToggles();
+  updateAll();
+}
+
+function buildAssistantContext() {
+  const selectedRow = state.selectedGeoid
+    ? currentDataMap().get(
+        state.showDataFor === 'zips'
+          ? normalizeZip(state.selectedGeoid)
+          : state.showDataFor === 'supervisor_districts'
+            ? normalizeDistrict(state.selectedGeoid)
+            : normalizeGeoid(state.selectedGeoid)
+      )
+    : null;
+
+  return {
+    selectedGeoid: state.selectedGeoid,
+    selectedLabel: state.selectedGeoid ? currentFeatureLabel(state.selectedGeoid) : null,
+    mapLayer: state.mapLayer,
+    showDataFor: state.showDataFor,
+    showChoro: state.showChoro,
+    showCoiOverlay: state.showCoiOverlay,
+    showBounds: state.showBounds,
+    showRoutes: state.showRoutes,
+    showStops: state.showStops,
+    showServices: state.showServices,
+    availablePanels: ['controls', 'overlays', 'location', 'assistant', 'faqs', 'share'],
+    availablePrimaryViews: ['yoi', 'coi', 'supervisor'],
+    selectedRow: selectedRow
+      ? {
+          yoi_custom_0_100: selectedRow.yoi_custom_0_100 ?? null,
+          total_population: selectedRow.total_population ?? null
+        }
+      : null
+  };
+}
+
+function appendAssistantMessage(text, role = 'bot') {
+  const wrap = document.getElementById('assistantMessages');
+  if (!wrap) return;
+
+  const div = document.createElement('div');
+  div.className = `assistant-msg assistant-msg-${role}`;
+  div.textContent = text;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function setAssistantBusy(isBusy) {
+  const input = document.getElementById('assistantInput');
+  const btn = document.getElementById('assistantSendBtn');
+  if (input) input.disabled = isBusy;
+  if (btn) btn.disabled = isBusy;
+}
+
+function executeAssistantAction(action) {
+  if (!action || !action.type) return;
+
+  if (action.type === 'set_panel' && action.panel) {
+    setPanel(action.panel);
+    return;
+  }
+
+  if (action.type === 'set_primary_view' && action.view) {
+    setPrimaryView(action.view);
+    return;
+  }
+
+  if (action.type === 'toggle_overlay' && action.overlay) {
+    const enabled = !!action.enabled;
+
+    if (action.overlay === 'bounds') state.showBounds = enabled;
+    if (action.overlay === 'routes') state.showRoutes = enabled;
+    if (action.overlay === 'stops') state.showStops = enabled;
+    if (action.overlay === 'services') state.showServices = enabled;
+
+    const boundsToggle = document.getElementById('toggleBounds');
+    const routesToggle = document.getElementById('toggleRoutes');
+    const stopsToggle = document.getElementById('toggleStops');
+    const servicesToggle = document.getElementById('toggleServices');
+
+    if (boundsToggle && action.overlay === 'bounds') boundsToggle.checked = enabled;
+    if (routesToggle && action.overlay === 'routes') routesToggle.checked = enabled;
+    if (stopsToggle && action.overlay === 'stops') stopsToggle.checked = enabled;
+    if (servicesToggle && action.overlay === 'services') servicesToggle.checked = enabled;
+
+    updateAll();
+  }
+}
+
+async function sendAssistantMessage(prefilledText = null) {
+  const input = document.getElementById('assistantInput');
+  if (!input) return;
+
+  const message = (prefilledText ?? input.value).trim();
+  if (!message) return;
+
+  appendAssistantMessage(message, 'user');
+  input.value = '';
+  setAssistantBusy(true);
+
+  try {
+    const res = await fetch(ASSISTANT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,
+        context: buildAssistantContext(),
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Assistant request failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+    appendAssistantMessage(data.reply || 'Sorry, I could not answer that.', 'bot');
+
+    if (data.action) {
+      executeAssistantAction(data.action);
+    }
+  } catch (err) {
+    console.error(err);
+    appendAssistantMessage('Sorry — the assistant backend is not reachable right now.', 'bot');
+  } finally {
+    setAssistantBusy(false);
+  }
+}
+
+function bindAssistantUi() {
+  const input = document.getElementById('assistantInput');
+  const sendBtn = document.getElementById('assistantSendBtn');
+
+  if (!input || !sendBtn || input.dataset.bound === 'true') return;
+
+  input.dataset.bound = 'true';
+
+  sendBtn.addEventListener('click', () => sendAssistantMessage());
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendAssistantMessage();
+    }
+  });
+
+  document.querySelectorAll('[data-assistant-prompt]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sendAssistantMessage(btn.dataset.assistantPrompt || '');
+    });
+  });
+}
+
 async function init() {
   buildLayerSelect();
   buildWeightSliders();
   bindControls();
+  bindAssistantUi();
   syncGeographyControls();
 
   state.rawYoi = await loadCsv('./data/processed/yoi/yoi_components.csv');
