@@ -3,288 +3,463 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Datasets | Youth Opportunity Index</title>
+  <title>YOI Methodology | Youth Opportunity Index</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #072843;
-      --blue: #0b5b96;
-      --text: #1e293b;
-      --muted: #667085;
-      --line: rgba(15, 23, 42, 0.10);
-      --panel: #ffffff;
-      --bg: #f4f7fb;
-    }
-
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-    }
-
-    .page-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255,255,255,0.96);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .page-header-inner {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .brand-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-strong { color: #0b5b96; }
-    .brand-accent { color: #f97316; }
-
-    .brand-subtitle {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .top-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
-
-    .top-nav a {
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .page-shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 42px 24px 72px;
-    }
-
-    .hero {
-      margin-bottom: 28px;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--blue);
-      font-size: 0.84rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0 0 14px;
-      font-size: clamp(2rem, 4vw, 3.1rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-    }
-
-    .hero p {
-      max-width: 860px;
-      font-size: 1rem;
-      line-height: 1.7;
-      color: #475569;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 24px rgba(4, 22, 39, 0.05);
-    }
-
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 1.2rem;
-      color: #0f172a;
-    }
-
-    .card p {
-      margin: 0;
-      line-height: 1.7;
-      color: #475569;
-    }
-
-    .doc-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .doc-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-      background: #fbfdff;
-    }
-
-    .doc-item h3 {
-      margin: 0 0 8px;
-      font-size: 0.98rem;
-      color: #0f172a;
-    }
-
-    .doc-item p {
-      margin: 0;
-      font-size: 0.92rem;
-      line-height: 1.6;
-      color: #667085;
-    }
-
-    .column-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .column-row {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #fff;
-      padding: 16px;
-    }
-
-    .column-name {
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 6px;
-    }
-
-    .column-desc {
-      color: #667085;
-      line-height: 1.6;
-      font-size: 0.93rem;
-    }
-
-    @media (max-width: 820px) {
-      .page-header-inner {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .doc-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./static-pages.css" />
 </head>
 <body>
   <header class="page-header">
     <div class="page-header-inner">
       <a class="brand" href="./index.html">
-        <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>.org</div>
-        <div class="brand-subtitle">data for equitable youth opportunity in San Diego County</div>
+        <div class="brand-title">Youth Opportunity Desert Dashboard</div>
+<div class="brand-subtitle">Halıcıoğlu Data Science Institute – UC San Diego</div>
       </a>
 
       <nav class="top-nav">
-        <a href="./index.html">Map</a>
-        <a href="./datasets.html">Datasets</a>
-        <a href="https://diversitydatakids.org/child-opportunity-index/">Child Opportunity Index</a>
-          <a href="./about.html">About Us</a>
-  <a href="./contact.html">Contact Us</a>
+        <a class="nav-link" href="./index.html">Map</a>
+        <a class="nav-link active" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link" href="./about.html">About Us</a>
+        <a class="nav-link" href="./contact.html">Contact Us</a>
       </nav>
     </div>
   </header>
 
   <main class="page-shell">
-    <section class="hero">
-      <p class="eyebrow">Datasets</p>
-      <h1>Data sources and column documentation</h1>
-      <p>
-        Use this page to document the variables used in the Youth Opportunity Index,
-        the raw source columns they came from, and how each metric was cleaned,
-        normalized, reversed, aggregated, or otherwise transformed before entering the final score.
-      </p>
-    </section>
+  <section class="hero">
+    <p class="eyebrow">YOI Methodology</p>
+    <h1>Youth Opportunity Index methodology</h1>
+    <p>
+      This page documents how the Youth Opportunity Index (YOI) is constructed in the current dashboard build.
+      The census tract is the base geography. Raw indicators are cleaned at tract level, converted to county-relative
+      percentile scores, reverse-coded when lower values indicate worse conditions, averaged into domain scores,
+      and then equally weighted across seven domains to create the overall YOI.
+    </p>
+  </section>
 
-    <section class="card">
-      <h2>How this page should be filled in</h2>
-      <p>
-        For each dataset, list the source name, original file/table, columns used, filters applied,
-        geography joins performed, missing-value handling, any reverse-coding, and the final derived field
-        that appears in the dashboard. Replace the placeholder notes below with your final documentation later.
-      </p>
-    </section>
-
-    <section class="card">
-      <h2>Source documentation template</h2>
-      <div class="doc-grid">
-        <div class="doc-item">
-          <h3>Source name</h3>
-          <p>Example: ACS 5-year estimates, ARJIS, SANDAG, DataQuest, or service inventory spreadsheet.</p>
-        </div>
-        <div class="doc-item">
-          <h3>Geographic level</h3>
-          <p>Example: census tract, ZIP code, supervisor district, point location, or crosswalk table.</p>
-        </div>
-        <div class="doc-item">
-          <h3>Columns used</h3>
-          <p>List the raw columns kept from the source file and note any renaming done for consistency.</p>
-        </div>
-        <div class="doc-item">
-          <h3>Transformations</h3>
-          <p>Describe cleaning, normalization, reverse-coding, aggregation, percentile ranking, and joins.</p>
+  <section class="card">
+    <h2>How the current YOI is built</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">Base geography</div>
+        <div class="column-desc">
+          <strong>Census tract</strong> is the primary analysis level. The main processed output is
+          <code>data/processed/yoi/yoi_components.csv</code>, joined to
+          <code>data/processed/boundaries/sd_tracts.geojson</code>.
         </div>
       </div>
-    </section>
 
-    <section class="card">
-      <h2>Example output columns to document</h2>
-      <div class="column-list">
-        <div class="column-row">
-          <div class="column-name">tract_geoid</div>
-          <div class="column-desc">Document how tract IDs were standardized and padded before joins.</div>
-        </div>
-
-        <div class="column-row">
-          <div class="column-name">economic_score / education_score / health_score</div>
-          <div class="column-desc">Explain which indicators feed each domain score and how the domain value was computed.</div>
-        </div>
-
-        <div class="column-row">
-          <div class="column-name">housing_score / safety_env_score / mobility_connectivity_score / youth_supports_score</div>
-          <div class="column-desc">Describe how each domain was normalized, weighted, and whether any indicators were reverse-coded.</div>
-        </div>
-
-        <div class="column-row">
-          <div class="column-name">yoi_custom_0_100</div>
-          <div class="column-desc">Explain how the final Youth Opportunity Index score was generated from the domain-level inputs.</div>
-        </div>
-
-        <div class="column-row">
-          <div class="column-name">total_population</div>
-          <div class="column-desc">Document the population source and how missing or unmatched records were handled.</div>
+      <div class="column-row">
+        <div class="column-name">Normalization</div>
+        <div class="column-desc">
+          Each indicator is converted to a percentile rank within San Diego County. Indicators where
+          lower values are worse are reverse-coded so that higher normalized values always mean higher opportunity.
         </div>
       </div>
-    </section>
-  </main>
+
+      <div class="column-row">
+        <div class="column-name">Domain scoring</div>
+        <div class="column-desc">
+          Indicators are grouped into seven domains:
+          Economic, Education, Health, Housing, Safety / Environment, Mobility / Connectivity, and Youth Supports.
+          The normalized indicators available within each domain are averaged to create the tract-level domain score.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Overall YOI</div>
+        <div class="column-desc">
+          The current build uses equal domain weights across all seven domains.
+          The overall score is stored as <code>yoi_raw_0_1</code> and scaled to
+          <code>yoi_0_100</code> / <code>yoi_custom_0_100</code> for dashboard display.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Indicator metadata</div>
+        <div class="column-desc">
+          The frontend explanation panels read
+          <code>data/processed/yoi/yoi_indicator_meta.csv</code>, which stores each indicator’s domain,
+          source label, directionality, and notes used throughout the dashboard.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Geographic levels shown in the dashboard</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">Census tract</div>
+        <div class="column-desc">
+          <strong>Level of detail:</strong> primary analysis geography.<br>
+          <strong>Used where:</strong> main choropleth, location details, domain explanations.<br>
+          <strong>Last updated in current build:</strong> current processed tract CSV and tract boundary GeoJSON.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">ZIP code</div>
+        <div class="column-desc">
+          <strong>Level of detail:</strong> aggregated view built from tract-level YOI outputs.<br>
+          <strong>Used where:</strong> alternative comparison geography in the dashboard.<br>
+          <strong>How built:</strong> tract scores are spatially overlaid with ZIP boundaries and aggregated into
+          <code>data/processed/yoi/yoi_zip_components.csv</code>.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Supervisor district</div>
+        <div class="column-desc">
+          <strong>Level of detail:</strong> aggregated policy geography built from tract-level YOI outputs.<br>
+          <strong>Used where:</strong> alternative comparison geography in the dashboard.<br>
+          <strong>How built:</strong> tract scores are spatially overlaid with supervisor district boundaries and aggregated into
+          <code>data/processed/yoi/yoi_supervisor_district_components.csv</code>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>External reference layer: Child Opportunity Index</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">What it is</div>
+        <div class="column-desc">
+          The Child Opportunity Index (COI) is an external benchmark layer used as a comparison overlay, not as part of the YOI calculation.
+          <br><br>
+          <strong>Link:</strong>
+          <a href="https://diversitydatakids.org/child-opportunity-index/" target="_blank" rel="noopener noreferrer">
+            diversitydatakids.org/child-opportunity-index
+          </a>
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">How it is used in this dashboard</div>
+        <div class="column-desc">
+          The dashboard loads a processed San Diego–only COI file,
+          <code>data/processed/overlays/sd_coi_2023.csv</code>.
+          The current pipeline filters COI to <strong>San Diego County</strong> and to <strong>year 2023</strong>,
+          then keeps national COI fields such as <code>r_COI_nat</code> and <code>c5_COI_nat</code>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Domain methodology</h2>
+    <p>
+      Each domain below lists the indicators currently used in the build script, the source table or dataset,
+      the raw columns used or derived, the geography level, and the current update logic reflected in the pipeline.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Economic</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">poverty_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1701</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S1701_C02_001E</code>, <code>S1701_C03_001E</code>, or <code>S1701_C02_002E</code><br>
+          <strong>Geography:</strong> census tract base; ZIP and supervisor views are aggregated from tract output<br>
+          <strong>Used where:</strong> Economic domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1701</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">median_hh_income</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B19013</a><br>
+          <strong>Columns used:</strong> <code>B19013_001E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Economic domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B19013</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">unemployment_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2301</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S2301_C04_001E</code>, <code>S2301_C02_004E</code>, or <code>S2301_C02_001E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Economic domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2301</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">snap_or_assist_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2201</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S2201_C02_013E</code>, <code>S2201_C02_015E</code>, or <code>S2201_C02_001E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Economic domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2201</code>)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Education</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">hs_plus / ba_plus</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1501</a><br>
+          <strong>Columns used:</strong> high school and bachelor’s attainment percent columns selected heuristically from <code>S1501_C02_013E</code> through <code>S1501_C02_016E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Education domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1501</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">school_enrollment</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1401</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S1401_C02_001E</code>, <code>S1401_C02_002E</code>, or <code>S1401_C02_003E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Education domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1401</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">youth_disconnection_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B14005</a><br>
+          <strong>Columns used:</strong> <code>B14005_001E</code> total plus a placeholder sum of non-total columns<br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Education domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B14005</code>)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Health</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">uninsured_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2701</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S2701_C02_001E</code>, <code>S2701_C02_005E</code>, or <code>S2701_C02_004E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Health domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2701</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">disability_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1810</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S1810_C02_001E</code>, <code>S1810_C02_002E</code>, or <code>S1810_C02_003E</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Health domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1810</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">frequent_mental_distress / poor_physical_health</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://www.cdc.gov/places/" target="_blank" rel="noopener noreferrer">CDC PLACES</a><br>
+          <strong>Columns used:</strong> <code>MeasureId=MHLTH</code> and <code>MeasureId=PHLTH</code><br>
+          <strong>Geography:</strong> census tract base<br>
+          <strong>Used where:</strong> Health domain score<br>
+          <strong>Last updated in current build:</strong> latest PLACES tract file and latest available <code>Year</code> found at build time
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Housing</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">rent_burden_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25070</a><br>
+          <strong>Columns used:</strong> placeholder pull from <code>B25070_001E</code><br>
+          <strong>Used where:</strong> Housing domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25070</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">overcrowding_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25014</a><br>
+          <strong>Columns used:</strong> placeholder pull from <code>B25014_001E</code><br>
+          <strong>Used where:</strong> Housing domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25014</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">moved_past_year_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B07001</a><br>
+          <strong>Columns used:</strong> placeholder pull from <code>B07001_001E</code><br>
+          <strong>Used where:</strong> Housing domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B07001</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">homeownership_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25003</a><br>
+          <strong>Columns used:</strong> <code>B25003_002E / B25003_001E</code><br>
+          <strong>Used where:</strong> Housing domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25003</code>)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Safety / Environment</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">single_parent_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1101</a><br>
+          <strong>Columns used:</strong> heuristic pick from <code>S1101_C02_002E</code>, <code>S1101_C02_001E</code>, or <code>S1101_C02_009E</code><br>
+          <strong>Used where:</strong> Safety / Environment domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1101</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">vacancy_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25002</a><br>
+          <strong>Columns used:</strong> <code>B25002_003E / B25002_001E</code><br>
+          <strong>Used where:</strong> Safety / Environment domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25002</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">crime_rate_per_1k</div>
+        <div class="column-desc">
+          <strong>Source:</strong> SANDAG ARJIS CIBRS<br>
+          <strong>Columns used:</strong> distinct incident UID counts aggregated to tract, then divided by tract population<br>
+          <strong>Used where:</strong> Safety / Environment domain score<br>
+          <strong>Last updated in current build:</strong> latest full crime year available in the raw CIBRS data at build time
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">env_burden</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://oehha.ca.gov/calenviroscreen" target="_blank" rel="noopener noreferrer">CalEnviroScreen 4.0</a><br>
+          <strong>Columns used:</strong> environmental burden / percentile field merged to tract GEOID<br>
+          <strong>Used where:</strong> Safety / Environment domain score<br>
+          <strong>Last updated in current build:</strong> CalEnviroScreen 4.0 shapefile used in the pipeline
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Mobility / Connectivity</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">no_vehicle_rate</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B08201</a><br>
+          <strong>Columns used:</strong> <code>B08201_002E / B08201_001E</code><br>
+          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B08201</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">commute_time_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B08303</a><br>
+          <strong>Columns used:</strong> placeholder pull from <code>B08303_001E</code><br>
+          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B08303</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">internet_sub_rate_proxy</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B28002</a><br>
+          <strong>Columns used:</strong> proxy broadband subscription share from a non-total estimate divided by <code>B28002_001E</code><br>
+          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
+          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B28002</code>)
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">lack_transport</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <a href="https://www.cdc.gov/places/" target="_blank" rel="noopener noreferrer">CDC PLACES</a><br>
+          <strong>Columns used:</strong> <code>MeasureId=LACKTRPT</code><br>
+          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
+          <strong>Last updated in current build:</strong> latest PLACES tract file and latest available <code>Year</code> found at build time
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Youth Supports</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">service_count</div>
+        <div class="column-desc">
+          <strong>Source:</strong> local <code>services_master.csv</code> inventory<br>
+          <strong>Columns used:</strong> service records grouped by tract GEOID<br>
+          <strong>Used where:</strong> Youth Supports domain score<br>
+          <strong>Last updated in current build:</strong> current <code>data/rawdomains/youth/services_master.csv</code> file
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">services_per_10k</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <code>services_master.csv</code> + tract population<br>
+          <strong>Columns used:</strong> <code>service_count / total_population * 10000</code><br>
+          <strong>Used where:</strong> Youth Supports domain score<br>
+          <strong>Geography:</strong> tract base, aggregated upward for ZIP and supervisor district views
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">youth_services_per_10k</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <code>services_master.csv</code><br>
+          <strong>Columns used:</strong> keyword-filtered youth-focused services divided by tract population<br>
+          <strong>Used where:</strong> Youth Supports domain score<br>
+          <strong>Keywords used:</strong> youth, teen, child, children, after school, school, tutoring
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">mh_services_per_10k</div>
+        <div class="column-desc">
+          <strong>Source:</strong> <code>services_master.csv</code><br>
+          <strong>Columns used:</strong> keyword-filtered mental-health-related services divided by tract population<br>
+          <strong>Used where:</strong> Youth Supports domain score<br>
+          <strong>Keywords used:</strong> mental, behavioral, therapy, counsel, psychi, substance, sud
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 </body>
 </html>

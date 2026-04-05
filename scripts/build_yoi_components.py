@@ -138,11 +138,19 @@ def load_places_latest() -> pd.DataFrame | None:
         return None
     p = cands[-1]
     df = pd.read_csv(p)
-    # Typical PLACES fields
-    loc_col = "LocationName" if "LocationName" in df.columns else ("locationname" if "locationname" in df.columns else None)
+        # Prefer a real tract id column over LocationName
+    loc_col = None
+    for cand in ["TractFIPS", "tractfips", "GEOID", "geoid", "GEO_ID", "geo_id", "LocationID", "locationid", "LocationName", "locationname"]:
+        if cand in df.columns:
+            loc_col = cand
+            break
     if loc_col is None:
         return None
-    df["tract_geoid"] = df[loc_col].apply(geoid11_from_any)
+
+    if str(loc_col).lower() in {"tractfips", "locationid"}:
+        df["tract_geoid"] = df[loc_col].apply(sd_geoid11_from_tract_like)
+    else:
+        df["tract_geoid"] = df[loc_col].apply(geoid11_from_any)
 
     # SD county filter if exists
     if "CountyFIPS" in df.columns:
@@ -286,14 +294,14 @@ def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
     gdf = gdf[gdf["tract_geoid"].astype(str).str.startswith("06073")].copy()
 
     env_col = None
-    for cand in ["CES4_Percentile", "CES4_Pctl", "Percentile", "CES_Pctl", "CES_SCORE", "CES4_Score"]:
+    for cand in ["PolBurdP", "PolBurdSc", "CIscoreP", "CIscore", "CES4_Percentile", "CES4_Pctl", "Percentile", "CES_Pctl", "CES_SCORE", "CES4_Score"]:
         if cand in gdf.columns:
             env_col = cand
             break
     if env_col is None:
         for c in gdf.columns:
             lc = c.lower()
-            if "pctl" in lc or "percent" in lc:
+            if "polburd" in lc or "burd" in lc or "pctl" in lc or "percent" in lc:
                 env_col = c
                 break
 
@@ -320,6 +328,14 @@ def pick_col(df, candidates):
         c = cols_lower.get(cand.lower())
         if c is not None:
             return c
+    return None
+
+def first_nonempty_numeric_col(df, candidates):
+    for c in candidates:
+        if c in df.columns:
+            s = pd.to_numeric(df[c], errors="coerce")
+            if s.notna().sum() > 0:
+                return c
     return None
 
 # 1) Use CalEnviroScreen shapefile as the base tract list + geometry
@@ -511,17 +527,16 @@ else:
 # EDUCATION 
 s1501 = load_census_table("education", "ACSST5Y2024.S1501")
 if s1501 is not None:
-    # HS+ and BA+ percent columns vary; try common candidates
-    hs_pick = None
-    ba_pick = None
-    for c in ["S1501_C02_015E", "S1501_C02_014E", "S1501_C02_013E"]:
-        if c in s1501.columns:
-            hs_pick = c
-            break
-    for c in ["S1501_C02_016E", "S1501_C02_015E", "S1501_C02_014E"]:
-        if c in s1501.columns:
-            ba_pick = c
-            break
+    hs_pick = first_nonempty_numeric_col(s1501, [
+        "S1501_C02_015E", "S1501_C03_015E", "S1501_C04_015E", "S1501_C05_015E", "S1501_C06_015E",
+        "S1501_C02_014E", "S1501_C03_014E", "S1501_C04_014E", "S1501_C05_014E", "S1501_C06_014E",
+        "S1501_C02_013E", "S1501_C03_013E", "S1501_C04_013E", "S1501_C05_013E", "S1501_C06_013E",
+    ])
+    ba_pick = first_nonempty_numeric_col(s1501, [
+        "S1501_C02_016E", "S1501_C03_016E", "S1501_C04_016E", "S1501_C05_016E", "S1501_C06_016E",
+        "S1501_C02_015E", "S1501_C03_015E", "S1501_C04_015E", "S1501_C05_015E", "S1501_C06_015E",
+        "S1501_C02_014E", "S1501_C03_014E", "S1501_C04_014E", "S1501_C05_014E", "S1501_C06_014E",
+    ])
 
     tmp = s1501[["tract_geoid"]].copy()
     tmp["hs_plus"] = safe_num(s1501[hs_pick]) if hs_pick else np.nan
@@ -536,15 +551,15 @@ else:
 
 s1401 = load_census_table("education", "ACSST5Y2024.S1401")
 if s1401 is not None:
-    # try overall enrollment percent
-    pick = None
-    for c in ["S1401_C02_001E", "S1401_C02_002E", "S1401_C02_003E"]:
-        if c in s1401.columns:
-            pick = c
-            break
+    pick = first_nonempty_numeric_col(s1401, [
+        "S1401_C02_001E", "S1401_C03_001E", "S1401_C04_001E", "S1401_C05_001E", "S1401_C06_001E",
+        "S1401_C02_002E", "S1401_C03_002E", "S1401_C04_002E", "S1401_C05_002E", "S1401_C06_002E",
+        "S1401_C02_003E", "S1401_C03_003E", "S1401_C04_003E", "S1401_C05_003E", "S1401_C06_003E",
+    ])
     if pick is None:
         cols = [c for c in s1401.columns if c.startswith("S1401_") and c.endswith("E")]
-        pick = cols[0] if cols else None
+        pick = first_nonempty_numeric_col(s1401, cols)
+
     tmp = s1401[["tract_geoid"]].copy()
     tmp["school_enrollment"] = safe_num(s1401[pick]) if pick else np.nan
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
@@ -871,8 +886,8 @@ else:
 # YOUTH SUPPORTS / WRAPAROUND 
 services_csv = RAW_DOMAINS / "youth" / "services_master.csv"
 if services_csv.exists():
-    svc = pd.read_csv(services_csv)
-    # find tract column
+    svc = pd.read_csv(services_csv, dtype=str)
+
     tract_col = None
     for cand in ["tract_geoid", "GEOID", "geoid", "tract"]:
         if cand in svc.columns:
@@ -880,18 +895,9 @@ if services_csv.exists():
             break
     if tract_col is None:
         tract_col = svc.columns[0]
-    svc["tract_geoid"] = svc[tract_col].apply(geoid11_from_any)
 
-    # Force tract_geoid to exist + be clean
-    svc["tract_geoid"] = (
-        svc["tract_geoid"]
-        .astype(str)
-        .str.replace(r"\.0$", "", regex=True)
-        .str.replace(r"\D", "", regex=True)
-    )
-    svc.loc[svc["tract_geoid"].str.len() != 11, "tract_geoid"] = np.nan
-
-    # Now filter to San Diego tracts, but DO NOT drop the column
+    svc["tract_geoid"] = svc[tract_col].apply(sd_geoid11_from_tract_like)
+    svc = svc[svc["tract_geoid"].notna()].copy()
     svc = sd_only(svc)
 
     # Safety check (this will prevent silent failures)
@@ -997,7 +1003,10 @@ for d in DOMAINS:
     domain_scores["yoi_raw_0_1"] += domain_scores[f"{d}_score"] * w
 domain_scores["yoi_0_100"] = domain_scores["yoi_raw_0_1"] * 100.0
 
-# Attach some useful raw columns
+# Attach raw + normalized indicator columns so the frontend can explain each domain
+indicator_cols = [c for c in meta_df["indicator"].tolist() if c in tracts.columns]
+norm_indicator_cols = [f"norm_{c}" for c in indicator_cols if f"norm_{c}" in tracts.columns]
+
 keep_raw = ["tract_geoid"]
 
 if "total_population" in tracts.columns:
@@ -1005,11 +1014,19 @@ if "total_population" in tracts.columns:
 elif pop_col and pop_col in tracts.columns:
     keep_raw.append(pop_col)
 
-for c in ["crime_rate_per_1k", "service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
-    if c in tracts.columns:
+for c in indicator_cols + norm_indicator_cols:
+    if c in tracts.columns and c not in keep_raw:
         keep_raw.append(c)
 
-out = domain_scores.merge(tracts[keep_raw].drop_duplicates("tract_geoid"), on="tract_geoid", how="left")
+for c in ["crime_rate_per_1k", "service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
+    if c in tracts.columns and c not in keep_raw:
+        keep_raw.append(c)
+
+out = domain_scores.merge(
+    tracts[keep_raw].drop_duplicates("tract_geoid"),
+    on="tract_geoid",
+    how="left",
+)
 
 out_path = OUT_YOI_DIR / "yoi_components.csv"
 out.to_csv(out_path, index=False)

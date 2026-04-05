@@ -7,140 +7,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #072843;
-      --blue: #0b5b96;
-      --text: #1e293b;
-      --muted: #667085;
-      --line: rgba(15, 23, 42, 0.10);
-      --panel: #ffffff;
-      --bg: #f4f7fb;
-    }
-
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-    }
-
-    .page-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255,255,255,0.96);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .page-header-inner {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .brand-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-strong { color: #0b5b96; }
-    .brand-accent { color: #f97316; }
-
-    .brand-subtitle {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .top-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-    }
-
-    .top-nav a {
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .page-shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 42px 24px 72px;
-    }
-
-    .hero {
-      margin-bottom: 24px;
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--blue);
-      font-size: 0.84rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0 0 14px;
-      font-size: clamp(2rem, 4vw, 3.1rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-    }
-
-    .hero p, .card p {
-      max-width: 850px;
-      font-size: 1rem;
-      line-height: 1.7;
-      color: #475569;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 24px rgba(4, 22, 39, 0.05);
-    }
-
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 1.2rem;
-      color: #0f172a;
-    }
-  </style>
+  <link rel="stylesheet" href="./static-pages.css" />
 </head>
 <body>
   <header class="page-header">
     <div class="page-header-inner">
       <a class="brand" href="./index.html">
-        <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>.org</div>
-        <div class="brand-subtitle">data for equitable youth opportunity in San Diego County</div>
+        <div class="brand-title">Youth Opportunity Desert Dashboard</div>
+<div class="brand-subtitle">Halıcıoğlu Data Science Institute – UC San Diego</div>
       </a>
 
       <nav class="top-nav">
-        <a href="./index.html">Map</a>
-        <a href="./datasets.html">Datasets</a>
-        <a href="./child-opportunity-index.html">Child Opportunity Index</a>
-        <a href="./about.html">About Us</a>
-        <a href="./contact.html">Contact Us</a>
+        <a class="nav-link" href="./index.html">Map</a>
+        <a class="nav-link" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link active" href="./about.html">About Us</a>
+        <a class="nav-link" href="./contact.html">Contact Us</a>
       </nav>
     </div>
   </header>
@@ -150,22 +31,21 @@
       <p class="eyebrow">About Us</p>
       <h1>About this project</h1>
       <p>
-        Add your project overview here. You can describe who built the Youth Opportunity Index,
-        why it was created, who the intended users are, and how this tool should be used.
+        The Youth Opportunity Desert Dashboard is a data-driven project focused on identifying gaps in access to youth-supporting resources across San Diego County. By combining information on youth service locations with demographic, socioeconomic, and transportation data, the dashboard helps reveal where young people may face limited access to opportunities such as after-school programs, libraries, parks, mentorship, and other supportive services. The goal is to make these disparities more visible so that communities, organizations, and policymakers can better understand where needs are greatest and make more informed, equitable decisions about future investments and program expansion.
       </p>
     </section>
 
     <section class="card">
       <h2>Mission</h2>
       <p>
-        Add your mission statement here.
+        The Youth Opportunity Desert Dashboard aims to identify and visualize gaps in access to youth-supporting resources across San Diego County. By integrating service location, demographic, and transportation data, the dashboard helps reveal youth opportunity deserts and inform more equitable, data-driven planning for future investments and programs.
       </p>
     </section>
 
     <section class="card">
       <h2>Team</h2>
       <p>
-        Add your team members, collaborators, advisors, and partner organizations here later.
+        This project was developed by Lauren Vo, an undergraduate Data Science student at UC San Diego, with research guidance from Shay Samat of the Data Science Alliance. It is supported through the Halıcıoğlu Data Science Institute Undergraduate Scholarship Program, which supports multidisciplinary student-led projects at UC San Diego, and is carried out in partnership with the Data Science Alliance, a San Diego-based 501(c)(3) nonprofit focused on advancing responsible data science and AI for community impact.
       </p>
     </section>
   </main>

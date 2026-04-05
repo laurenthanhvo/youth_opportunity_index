@@ -15,28 +15,14 @@
 <body>
   <div id="map"></div>
 
-  <header class="top-header">
-    <div class="brand-wrap">
-      <div class="brand-title"><span class="brand-strong">youthopportunity</span><span class="brand-accent">index</span>dashboard</div>
-      <div class="brand-subtitle">data for equitable youth opportunity in San Diego County</div>
-    </div>
-    <div class="top-actions">
-      <div class="search-shell">
-        <i class="bi bi-search"></i>
-        <input id="searchInput" type="text" placeholder="Search for a tract GEOID">
-      </div>
-      <button id="menuBtn" class="menu-btn"><i class="bi bi-list"></i> Menu</button>
-    </div>
-  </header>
-
   <aside class="left-rail">
-    <button class="rail-btn active" data-panel="controls"><i class="bi bi-sliders2"></i><span>Data<br>Controls</span></button>
-    <button class="rail-btn" data-panel="overlays"><i class="bi bi-layers"></i><span>Overlays</span></button>
-    <button class="rail-btn" data-panel="profile"><i class="bi bi-bar-chart"></i><span>Domain<br>Profile</span></button>
-    <button class="rail-btn" data-panel="location"><i class="bi bi-geo-alt"></i><span>Location<br>Details</span></button>
-    <button class="rail-btn" data-panel="faqs"><i class="bi bi-question-circle"></i><span>FAQs</span></button>
-    <button class="rail-btn" data-panel="share"><i class="bi bi-share"></i><span>Share</span></button>
-  </aside>
+  <button class="rail-btn active" data-panel="controls"><i class="bi bi-sliders2"></i><span>Data<br>Controls</span></button>
+  <button class="rail-btn" data-panel="overlays"><i class="bi bi-layers"></i><span>Overlays</span></button>
+  <!-- <button class="rail-btn" data-panel="profile"><i class="bi bi-bar-chart"></i><span>Domain<br>Profile</span></button> -->
+  <button class="rail-btn" data-panel="location"><i class="bi bi-geo-alt"></i><span>Location<br>Details</span></button>
+  <button class="rail-btn" data-panel="faqs"><i class="bi bi-question-circle"></i><span>FAQs</span></button>
+  <button class="rail-btn" data-panel="share"><i class="bi bi-share"></i><span>Share</span></button>
+</aside>
 
   <section class="drawer-panel" id="drawerPanel">
     <div class="drawer-header">
@@ -54,13 +40,12 @@
           <select id="mapLayerSelect" class="form-select control-select"></select>
         </div>
 
-        <div class="control-section">
+        <!-- <div class="control-section">
           <label class="control-label">Rate locations by</label>
           <div class="segmented" id="scoreModeGroup">
-            <button class="seg-btn active" data-mode="level">Level</button>
-            <button class="seg-btn" data-mode="score">Score</button>
+            <button class="seg-btn active" data-mode="score">Score</button>
           </div>
-        </div>
+        </div> -->
 
         <div class="control-section">
           <label class="control-label">Level of comparison</label>
@@ -163,11 +148,11 @@
         <div id="transitAvailabilityNote" class="callout-note mt-3"></div>
       </div>
 
-      <div class="panel-view" id="panel-profile">
-  <div class="helper-text mb-3">Domain scores for the selected area, shown out of 100.</div>
-  <div id="profileChart"></div>
-  <div class="helper-text mt-3">Click a bar to switch the map layer to that domain. Smaller text shows weighted contribution.</div>
-</div>
+            <!-- <div class="panel-view" id="panel-profile">
+        <div class="callout-note mb-3"><strong>Select an area on the map</strong> to load its domain profile here.</div>
+        <div id="profileChart"></div>
+        <div class="helper-text mt-3">Click a bar to switch the map layer to that domain. Smaller text shows weighted contribution.</div>
+      </div> -->
 
       <div class="panel-view" id="panel-location">
         <div id="locationDetails"></div>
@@ -177,16 +162,23 @@
   <div class="faq-item open">
     <button class="faq-btn">What does this map show?<i class="bi bi-chevron-down"></i></button>
     <div class="faq-body">
-      This dashboard maps the Youth Opportunity Index for San Diego County. You can compare places by census tract, ZIP code, or supervisor district, inspect overall opportunity or single domains, and explore transit, services, and related overlays.
+      This dashboard maps the Youth Opportunity Index for San Diego County. You can compare places by census tract, ZIP code, or supervisor district, inspect overall opportunity or single domains, adjust domain weights, and compare the local YOI against the external Child Opportunity Index overlay.
     </div>
   </div>
 
   <div class="faq-item">
-    <button class="faq-btn">How should I read the colors?<i class="bi bi-chevron-down"></i></button>
-    <div class="faq-body">
-      Lighter blue represents lower opportunity and darker blue represents higher opportunity. In Level mode, the map is grouped into Very Low through Very High categories. In Score mode, the color scale behaves more continuously from lower to higher values.
-    </div>
+  <button class="faq-btn">How should I read the colors?<i class="bi bi-chevron-down"></i></button>
+  <div class="faq-body">
+    The map uses a warm-to-cool score scale. Lower opportunity appears in red, orange, and light gold tones, while higher opportunity appears in light teal through dark teal tones. For the Youth Opportunity Index, scores are county-normalized for 2024. For the Child Opportunity Index overlay, scores are nationally normalized for 2023.
   </div>
+</div>
+
+<div class="faq-item">
+  <button class="faq-btn">Why does the Youth Opportunity Index look different from the Child Opportunity Index?<i class="bi bi-chevron-down"></i></button>
+  <div class="faq-body">
+    These two layers are not the same measure. The Youth Opportunity Index is this project’s local composite index for San Diego County and is county-normalized for 2024. The Child Opportunity Index overlay is an external benchmark layer and is nationally normalized for 2023. Because they use different inputs, normalization frames, and years, the same tract may look different across the two maps.
+  </div>
+</div>
 
   <div class="faq-item">
     <button class="faq-btn">What do the custom domain weights do?<i class="bi bi-chevron-down"></i></button>
@@ -217,11 +209,11 @@
   </div>
 
   <div class="faq-item">
-    <button class="faq-btn">What do the overlays do?<i class="bi bi-chevron-down"></i></button>
-    <div class="faq-body">
-      Overlays let you turn supporting map layers on and off. These include the YOI choropleth, tract boundaries, supervisor district view, transit routes, transit stops, service locations, and the Child Opportunity Index overlay. Use them to compare opportunity patterns with mobility access, services, and alternate reference layers.
-    </div>
+  <button class="faq-btn">What do the overlays do?<i class="bi bi-chevron-down"></i></button>
+  <div class="faq-body">
+    Overlays let you turn supporting map layers on and off. These include the YOI choropleth, tract boundaries, supervisor district view, transit routes, transit stops, service locations, and the Child Opportunity Index overlay. The COI overlay is meant as a reference layer, not as the same score system as YOI.
   </div>
+</div>
 
   <div class="faq-item">
     <button class="faq-btn">How should I interpret the Child Opportunity Index overlay?<i class="bi bi-chevron-down"></i></button>
@@ -270,6 +262,34 @@
     </div>
   </section>
 
+  <div class="drawer-tool-stack">
+  <button id="railMenuBtn" class="drawer-tool-btn" type="button" title="Menu">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <button id="railSearchBtn" class="drawer-tool-btn" type="button" title="Search">
+    <i class="bi bi-search"></i>
+  </button>
+
+  <button id="railZoomInBtn" class="drawer-tool-btn" type="button" title="Zoom in">
+    <i class="bi bi-plus-lg"></i>
+  </button>
+
+  <button id="railZoomOutBtn" class="drawer-tool-btn" type="button" title="Zoom out">
+    <i class="bi bi-dash-lg"></i>
+  </button>
+</div>
+
+<div id="railSearchFlyout" class="drawer-search-flyout">
+  <div class="rail-search-shell">
+    <i class="bi bi-search"></i>
+    <input id="searchInput" type="text" placeholder="Search for a tract GEOID">
+    <button id="closeRailSearchBtn" class="rail-search-close" type="button" title="Close search">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+</div>
+
     <div id="menuBackdrop" class="menu-backdrop"></div>
 
   <aside id="siteMenuDrawer" class="site-menu-drawer" aria-hidden="true">
@@ -287,12 +307,7 @@
       <!-- <div class="site-menu-group">
         <div class="site-menu-group-label">Pages</div> -->
         <a class="site-menu-link" href="./datasets.html">
-  <span>Datasets</span>
-  <i class="bi bi-arrow-right"></i>
-</a>
-
-<a class="site-menu-link" href="https://diversitydatakids.org/child-opportunity-index/">
-  <span>Child Opportunity Index</span>
+  <span>YOI Methodology</span>
   <i class="bi bi-arrow-right"></i>
 </a>
 

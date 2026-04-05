@@ -126,12 +126,16 @@ def main():
     tracts = tracts[~tracts[TRACT_ID_COL].isin(ocean_ids)].copy()
 
     # merge scores into tract geometry
-    score_cols_for_merge = [overall_input_col] + DOMAIN_SCORE_COLS
+    value_cols_for_merge = [
+    c for c in tract_scores.columns
+    if c not in {TRACT_ID_COL, POP_COL}
+    and pd.api.types.is_numeric_dtype(tract_scores[c])
+]
     tracts = tracts[[TRACT_ID_COL, "geometry"]].merge(
-        tract_scores[[TRACT_ID_COL, POP_COL] + score_cols_for_merge],
-        on=TRACT_ID_COL,
-        how="inner",
-    )
+    tract_scores[[TRACT_ID_COL, POP_COL] + value_cols_for_merge],
+    on=TRACT_ID_COL,
+    how="inner",
+)
 
     # --- load ZIP geometry ---
     zips = gpd.read_file(ZIP_GEOJSON)
@@ -148,11 +152,11 @@ def main():
 
     # --- intersect tracts with ZIPs ---
     inter = gpd.overlay(
-        tracts[[TRACT_ID_COL, POP_COL] + score_cols_for_merge + ["tract_area", "geometry"]],
-        zips[["zip", "geometry"]],
-        how="intersection",
-        keep_geom_type=False,
-    )
+    tracts[[TRACT_ID_COL, POP_COL] + value_cols_for_merge + ["tract_area", "geometry"]],
+    zips[["zip", "geometry"]],
+    how="intersection",
+    keep_geom_type=False,
+)
 
     if inter.empty:
         raise ValueError("Tract/ZIP intersection produced no rows.")
@@ -176,7 +180,7 @@ def main():
         use_weights = g["weighted_pop"].values
         fallback_weights = g["area_share"].values
 
-        for col in score_cols_for_merge:
+        for col in value_cols_for_merge:
             val = weighted_mean(g[col].values, use_weights)
             if pd.isna(val):
                 val = weighted_mean(g[col].values, fallback_weights)
@@ -194,19 +198,21 @@ def main():
         out["yoi_0_100"] = out[overall_input_col]
 
     preferred_order = [
-        "zip",
-        "total_population",
-        "yoi_custom_0_100",
-        "yoi_0_100",
-        "economic_score",
-        "education_score",
-        "health_score",
-        "housing_score",
-        "safety_env_score",
-        "mobility_connectivity_score",
-        "youth_supports_score",
-    ]
-    out = out[[c for c in preferred_order if c in out.columns]]
+    "zip",
+    "total_population",
+    "yoi_custom_0_100",
+    "yoi_0_100",
+    "economic_score",
+    "education_score",
+    "health_score",
+    "housing_score",
+    "safety_env_score",
+    "mobility_connectivity_score",
+    "youth_supports_score",
+]
+
+    remaining_cols = [c for c in out.columns if c not in preferred_order]
+    out = out[[c for c in preferred_order if c in out.columns] + remaining_cols]
 
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(OUT_CSV, index=False)

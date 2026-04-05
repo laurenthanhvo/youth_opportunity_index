@@ -15,7 +15,12 @@ const DOMAIN_LABELS = {
 
 const EXCLUDED_TRACT_GEOIDS = new Set(['06073990100']);
 
-const BLUES = ['#eaf3fb', '#b6d3e9', '#6da3c9', '#275c81', '#0a2f4a'];
+// const BLUES = ['#eaf3fb', '#b6d3e9', '#6da3c9', '#275c81', '#0a2f4a'];
+const BLUES = ['#B6442C', '#E59A22', '#EEC574', '#7CC6BB', '#2B989E', '#246E7E', '#27373D'];
+
+const WARM_COLORS = ['#B6442C', '#E59A22', '#EEC574'];
+const MID_COLORS = ['#EEC574', '#B5C6A8', '#7CC6BB'];
+const COOL_COLORS = ['#7CC6BB', '#2B989E', '#246E7E', '#27373D'];
 
 const state = {
   rawYoi: [],
@@ -33,7 +38,7 @@ const state = {
   selectedGeoid: null,
   activePanel: 'controls',
   mapLayer: 'YOI (0–100)',
-  scoreMode: 'level',
+  scoreMode: 'score',
   showDataFor: 'tracts',
   showChoro: true,
   showBounds: true,
@@ -59,7 +64,16 @@ let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
 
-const map = L.map('map', { zoomControl: true, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
+function clearTransientUi() {
+  if (chartTooltip) chartTooltip.style('opacity', 0);
+
+  if (popupRef) {
+    popupRef.remove();
+    popupRef = null;
+  }
+}
+
+const map = L.map('map', { zoomControl: false, preferCanvas: true, attributionControl: true }).setView([32.87, -116.96], 10);
 
 map.getContainer().style.opacity = '0';
 map.getContainer().style.transition = 'opacity 120ms ease';
@@ -168,7 +182,9 @@ function currentAreaLabelPlural() {
 }
 
 function isFiniteNumber(v) {
-  return Number.isFinite(+v);
+  if (v === null || v === undefined) return false;
+  if (typeof v === 'string' && v.trim() === '') return false;
+  return Number.isFinite(Number(v));
 }
 
 function coerceCsvRows(rows) {
@@ -207,8 +223,16 @@ function metricDomain() {
 
 function levelBins() {
   const [min, max] = metricDomain();
-  const step = (max - min) / 5;
-  return [min + step, min + 2 * step, min + 3 * step, min + 4 * step];
+  const mid = min + (max - min) * 0.5;
+
+  return [
+    min + (mid - min) * (1 / 3),
+    min + (mid - min) * (2 / 3),
+    mid,
+    mid + (max - mid) * (1 / 4),
+    mid + (max - mid) * (2 / 4),
+    mid + (max - mid) * (3 / 4),
+  ];
 }
 
 function currentBins() {
@@ -219,17 +243,19 @@ function currentLegendLabels() {
   if (state.scoreMode === 'score') {
     return ['0', '20', '40', '60', '80', '100'];
   }
-  return ['Very Low', 'Low', 'Moderate', 'High', 'Very High'];
+  return ['Very Low', 'Low', 'Low-Mid', 'Moderate', 'Mid-High', 'High', 'Very High'];
 }
 
 function valueToCategory(v) {
   if (!isFiniteNumber(v)) return 'N/A';
   const bins = levelBins();
-  if (v < bins[0]) return 'Very Low';
-  if (v < bins[1]) return 'Low';
-  if (v < bins[2]) return 'Moderate';
-  if (v < bins[3]) return 'High';
-  return 'Very High';
+  const labels = currentLegendLabels();
+
+  for (let i = 0; i < bins.length; i++) {
+    if (v < bins[i]) return labels[i];
+  }
+
+  return labels[labels.length - 1];
 }
 
 function scoreDisplayValue(v) {
@@ -292,6 +318,19 @@ function setSearchStatus(message, isError = false) {
   input.setCustomValidity(isError ? message : '');
   input.title = message || '';
   if (isError && typeof input.reportValidity === 'function') input.reportValidity();
+}
+
+function setRailSearchOpen(isOpen) {
+  const flyout = document.getElementById('railSearchFlyout');
+  if (!flyout) return;
+
+  flyout.classList.toggle('open', isOpen);
+
+  if (isOpen) {
+    requestAnimationFrame(() => {
+      document.getElementById('searchInput')?.focus();
+    });
+  }
 }
 
 function runSearch() {
@@ -426,15 +465,24 @@ function colorForValue(v) {
   if (state.scoreMode === 'score') {
     const [min, max] = metricDomain();
     const t = Math.max(0, Math.min(1, (v - min) / (max - min || 1)));
-    return d3.interpolateRgbBasis(BLUES)(t);
+
+    if (t <= 0.45) {
+      return d3.interpolateRgbBasis(WARM_COLORS)(t / 0.45);
+    }
+
+    if (t <= 0.55) {
+      return d3.interpolateRgbBasis(MID_COLORS)((t - 0.45) / 0.10);
+    }
+
+    return d3.interpolateRgbBasis(COOL_COLORS)((t - 0.55) / 0.45);
   }
 
   const bins = levelBins();
-  if (v < bins[0]) return BLUES[0];
-  if (v < bins[1]) return BLUES[1];
-  if (v < bins[2]) return BLUES[2];
-  if (v < bins[3]) return BLUES[3];
-  return BLUES[4];
+  for (let i = 0; i < bins.length; i++) {
+    if (v < bins[i]) return BLUES[i];
+  }
+
+  return BLUES[BLUES.length - 1];
 }
 
 function styleFeature(feature) {
@@ -447,11 +495,18 @@ function styleFeature(feature) {
       ? normalizeDistrict(state.selectedGeoid)
       : normalizeGeoid(state.selectedGeoid);
   const isSelected = featureKey === selectedKey;
+
+  const showFill =
+    effectiveShowCoiOverlay() ||
+    state.mapLayer !== 'YOI (0–100)' ||
+    state.showDataFor !== 'tracts' ||
+    state.showChoro;
+
   return {
     color: isSelected ? '#ffffff' : (state.showBounds ? 'rgba(27,51,75,0.34)' : 'transparent'),
     weight: isSelected ? 3.2 : (state.showBounds ? 0.6 : 0),
-    fillColor: state.showChoro ? colorForValue(value) : '#ffffff',
-    fillOpacity: state.showChoro ? (isSelected ? 0.92 : 0.92) : 0.02,
+    fillColor: showFill ? colorForValue(value) : '#ffffff',
+    fillOpacity: showFill ? 0.92 : 0.02,
   };
 }
 
@@ -592,24 +647,24 @@ routesLayer = null;
 
 if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson) > 0) {
   const routeOutlineLayer = L.geoJSON(state.routesGeojson, {
-    style: () => ({
-      color: 'rgba(7, 40, 67, 0.55)',
-      weight: 6.6,
-      opacity: 1,
-      lineCap: 'round',
-      lineJoin: 'round',
-    }),
-    interactive: false,
-  });
+  style: () => ({
+    color: 'rgba(255, 255, 255, 0.88)',
+    weight: 5.4,
+    opacity: 1,
+    lineCap: 'round',
+    lineJoin: 'round',
+  }),
+  interactive: false,
+});
 
-  const routeCenterLayer = L.geoJSON(state.routesGeojson, {
-    style: () => ({
-      color: '#e8f2ff',
-      weight: 3.2,
-      opacity: 0.98,
-      lineCap: 'round',
-      lineJoin: 'round',
-    }),
+const routeCenterLayer = L.geoJSON(state.routesGeojson, {
+  style: () => ({
+    color: '#3B828D',
+    weight: 2.8,
+    opacity: 0.98,
+    lineCap: 'round',
+    lineJoin: 'round',
+  }),
     onEachFeature: (feature, layer) => {
       const p = feature.properties || {};
       const label =
@@ -649,12 +704,12 @@ if (state.showRoutes && state.routesGeojson && featureCount(state.routesGeojson)
   if (state.showStops && state.stopsGeojson && featureCount(state.stopsGeojson) > 0) {
     stopsLayer = L.geoJSON(state.stopsGeojson, {
       pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-        radius: 4,
-        weight: 1.4,
-        color: '#1e6394',
-        fillColor: '#e8f2ff',
-        fillOpacity: 0.95,
-      }),
+  radius: 4,
+  weight: 1.4,
+  color: '#143a3d',
+  fillColor: '#2B989E',
+  fillOpacity: 0.95,
+}),
       onEachFeature: (feature, layer) => {
         const p = feature.properties || {};
         layer.bindTooltip(String(p.stop_name || p.name || p.stop_id || 'Transit stop'));
@@ -668,12 +723,12 @@ serviceLayer = null;
 if (state.showServices && state.servicesGeojson && featureCount(state.servicesGeojson) > 0) {
   serviceLayer = L.geoJSON(state.servicesGeojson, {
     pointToLayer: (_, latlng) => L.circleMarker(latlng, {
-      radius: 5,
-      weight: 2,
-      color: '#0b5b96',
-      fillColor: '#f59e0b',
-      fillOpacity: 0.96,
-    }),
+  radius: 5,
+  weight: 2,
+  color: '#0B151C',
+  fillColor: '#D9A95D',
+  fillOpacity: 0.94,
+}),
     onEachFeature: (feature, layer) => {
       const p = feature.properties || {};
 
@@ -857,6 +912,150 @@ function buildProfileSummaryText(domainData) {
   return `This area shows a ${pattern}. The largest county-relative deficits are in ${drivers.map(d => d.label).join(', ')}.`;
 }
 
+function buildDomainBreakdownMarkup(row, domainKey) {
+  const boolFromMeta = value => String(value).toLowerCase() === 'true';
+
+  const formatRawValue = value => {
+    if (!isFiniteNumber(value)) return 'N/A';
+    const n = +value;
+
+    if (Math.abs(n) >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    if (Math.abs(n) >= 100) return n.toFixed(1).replace(/\.0$/, '');
+    if (Math.abs(n) >= 10) return n.toFixed(1).replace(/\.0$/, '');
+    if (Math.abs(n) >= 1) return n.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+    return n.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  };
+
+  const countyAverageForCol = col => {
+    const rows = (state.rawYoi || [])
+      .map(r => ({ value: +r[col], weight: +r.total_population }))
+      .filter(d => Number.isFinite(d.value));
+
+    if (!rows.length) return NaN;
+
+    const weighted = rows.filter(d => Number.isFinite(d.weight) && d.weight > 0);
+    const totalWeight = weighted.reduce((sum, d) => sum + d.weight, 0);
+
+    if (weighted.length && totalWeight > 0) {
+      return weighted.reduce((sum, d) => sum + d.value * d.weight, 0) / totalWeight;
+    }
+
+    return rows.reduce((sum, d) => sum + d.value, 0) / rows.length;
+  };
+
+  const metaRows = (state.meta || []).filter(m => m.domain === domainKey);
+  const d = domainRows(row).find(x => x.key === domainKey);
+  if (!d) return '';
+
+  const stats = domainDistributionStats(d.key);
+  const countyDomainMean = countyAverageForCol(`${d.key}_score`);
+
+  const availableNormIndicators = metaRows.filter(m => isFiniteNumber(row[`norm_${m.indicator}`]));
+  const divisor = availableNormIndicators.length || metaRows.length || 1;
+
+  const hasIndicatorValues = metaRows.some(m =>
+    Object.prototype.hasOwnProperty.call(row, m.indicator) ||
+    Object.prototype.hasOwnProperty.call(row, `norm_${m.indicator}`)
+  );
+
+  const indicatorMarkup = hasIndicatorValues
+    ? metaRows.map(m => {
+        const rawCol = m.indicator;
+        const normCol = `norm_${m.indicator}`;
+
+        const selectedRaw = row[rawCol];
+        const countyRaw = countyAverageForCol(rawCol);
+        const selectedNorm = +row[normCol];
+
+        const influenceOnDomain = isFiniteNumber(selectedNorm) ? selectedNorm / divisor : NaN;
+        const influenceOnOverall = isFiniteNumber(influenceOnDomain)
+          ? influenceOnDomain * (+state.normalizedWeights[d.key] || 0)
+          : NaN;
+
+        return `
+          <div class="indicator-row">
+            <div class="indicator-row-top">
+              <div>
+                <div class="indicator-name">${m.indicator}</div>
+                <div class="indicator-direction">${boolFromMeta(m.higher_is_better) ? 'Higher is better' : 'Lower is better'}</div>
+              </div>
+              <div class="indicator-chip">${isFiniteNumber(selectedNorm) ? scoreOutOf100(selectedNorm) : 'N/A'}</div>
+            </div>
+
+            <div class="indicator-grid">
+              <div class="indicator-stat">
+                <span>Selected value</span>
+                <strong>${formatRawValue(selectedRaw)}</strong>
+              </div>
+
+              <div class="indicator-stat">
+                <span>County avg</span>
+                <strong>${formatRawValue(countyRaw)}</strong>
+              </div>
+
+              <div class="indicator-stat">
+                <span>Influence on domain</span>
+                <strong>${isFiniteNumber(influenceOnDomain) ? influenceOnDomain.toFixed(3) : 'N/A'}</strong>
+              </div>
+
+              <div class="indicator-stat">
+                <span>Influence on overall</span>
+                <strong>${isFiniteNumber(influenceOnOverall) ? influenceOnOverall.toFixed(3) : 'N/A'}</strong>
+              </div>
+            </div>
+
+            <div class="indicator-source-line">
+              <span>Source</span>
+              <strong>${m.source || 'N/A'}</strong>
+            </div>
+
+            <div class="indicator-note">${m.notes || 'No source note available.'}</div>
+          </div>
+        `;
+      }).join('')
+    : `
+        <div class="callout-note">
+          Indicator-level values are not in the current processed CSV for this geography yet.
+        </div>
+      `;
+
+  return `
+    <div class="profile-breakdown-shell">
+      <div class="domain-overview-grid">
+        <div class="domain-overview-stat">
+          <span>Selected domain score</span>
+          <strong>${scoreOutOf100(d.score)}</strong>
+        </div>
+
+        <div class="domain-overview-stat">
+          <span>County avg</span>
+          <strong>${scoreOutOf100(countyDomainMean)}</strong>
+        </div>
+
+        <div class="domain-overview-stat">
+          <span>Gap vs median</span>
+          <strong>${Number.isFinite(stats.median) ? `${d.score - stats.median >= 0 ? '+' : ''}${Math.round((d.score - stats.median) * 100)}` : 'N/A'}</strong>
+        </div>
+
+        <div class="domain-overview-stat">
+          <span>Contribution to overall</span>
+          <strong>${d.weighted.toFixed(3)}</strong>
+        </div>
+      </div>
+
+      <div class="domain-overview-note">
+        This domain score is the mean of the normalized indicators available for this domain.
+        Its contribution to the overall YOI equals domain score × current domain weight.
+      </div>
+
+      <div class="indicator-breakdown-title">Indicators used in this domain</div>
+      <div class="indicator-breakdown">
+        ${indicatorMarkup}
+      </div>
+    </div>
+  `;
+}
+
 function renderLocationDetails() {
   const el = document.getElementById('locationDetails');
 
@@ -878,6 +1077,7 @@ function renderLocationDetails() {
     return;
   }
 
+  const areaLabel = currentFeatureLabel(currentIdForRow(row));
   const popMissing = row.total_population == null;
   const pop = popMissing ? 'N/A' : Number(row.total_population).toLocaleString();
   const { rank, total, percentile } = percentileForRow(row);
@@ -886,46 +1086,170 @@ function renderLocationDetails() {
   const best = domainData[0];
   const worst = domainData[domainData.length - 1];
 
-  const domainMarkup = domainData.map(d => {
+  const boolFromMeta = value => String(value).toLowerCase() === 'true';
+
+  const formatRawValue = value => {
+    if (!isFiniteNumber(value)) return 'N/A';
+    const n = +value;
+
+    if (Math.abs(n) >= 1000) {
+      return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+    if (Math.abs(n) >= 100) {
+      return n.toFixed(1).replace(/\.0$/, '');
+    }
+    if (Math.abs(n) >= 10) {
+      return n.toFixed(1).replace(/\.0$/, '');
+    }
+    if (Math.abs(n) >= 1) {
+      return n.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+    }
+    return n.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  };
+
+  const countyAverageForCol = col => {
+    const rows = (state.rawYoi || [])
+      .map(r => ({ value: +r[col], weight: +r.total_population }))
+      .filter(d => Number.isFinite(d.value));
+
+    if (!rows.length) return NaN;
+
+    const weighted = rows.filter(d => Number.isFinite(d.weight) && d.weight > 0);
+    const totalWeight = weighted.reduce((sum, d) => sum + d.weight, 0);
+
+    if (weighted.length && totalWeight > 0) {
+      return weighted.reduce((sum, d) => sum + d.value * d.weight, 0) / totalWeight;
+    }
+
+    return rows.reduce((sum, d) => sum + d.value, 0) / rows.length;
+  };
+
+  const metaForDomain = domainKey => (state.meta || []).filter(m => m.domain === domainKey);
+
+  const domainMarkup = domainData.map((d, idx) => {
     const stats = domainDistributionStats(d.key);
+    const countyDomainMean = countyAverageForCol(`${d.key}_score`);
+    const metaRows = metaForDomain(d.key);
+
+    const availableNormIndicators = metaRows.filter(m => isFiniteNumber(row[`norm_${m.indicator}`]));
+    const divisor = availableNormIndicators.length || metaRows.length || 1;
+
+    const hasIndicatorValues = metaRows.some(m =>
+      Object.prototype.hasOwnProperty.call(row, m.indicator) ||
+      Object.prototype.hasOwnProperty.call(row, `norm_${m.indicator}`)
+    );
+
+    const indicatorMarkup = hasIndicatorValues
+      ? metaRows.map(m => {
+          const rawCol = m.indicator;
+          const normCol = `norm_${m.indicator}`;
+
+          const selectedRaw = row[rawCol];
+          const countyRaw = countyAverageForCol(rawCol);
+          const selectedNorm = +row[normCol];
+
+          const influenceOnDomain = isFiniteNumber(selectedNorm) ? selectedNorm / divisor : NaN;
+          const influenceOnOverall = isFiniteNumber(influenceOnDomain)
+            ? influenceOnDomain * (+state.normalizedWeights[d.key] || 0)
+            : NaN;
+
+          return `
+            <div class="indicator-row">
+              <div class="indicator-row-top">
+                <div>
+                  <div class="indicator-name">${m.indicator}</div>
+                  <div class="indicator-direction">${boolFromMeta(m.higher_is_better) ? 'Higher is better' : 'Lower is better'}</div>
+                </div>
+                <div class="indicator-chip">${isFiniteNumber(selectedNorm) ? scoreOutOf100(selectedNorm) : 'N/A'}</div>
+              </div>
+
+              <div class="indicator-grid">
+                <div class="indicator-stat">
+                  <span>Selected value</span>
+                  <strong>${formatRawValue(selectedRaw)}</strong>
+                </div>
+
+                <div class="indicator-stat">
+                  <span>County avg</span>
+                  <strong>${formatRawValue(countyRaw)}</strong>
+                </div>
+
+                <div class="indicator-stat">
+                  <span>Influence on domain</span>
+                  <strong>${isFiniteNumber(influenceOnDomain) ? influenceOnDomain.toFixed(3) : 'N/A'}</strong>
+                </div>
+
+                <div class="indicator-stat">
+                  <span>Influence on overall</span>
+                  <strong>${isFiniteNumber(influenceOnOverall) ? influenceOnOverall.toFixed(3) : 'N/A'}</strong>
+                </div>
+              </div>
+
+              <div class="indicator-source-line">
+                <span>Source</span>
+                <strong>${m.source || 'N/A'}</strong>
+              </div>
+
+              <div class="indicator-note">${m.notes || 'No source note available.'}</div>
+            </div>
+          `;
+        }).join('')
+      : `
+          <div class="callout-note">
+            Indicator-level values are not in the current processed CSV for this geography yet.
+            Rebuild the processed YOI CSVs after updating the Python export scripts below.
+          </div>
+        `;
 
     return `
-      <div class="domain-row domain-row-card">
-        <div class="domain-row-head">
-          <span>${d.label}</span>
-          <span>${scoreOutOf100(d.score)}</span>
-        </div>
-
-        <div class="domain-bar">
-          <div class="domain-bar-fill" style="width:${d.score * 100}%"></div>
-        </div>
-
-        <div class="domain-compare-label">Compared with county</div>
-
-        <div class="domain-stats-grid">
-          <div class="domain-stat-chip">
-            <div class="domain-stat-label">Selected</div>
-            <div class="domain-stat-value">${scoreOutOf100(d.score)}</div>
+      <div class="domain-accordion ${idx === 0 ? 'open' : ''}">
+        <button type="button" class="domain-accordion-btn" data-domain="${d.key}" aria-expanded="${idx === 0 ? 'true' : 'false'}">
+          <div class="domain-accordion-main">
+            <div class="domain-accordion-title-row">
+              <div class="domain-accordion-title">${d.label}</div>
+              <div class="domain-accordion-score">${scoreOutOf100(d.score)}</div>
+            </div>
+            <div class="domain-accordion-meta">
+              County avg ${scoreOutOf100(countyDomainMean)} · Weight ${(d.weight * 100).toFixed(1)}% · Overall contribution ${d.weighted.toFixed(3)}
+            </div>
           </div>
 
-          <div class="domain-stat-chip">
-            <div class="domain-stat-label">Median</div>
-            <div class="domain-stat-value">${scoreOutOf100(stats.median)}</div>
+          <div class="domain-accordion-icon">
+            <i class="bi bi-chevron-down"></i>
+          </div>
+        </button>
+
+        <div class="domain-accordion-body">
+          <div class="domain-overview-grid">
+            <div class="domain-overview-stat">
+              <span>Selected domain score</span>
+              <strong>${scoreOutOf100(d.score)}</strong>
+            </div>
+
+            <div class="domain-overview-stat">
+              <span>County avg</span>
+              <strong>${scoreOutOf100(countyDomainMean)}</strong>
+            </div>
+
+            <div class="domain-overview-stat">
+              <span>Gap vs median</span>
+              <strong>${Number.isFinite(stats.median) ? `${d.score - stats.median >= 0 ? '+' : ''}${Math.round((d.score - stats.median) * 100)}` : 'N/A'}</strong>
+            </div>
+
+            <div class="domain-overview-stat">
+              <span>Contribution to overall</span>
+              <strong>${d.weighted.toFixed(3)}</strong>
+            </div>
           </div>
 
-          <div class="domain-stat-chip">
-            <div class="domain-stat-label">Mean</div>
-            <div class="domain-stat-value">${scoreOutOf100(stats.mean)}</div>
+          <div class="domain-overview-note">
+            This domain score is the mean of the normalized indicators available for this domain.
+            Its contribution to the overall YOI equals domain score × current domain weight.
           </div>
 
-          <div class="domain-stat-chip">
-            <div class="domain-stat-label">Min</div>
-            <div class="domain-stat-value">${scoreOutOf100(stats.min)}</div>
-          </div>
-
-          <div class="domain-stat-chip">
-            <div class="domain-stat-label">Max</div>
-            <div class="domain-stat-value">${scoreOutOf100(stats.max)}</div>
+          <div class="indicator-breakdown-title">Indicators used in this domain</div>
+          <div class="indicator-breakdown">
+            ${indicatorMarkup}
           </div>
         </div>
       </div>
@@ -933,16 +1257,17 @@ function renderLocationDetails() {
   }).join('');
 
   el.innerHTML = `
-    <div class="location-header">
-      <div class="loc-tract">${
-        state.showDataFor === 'zips'
-          ? `ZIP code ${normalizeZip(row.zip ?? row.ZIP ?? row.zcta ?? row.zip_code)}`
-          : state.showDataFor === 'supervisor_districts'
-            ? `Supervisor District ${normalizeDistrict(row.distno ?? row.DISTNO ?? row.district ?? row.District ?? row.supervisor_district ?? row.id ?? row.ID)}`
-            : tractLabelFromGeoid(row.tract_geoid)
-      }</div>
-      <div class="loc-sub">San Diego County, CA</div>
-      ${popMissing ? '<div class="warning-badge">Population unavailable</div>' : ''}
+    <div class="location-panel-head">
+      <div class="location-header">
+        <div class="loc-tract">${areaLabel}</div>
+        <div class="loc-sub">San Diego County, CA</div>
+        ${popMissing ? '<div class="warning-badge">Population unavailable</div>' : ''}
+      </div>
+
+      <button type="button" class="location-jump-btn" data-jump-to-profile>
+        <span>Domain Profile</span>
+        <i class="bi bi-chevron-down"></i>
+      </button>
     </div>
 
     <div class="loc-metric-grid">
@@ -958,12 +1283,12 @@ function renderLocationDetails() {
 
       <div class="loc-metric">
         <div class="loc-metric-label">Rank</div>
-        <div class="loc-metric-value">${rank ? `${rank}/${total}` : 'N/A'}</div>
+        <div class="loc-metric-value">${Number.isFinite(rank) ? `${rank}/${total}` : 'N/A'}</div>
       </div>
 
       <div class="loc-metric">
         <div class="loc-metric-label">Percentile</div>
-        <div class="loc-metric-value">${percentile ? `${percentile}th` : 'N/A'}</div>
+        <div class="loc-metric-value">${Number.isFinite(percentile) ? `${percentile}th` : 'N/A'}</div>
       </div>
 
       <div class="loc-metric">
@@ -977,11 +1302,42 @@ function renderLocationDetails() {
       </div>
     </div>
 
-    <div class="control-label">Domain scores</div>
-    <div class="domain-list">
-      ${domainMarkup}
+    <div class="location-section" id="locationDomainProfileSection">
+      <div class="location-section-head">
+        <div>
+          <div class="location-section-title">Domain Profile</div>
+          <div class="location-section-subtitle">County-relative domain diagnostics for the selected area.</div>
+        </div>
+      </div>
+      <div id="profileChart"></div>
     </div>
+
+    
   `;
+
+  el.querySelector('[data-jump-to-profile]')?.addEventListener('click', () => {
+    el.querySelector('#locationDomainProfileSection')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  });
+
+  el.querySelectorAll('.domain-accordion-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.domain-accordion');
+      const isOpen = card.classList.contains('open');
+
+      el.querySelectorAll('.domain-accordion').forEach(node => {
+        node.classList.remove('open');
+        node.querySelector('.domain-accordion-btn')?.setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        card.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
 }
 
 function ensureChartTooltip() {
@@ -1304,14 +1660,18 @@ function renderProfileChart() {
       renderProfileChart();
     });
 
-  wrap.selectAll('.profile-domain-card')
-    .on('click', function () {
+    wrap.selectAll('.profile-domain-card')
+    .on('click', function (event) {
+      if (event.target.closest('.profile-domain-toggle')) return;
+
       const key = this.dataset.domain;
       state.mapLayer = `${key} score`;
       document.getElementById('mapLayerSelect').value = state.mapLayer;
       updateAll();
     })
     .on('mousemove', function (event) {
+      if (event.target.closest('.profile-domain-toggle')) return;
+
       const d = byKey.get(this.dataset.domain);
       if (!d) return;
 
@@ -1330,6 +1690,57 @@ function renderProfileChart() {
         .style('top', `${event.pageY - 28}px`);
     })
     .on('mouseout', () => chartTooltip.style('opacity', 0));
+
+  wrap.selectAll('.profile-domain-card').each(function () {
+    const card = this;
+    const key = card.dataset.domain;
+    const d = byKey.get(key);
+    if (!d) return;
+
+    const top = card.querySelector('.profile-card-top');
+    const legend = card.querySelector('.profile-track-legend');
+    if (!top || !legend) return;
+
+    if (!top.querySelector('.profile-domain-toggle')) {
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'profile-domain-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('title', 'Show domain score breakdown');
+      toggle.innerHTML = '<i class="bi bi-chevron-down"></i>';
+      top.appendChild(toggle);
+    }
+
+    if (!card.querySelector('.profile-domain-expand')) {
+      const expand = document.createElement('div');
+      expand.className = 'profile-domain-expand';
+      legend.insertAdjacentElement('afterend', expand);
+    }
+
+    const toggle = top.querySelector('.profile-domain-toggle');
+    const expand = card.querySelector('.profile-domain-expand');
+
+    toggle.onclick = event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const isOpen = card.classList.contains('breakdown-open');
+
+      wrap.selectAll('.profile-domain-card').each(function () {
+        this.classList.remove('breakdown-open');
+        const btn = this.querySelector('.profile-domain-toggle');
+        const body = this.querySelector('.profile-domain-expand');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        if (body) body.innerHTML = '';
+      });
+
+      if (!isOpen) {
+        card.classList.add('breakdown-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        expand.innerHTML = buildDomainBreakdownMarkup(row, key);
+      }
+    };
+  });
 }
 
 function updateFeatureProperties() {
@@ -1346,9 +1757,12 @@ function renderPanelContent() {
 }
 
 function setPanel(panelName) {
+  clearTransientUi();
+
   state.activePanel = panelName;
   document.querySelectorAll('.rail-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.panel === panelName));
   document.querySelectorAll('.panel-view').forEach(view => view.classList.toggle('active', view.id === `panel-${panelName}`));
+
   const titleMap = {
     controls: ['Data Controls', 'Adjust the map and comparison view.'],
     overlays: ['Overlays', 'Turn map layers on and off.'],
@@ -1357,9 +1771,15 @@ function setPanel(panelName) {
     faqs: ['Frequently asked questions', 'Helpful context for interpreting the dashboard.'],
     share: ['Share', 'Copy the current state of the explorer.'],
   };
+
   document.getElementById('drawerTitle').textContent = titleMap[panelName][0];
   document.getElementById('drawerSubtitle').textContent = titleMap[panelName][1];
-  document.getElementById('drawerPanel').classList.remove('collapsed');
+
+  const drawerPanel = document.getElementById('drawerPanel');
+drawerPanel.classList.toggle('panel-popout', panelName === 'profile' || panelName === 'location');
+drawerPanel.classList.remove('collapsed');
+
+document.body.classList.toggle('location-panel-open', panelName === 'location');
 }
 
 function updateTransitAvailabilityNote() {
@@ -1383,7 +1803,11 @@ function buildLayerSelect() {
   const select = document.getElementById('mapLayerSelect');
   select.innerHTML = ['YOI (0–100)', ...DOMAINS.map(d => `${d} score`)].map(v => `<option value="${v}">${v === 'YOI (0–100)' ? 'Overall Youth Opportunity' : DOMAIN_LABELS[v.replace(/ score$/, '')] + ' Domain'}</option>`).join('');
   select.value = state.mapLayer;
-  select.addEventListener('change', e => { state.mapLayer = e.target.value; updateAll(); });
+    select.addEventListener('change', e => {
+    state.mapLayer = e.target.value;
+    clearTransientUi();
+    updateAll();
+  });
 }
 
 function buildWeightSliders() {
@@ -1450,15 +1874,16 @@ function bindControls() {
   document.getElementById('toggleRoutes').addEventListener('change', e => { state.showRoutes = e.target.checked; updateAll(); });
   document.getElementById('toggleStops').addEventListener('change', e => { state.showStops = e.target.checked; updateAll(); });
   document.getElementById('hoverToggle').addEventListener('change', e => { state.showHover = e.target.checked; updateAll(); });
-  document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(btn => {
+    document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#scoreModeGroup .seg-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.scoreMode = btn.dataset.mode;
+      clearTransientUi();
       updateAll();
     });
   });
-  document.querySelectorAll('[data-show-data-for]').forEach(btn => {
+    document.querySelectorAll('[data-show-data-for]').forEach(btn => {
     btn.addEventListener('click', () => {
       const mode = btn.dataset.showDataFor;
 
@@ -1474,52 +1899,81 @@ function bindControls() {
 
       state.showDataFor = mode;
       state.selectedGeoid = null;
+      clearTransientUi();
       syncGeographyControls();
       updateAll();
     });
   });
+
+
   document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
-  document.getElementById('closeDrawerBtn').addEventListener('click', () => document.getElementById('drawerPanel').classList.toggle('collapsed'));
-    document.getElementById('menuBtn')?.addEventListener('click', () => {
-    const drawer = document.getElementById('siteMenuDrawer');
-    if (drawer?.classList.contains('open')) closeSiteMenu();
-    else openSiteMenu();
-  });
+document.getElementById('closeDrawerBtn').addEventListener('click', () => document.getElementById('drawerPanel').classList.toggle('collapsed'));
 
-  document.getElementById('closeSiteMenuBtn')?.addEventListener('click', closeSiteMenu);
-  document.getElementById('menuBackdrop')?.addEventListener('click', closeSiteMenu);
+document.getElementById('railMenuBtn')?.addEventListener('click', () => {
+  const drawer = document.getElementById('siteMenuDrawer');
+  if (drawer?.classList.contains('open')) closeSiteMenu();
+  else openSiteMenu();
+});
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeSiteMenu();
-  });
-  document.querySelectorAll('.faq-btn').forEach(btn => btn.addEventListener('click', () => btn.parentElement.classList.toggle('open')));
-  document.getElementById('copyLinkBtn').addEventListener('click', async () => {
-    const url = new URL(window.location.href);
-    if (state.selectedGeoid) url.searchParams.set('tract', state.selectedGeoid);
-    url.searchParams.set('layer', state.mapLayer);
-    await navigator.clipboard.writeText(url.toString());
-    document.getElementById('shareStatus').textContent = 'Current view link copied.';
-  });
-  document.getElementById('copySelectedBtn').addEventListener('click', async () => {
-    const geoid = state.selectedGeoid || '';
-    if (!geoid) {
-      document.getElementById('shareStatus').textContent = 'No tract selected yet.';
-      return;
-    }
-    await navigator.clipboard.writeText(geoid);
-    document.getElementById('shareStatus').textContent = `Copied ${geoid}.`;
-  });
-  const searchInput = document.getElementById('searchInput');
-  searchInput.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    runSearch();
-  });
-  searchInput.addEventListener('focus', () => setSearchStatus(''));
-  document.querySelector('.search-shell i')?.addEventListener('click', runSearch);
+document.getElementById('railSearchBtn')?.addEventListener('click', () => {
+  const flyout = document.getElementById('railSearchFlyout');
+  setRailSearchOpen(!flyout?.classList.contains('open'));
+});
+
+document.getElementById('closeRailSearchBtn')?.addEventListener('click', () => {
+  setRailSearchOpen(false);
+});
+
+document.getElementById('railZoomInBtn')?.addEventListener('click', () => {
+  map.zoomIn();
+});
+
+document.getElementById('railZoomOutBtn')?.addEventListener('click', () => {
+  map.zoomOut();
+});
+
+document.getElementById('closeSiteMenuBtn')?.addEventListener('click', closeSiteMenu);
+document.getElementById('menuBackdrop')?.addEventListener('click', closeSiteMenu);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSiteMenu();
+    setRailSearchOpen(false);
+  }
+});
+
+document.querySelectorAll('.faq-btn').forEach(btn => btn.addEventListener('click', () => btn.parentElement.classList.toggle('open')));
+
+document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+  const url = new URL(window.location.href);
+  if (state.selectedGeoid) url.searchParams.set('tract', state.selectedGeoid);
+  url.searchParams.set('layer', state.mapLayer);
+  await navigator.clipboard.writeText(url.toString());
+  document.getElementById('shareStatus').textContent = 'Current view link copied.';
+});
+
+document.getElementById('copySelectedBtn').addEventListener('click', async () => {
+  const geoid = state.selectedGeoid || '';
+  if (!geoid) {
+    document.getElementById('shareStatus').textContent = 'No tract selected yet.';
+    return;
+  }
+  await navigator.clipboard.writeText(geoid);
+  document.getElementById('shareStatus').textContent = `Copied ${geoid}.`;
+});
+
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  runSearch();
+});
+searchInput.addEventListener('focus', () => setSearchStatus(''));
+document.querySelector('.rail-search-shell i')?.addEventListener('click', runSearch);
   document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
-  state.showCoiOverlay = e.target.checked;
-  updateAll();
+    state.showCoiOverlay = e.target.checked;
+    clearTransientUi();
+    updateAll();
 });
 document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
     if (e.target.checked) {
@@ -1535,6 +1989,7 @@ document.getElementById('toggleSupervisorDistricts')?.addEventListener('change',
     }
 
     state.selectedGeoid = null;
+    clearTransientUi();
     syncGeographyControls();
     updateAll();
   });
