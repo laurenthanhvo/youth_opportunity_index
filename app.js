@@ -1843,10 +1843,7 @@ function syncGeographyControls() {
     btn.classList.toggle('active', btn.dataset.showDataFor === state.showDataFor);
   });
 
-  const supervisorToggle = document.getElementById('toggleSupervisorDistricts');
-  if (supervisorToggle) {
-    supervisorToggle.checked = state.showDataFor === 'supervisor_districts';
-  }
+  syncPrimaryViewToggles();
 }
 
 function openSiteMenu() {
@@ -1872,53 +1869,28 @@ function closeSiteMenu() {
 }
 
 function bindControls() {
-  // document.getElementById('toggleChoro').addEventListener('change', e => { state.showChoro = e.target.checked; updateAll(); });
-  document.getElementById('toggleChoro').addEventListener('change', e => {
-  state.showChoro = e.target.checked;
-
+  document.getElementById('toggleChoro')?.addEventListener('change', e => {
   if (e.target.checked) {
-    state.showCoiOverlay = false;
-    const coiToggle = document.getElementById('toggleCoiOverlay');
-    if (coiToggle) coiToggle.checked = false;
+    setPrimaryView('yoi');
+  } else {
+    syncPrimaryViewToggles();
   }
-
-  clearTransientUi();
-  updateAll();
 });
 
 document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
-  state.showCoiOverlay = e.target.checked;
-
   if (e.target.checked) {
-    state.showChoro = false;
-    const yoiToggle = document.getElementById('toggleChoro');
-    if (yoiToggle) yoiToggle.checked = false;
+    setPrimaryView('coi');
   } else {
-    state.showChoro = true;
-    const yoiToggle = document.getElementById('toggleChoro');
-    if (yoiToggle) yoiToggle.checked = true;
+    setPrimaryView('yoi');
   }
-
-  clearTransientUi();
-  updateAll();
 });
+
 document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
   if (e.target.checked) {
-    if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
-      console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
-      e.target.checked = false;
-      return;
-    }
-
-    state.showDataFor = 'supervisor_districts';
-  } else if (state.showDataFor === 'supervisor_districts') {
-    state.showDataFor = 'tracts';
+    setPrimaryView('supervisor');
+  } else {
+    setPrimaryView('yoi');
   }
-
-  state.selectedGeoid = null;
-  clearTransientUi();
-  syncGeographyControls();
-  updateAll();
 });
   document.getElementById('toggleBounds').addEventListener('change', e => { state.showBounds = e.target.checked; updateAll(); });
   document.getElementById('toggleRoutes').addEventListener('change', e => { state.showRoutes = e.target.checked; updateAll(); });
@@ -1942,16 +1914,25 @@ document.getElementById('toggleSupervisorDistricts')?.addEventListener('change',
       return;
     }
 
-    if (mode === 'supervisor_districts' && (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0)) {
-      console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
+    if (mode === 'supervisor_districts') {
+      setPrimaryView('supervisor');
       return;
     }
 
-    state.showDataFor = mode;
-    state.selectedGeoid = null;
-    clearTransientUi();
-    syncGeographyControls();
-    updateAll();
+    if (mode === 'tracts') {
+      setPrimaryView('yoi');
+      return;
+    }
+
+    if (mode === 'zips') {
+      state.showDataFor = 'zips';
+      state.showChoro = false;
+      state.showCoiOverlay = false;
+      state.selectedGeoid = null;
+      clearTransientUi();
+      syncGeographyControls();
+      updateAll();
+    }
   });
 });
 
