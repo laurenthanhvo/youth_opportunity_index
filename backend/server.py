@@ -24,7 +24,7 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 # ---------------------------------------------------------
 try:
     # Adjust this path if your server.py is not in your project root
-    yoi_df = pd.read_csv("./data/processed/yoi/yoi_components.csv")
+    yoi_df = pd.read_csv("../data/processed/yoi/yoi_components.csv")
 except FileNotFoundError:
     print("Warning: Could not find yoi_components.csv. Data tools will fail.")
     yoi_df = pd.DataFrame()
@@ -79,7 +79,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=[
+        "https://laurenthanhvo.github.io",
+        "http://127.0.0.1:8000",
+        "http://localhost:8000"
+    ], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
