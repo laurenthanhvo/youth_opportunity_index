@@ -64,7 +64,7 @@ let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
 
-const ASSISTANT_API_URL = 'http://127.0.0.1:8001/api/chat';
+const ASSISTANT_API_URL = 'https://my-yoi-backend.onrender.com/api/chat';
 
 function clearTransientUi() {
   if (chartTooltip) chartTooltip.style('opacity', 0);
