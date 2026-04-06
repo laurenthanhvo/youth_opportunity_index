@@ -414,21 +414,47 @@ function updateWeightsUi() {
 
 function recomputeCustomScores() {
   normalizeWeights();
-  state.rawYoi.forEach(row => {
+
+  const applyCustomScore = row => {
     let total = 0;
-    DOMAINS.forEach(d => { total += (+row[`${d}_score`] || 0) * state.normalizedWeights[d]; });
-    row.yoi_custom_0_1 = total;
-    row.yoi_custom_0_100 = total * 100;
-  });
-  [state.zipRows, state.supervisorDistrictRows].forEach(rows => {
-    rows.forEach(row => {
-      if (!isFiniteNumber(row.yoi_custom_0_100) && isFiniteNumber(row.yoi_0_100)) row.yoi_custom_0_100 = +row.yoi_0_100;
-      if (!isFiniteNumber(row.yoi_custom_0_1) && isFiniteNumber(row.yoi_raw_0_1)) row.yoi_custom_0_1 = +row.yoi_raw_0_1;
+    let hasDomainScore = false;
+
+    DOMAINS.forEach(d => {
+      const score = +row[`${d}_score`];
+      if (Number.isFinite(score)) {
+        total += score * state.normalizedWeights[d];
+        hasDomainScore = true;
+      }
     });
-  });
-  state.tractMap = new Map(state.rawYoi.map(r => [normalizeGeoid(r.tract_geoid), r]));
-  state.zipMap = new Map(state.zipRows.map(r => [normalizeZip(r.zip ?? r.ZIP ?? r.zcta ?? r.zip_code), r]));
-  state.supervisorDistrictMap = new Map(state.supervisorDistrictRows.map(r => [normalizeDistrict(r.distno ?? r.DISTNO ?? r.district ?? r.District ?? r.supervisor_district ?? r.id ?? r.ID), r]));
+
+    if (hasDomainScore) {
+      row.yoi_custom_0_1 = total;
+      row.yoi_custom_0_100 = total * 100;
+    } else {
+      if (isFiniteNumber(row.yoi_0_100)) row.yoi_custom_0_100 = +row.yoi_0_100;
+      if (isFiniteNumber(row.yoi_raw_0_1)) row.yoi_custom_0_1 = +row.yoi_raw_0_1;
+      else if (isFiniteNumber(row.yoi_custom_0_100)) row.yoi_custom_0_1 = +row.yoi_custom_0_100 / 100;
+    }
+  };
+
+  state.rawYoi.forEach(applyCustomScore);
+  state.zipRows.forEach(applyCustomScore);
+  state.supervisorDistrictRows.forEach(applyCustomScore);
+
+  state.tractMap = new Map(
+    state.rawYoi.map(r => [normalizeGeoid(r.tract_geoid), r])
+  );
+
+  state.zipMap = new Map(
+    state.zipRows.map(r => [normalizeZip(r.zip ?? r.ZIP ?? r.zcta ?? r.zip_code), r])
+  );
+
+  state.supervisorDistrictMap = new Map(
+    state.supervisorDistrictRows.map(r => [
+      normalizeDistrict(r.distno ?? r.DISTNO ?? r.district ?? r.District ?? r.supervisor_district ?? r.id ?? r.ID),
+      r
+    ])
+  );
 }
 
 function percentileForRow(row) {
