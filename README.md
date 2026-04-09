@@ -16,8 +16,10 @@ The dashboard centers on a **Youth Opportunity Index (YOI)** built for San Diego
 - compare places across **census tracts, ZIP codes, and supervisor districts**
 - adjust **custom domain weights** and see the overall map update
 - inspect **location details** and domain-level diagnostics for selected areas
+- search the currently selected geography level using **search suggestions** and keyboard-friendly search behavior
 - turn on contextual overlays such as **transit routes, transit stops, service locations, tract boundaries, and the Child Opportunity Index (COI)**
 - use an **AI assistant** to explain the dashboard and answer dataset-backed questions
+- share the current dashboard state by copying the active view link or the selected geography identifier
 - navigate supporting pages for **YOI Methodology**, **About Us**, and **Contact Us**
 
 ---
@@ -54,14 +56,16 @@ The left rail opens six main panels:
   - explains how to interpret colors, overlays, geographic levels, COI vs YOI, custom weights, and likely opportunity-desert patterns
 
 - **Share**
-  - supports sharing the current dashboard state and selected geography context
+  - copy a link to the current dashboard state, including active layer context
+  - copy the currently selected geography identifier for quick reuse in notes or outreach
 
 ### Utility controls
 
 The dashboard also includes:
 
-- a **menu** button for navigation to the methodology, about, and contact pages
-- a **search** control for locating tracts by GEOID / tract identifier
+- a **top navigation header** for moving between the dashboard, methodology, about, and contact pages
+- a **search** control that adapts to the selected geography level and supports suggestions
+- a **home / reset view** button for returning to the default county map view
 - **zoom in / zoom out** controls for map navigation
 
 ---
@@ -72,8 +76,11 @@ The dashboard also includes:
 - **Warm-to-cool score palette** for easier visual interpretation of lower- to higher-opportunity places
 - **Three geography levels**: census tracts, ZIP codes, and supervisor districts
 - **Custom domain weighting** for recomputing overall YOI in the browser
+- **Geography-aware search** with suggestions and keyboard support
 - **Domain diagnostics** for selected places
 - **Contextual overlays** for youth services, transit, boundaries, and COI benchmarking
+- **Share utilities** for copying the current view or selected geography
+- **Custom home / zoom controls** for map navigation
 - **AI assistant** powered by Gemini through a FastAPI backend
 - **Static information pages** for methodology, project context, and contact information
 
@@ -226,7 +233,7 @@ This project has a static frontend and a Python backend for the AI assistant.
 ```bash
 git clone https://github.com/laurenthanhvo/youth_opportunity_index.git
 cd youth_opportunity_index
-```
+````
 
 ### 2. Set up the Python environment
 
@@ -292,21 +299,21 @@ const ASSISTANT_API_URL = 'http://localhost:8001/api/chat';
 
 The assistant backend:
 
-- loads the processed tract-level YOI CSV into memory
-- accepts dashboard context from the frontend
-- uses Gemini with a structured system prompt tailored to the dashboard
-- supports both explanatory responses and simple UI actions
-- can answer dataset-backed questions using Python tool calls
+* loads the processed tract-level YOI CSV into memory
+* accepts dashboard context from the frontend
+* uses Gemini with a structured system prompt tailored to the dashboard
+* supports both explanatory responses and simple UI actions
+* can answer dataset-backed questions using Python tool calls
 
 The current tool functions in `server.py` include:
 
-- `get_highest_lowest_tract(metric)`
-- `count_tracts_by_condition(metric, operator_str, value)`
+* `get_highest_lowest_tract(metric)`
+* `count_tracts_by_condition(metric, operator_str, value)`
 
 The backend also exposes:
 
-- `GET /api/health`
-- `POST /api/chat`
+* `GET /api/health`
+* `POST /api/chat`
 
 ---
 
@@ -314,8 +321,8 @@ The backend also exposes:
 
 Current deployment assumptions from the existing project materials:
 
-- **Frontend:** static hosting such as GitHub Pages
-- **Backend:** Render-hosted FastAPI service
+* **Frontend:** static hosting such as GitHub Pages
+* **Backend:** Render-hosted FastAPI service
 
 If using a free Render tier, the assistant may have a cold-start delay after inactivity.
 
@@ -325,11 +332,11 @@ If using a free Render tier, the assistant may have a cold-start delay after ina
 
 A few important interpretation notes built into the current dashboard:
 
-- **YOI and COI are not the same measure** and should not be treated as directly interchangeable.
-- **Census tracts** are the most detailed view.
-- **ZIP codes** are broader and often easier for general audiences to recognize.
-- **Supervisor districts** are larger policy-oriented geographies useful for stakeholder and planning conversations.
-- **Custom weights** change the overall YOI and related diagnostics, but they do not rewrite the raw score of an individual domain layer.
+* **YOI and COI are not the same measure** and should not be treated as directly interchangeable.
+* **Census tracts** are the most detailed view.
+* **ZIP codes** are broader and often easier for general audiences to recognize.
+* **Supervisor districts** are larger policy-oriented geographies useful for stakeholder and planning conversations.
+* **Custom weights** change the overall YOI and related diagnostics, but they do not rewrite the raw score of an individual domain layer.
 
 ---
 
@@ -337,22 +344,22 @@ A few important interpretation notes built into the current dashboard:
 
 A large share of the originally planned functionality is already implemented in the current build:
 
-- multiple geography levels
-- custom-weighted overall YOI
-- contextual overlays
-- location-level interpretation panels
-- an assistant workflow
-- supporting methodology / about / contact pages
+* multiple geography levels
+* custom-weighted overall YOI
+* contextual overlays
+* location-level interpretation panels
+* an assistant workflow
+* supporting methodology / about / contact pages
 
 Because of that, the most important next phase is **refinement through stakeholder feedback**, not just adding more interface features.
 
 Likely next steps include:
 
-- validating whether current indicators and weights reflect on-the-ground experience
-- improving clarity for non-technical audiences
-- expanding or refreshing supporting data layers as new data becomes available
-- refining interpretation guidance for community and policy users
-- incorporating feedback from organizations, researchers, and youth-serving partners about usability and practical relevance
+* validating whether current indicators and weights reflect on-the-ground experience
+* improving clarity for non-technical audiences
+* expanding or refreshing supporting data layers as new data becomes available
+* refining interpretation guidance for community and policy users
+* incorporating feedback from organizations, researchers, and youth-serving partners about usability and practical relevance
 
 The longer-term goal is for the dashboard to continue evolving into a stronger planning, communication, and decision-support tool for youth opportunity across San Diego County.
 
@@ -360,8 +367,7 @@ The longer-term goal is for the dashboard to continue evolving into a stronger p
 
 ## Team and contact
 
-- **Project lead / developer:** Lauren Vo
-- **Research guidance:** Shay Samat / Data Science Alliance
+* **Project lead / developer:** Lauren Vo
+* **Research guidance:** Shay Samat / Data Science Alliance
 
 For project questions, feedback, collaboration, or suggested indicators / data layers, see the contact information in `contact.html`.
-
