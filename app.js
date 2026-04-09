@@ -2031,6 +2031,24 @@ function renderPanelContent() {
   renderProfileChart();
 }
 
+// function syncDrawerToolPositions() {
+//   const drawerPanel = document.getElementById('drawerPanel');
+//   const toolStack = document.querySelector('.drawer-tool-stack');
+//   const searchFlyout = document.querySelector('.drawer-search-flyout');
+
+//   if (!drawerPanel || !toolStack) return;
+
+//   const rect = drawerPanel.getBoundingClientRect();
+
+//   toolStack.style.left = `${Math.round(rect.right + 14)}px`;
+//   toolStack.style.top = `${Math.round(rect.top + 12)}px`;
+
+//   if (searchFlyout) {
+//     searchFlyout.style.left = `${Math.round(rect.right + 64)}px`;
+//     searchFlyout.style.top = `${Math.round(rect.top + 48)}px`;
+//   }
+// }
+
 function setPanel(panelName) {
   clearTransientUi();
 
@@ -2051,11 +2069,13 @@ function setPanel(panelName) {
   document.getElementById('drawerTitle').textContent = titleMap[panelName][0];
   document.getElementById('drawerSubtitle').textContent = titleMap[panelName][1];
 
-  const drawerPanel = document.getElementById('drawerPanel');
-drawerPanel.classList.toggle('panel-popout', panelName === 'profile' || panelName === 'location');
-drawerPanel.classList.remove('collapsed');
+    const drawerPanel = document.getElementById('drawerPanel');
+  drawerPanel.classList.toggle('panel-popout', panelName === 'profile' || panelName === 'location');
+  drawerPanel.classList.remove('collapsed');
 
-document.body.classList.toggle('location-panel-open', panelName === 'location');
+  document.body.classList.toggle('location-panel-open', panelName === 'location');
+
+  syncDrawerToolPositions();
 }
 
 function updateTransitAvailabilityNote() {
@@ -2212,7 +2232,10 @@ document.getElementById('toggleSupervisorDistricts')?.addEventListener('change',
 
 
   document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
-document.getElementById('closeDrawerBtn').addEventListener('click', () => document.getElementById('drawerPanel').classList.toggle('collapsed'));
+document.getElementById('closeDrawerBtn').addEventListener('click', () => {
+  document.getElementById('drawerPanel').classList.toggle('collapsed');
+  requestAnimationFrame(syncDrawerToolPositions);
+});
 
 // document.getElementById('railMenuBtn')?.addEventListener('click', () => {
 //   const drawer = document.getElementById('siteMenuDrawer');
@@ -2679,6 +2702,7 @@ requestAnimationFrame(() => {
   requestAnimationFrame(() => {
     map.invalidateSize(false);
     applyInitialMapView();
+    syncDrawerToolPositions();
   });
 });
 }
@@ -2687,3 +2711,5 @@ init().catch(err => {
   console.error(err);
   document.getElementById('locationDetails').innerHTML = `<div class="callout-note">Failed to load dashboard data: ${err.message}</div>`;
 });
+
+window.addEventListener('resize', syncDrawerToolPositions);

@@ -198,50 +198,84 @@ def tract_from_sandag_tract_value(x) -> str | None:
 
 def load_cibrs_and_aggregate_latest_full_year() -> pd.DataFrame | None:
     """
-    Reads the large CIBRS detailed CSV (already downloaded) and aggregates:
-      - incidents per tract for latest FULL year
-    Outputs:
+    Loads CIBRS crime data and returns:
       tract_geoid, crime_incidents
+
+    Supports either:
+      1) detailed incident-level files with incident/date/tract columns, or
+      2) pre-aggregated tract files with:
+           Census Tract
+           count_distinct_incidentuid
     """
     safety_dir = RAW_DOMAINS / "safety"
+
     cands = sorted(safety_dir.glob("CIBRS_Group_A_Detailed_Report_Data_*.csv"))
     if not cands:
+        cands = sorted(safety_dir.glob("CIBRS_Group_A_Public_Crime_Data_*.csv"))
+    if not cands:
         return None
+
     p = cands[-1]
     print("Using CIBRS:", p)
 
-    usecols = []
-    for c in ["incidentuid", "Incident UID", "incident_date", "Incident Date", "census_tract", "Census Tract"]:
-        usecols.append(c)
-
-    # detect actual column names
     head = pd.read_csv(p, nrows=0)
     cols = head.columns.tolist()
+    lower_map = {c.lower().strip(): c for c in cols}
 
     def pick(*names):
         for n in names:
-            if n in cols:
-                return n
+            hit = lower_map.get(n.lower().strip())
+            if hit is not None:
+                return hit
         return None
 
-    c_inc = pick("incidentuid", "Incident UID")
-    c_date = pick("incident_date", "Incident Date")
-    c_tr = pick("census_tract", "Census Tract")
+    # Case 1: pre-aggregated tract counts
+    c_tr = pick("Census Tract", "census_tract", "tract", "tract_num")
+    c_cnt = pick("count_distinct_incidentuid", "crime_incidents", "incident_count", "count")
+
+    if c_tr is not None and c_cnt is not None:
+        df = pd.read_csv(p, usecols=[c_tr, c_cnt]).copy()
+        df["tract_geoid"] = df[c_tr].apply(tract_from_sandag_tract_value)
+        df = sd_only(df)
+        df["crime_incidents"] = pd.to_numeric(df[c_cnt], errors="coerce")
+        df = df.dropna(subset=["tract_geoid", "crime_incidents"]).copy()
+        df = (
+            df.groupby("tract_geoid", as_index=False)["crime_incidents"]
+            .sum()
+        )
+        return df[["tract_geoid", "crime_incidents"]]
+
+    # Case 2: detailed incident-level file
+    c_inc = pick(
+        "incidentuid", "incident_uid", "Incident UID", "IncidentUID",
+        "incident id", "incident_id"
+    )
+    c_date = pick(
+        "incident_date", "Incident Date", "date", "offense_date", "report_date"
+    )
+    c_tr = pick(
+        "census_tract", "Census Tract", "tract", "tract_num", "census tract"
+    )
+
     if c_inc is None or c_date is None or c_tr is None:
-        print("CIBRS missing required columns; expected Incident UID, Incident Date, Census Tract")
+        print("CIBRS missing required columns.")
+        print("Available columns:", cols)
+        print("Matched incident column:", c_inc)
+        print("Matched date column:", c_date)
+        print("Matched tract column:", c_tr)
+        print("Matched aggregated count column:", c_cnt)
         return None
 
-    # First pass: find max year quickly
     years = set()
     for chunk in pd.read_csv(p, usecols=[c_date], chunksize=200_000):
         dt = pd.to_datetime(chunk[c_date], errors="coerce")
         y = dt.dt.year.dropna().unique().tolist()
         years.update([int(v) for v in y if not pd.isna(v)])
+
     if not years:
         return None
+
     max_year = max(years)
-    # Use latest *full* year:
-    # if current year is partial, use max_year-1; otherwise max_year
     target_year = max_year - 1 if max_year >= 2025 else max_year
     print("CIBRS years found:", sorted(years))
     print("Using target crime year:", target_year)
@@ -252,14 +286,18 @@ def load_cibrs_and_aggregate_latest_full_year() -> pd.DataFrame | None:
         chunk = chunk.loc[dt.dt.year == target_year].copy()
         if chunk.empty:
             continue
+
         chunk["tract_geoid"] = chunk[c_tr].apply(tract_from_sandag_tract_value)
         chunk = sd_only(chunk)
-        # distinct incident uids per tract
+
         g = chunk.groupby("tract_geoid")[c_inc].nunique()
         for k, v in g.items():
             counts[k] = counts.get(k, 0) + int(v)
 
-    out = pd.DataFrame({"tract_geoid": list(counts.keys()), "crime_incidents": list(counts.values())})
+    out = pd.DataFrame({
+        "tract_geoid": list(counts.keys()),
+        "crime_incidents": list(counts.values())
+    })
     return out
 
 def load_calenviroscreen_sd_geo() -> gpd.GeoDataFrame | None:
@@ -452,16 +490,11 @@ def add_indicator(df: pd.DataFrame, name: str, domain: str, series: pd.Series, h
 # poverty rate (S1701) -> try common percent column; fallback to label-less heuristics
 s1701 = load_census_table("economic", "ACSST5Y2024.S1701")
 if s1701 is not None:
-    # common: S1701_C02_001E (percent below poverty) BUT not guaranteed
-    cand_cols = [c for c in s1701.columns if re.fullmatch(r"S1701_C0\d_0\d\dE", c)]
-    # heuristic: choose the column whose name ends in _001E and has C02 or C03 (often percent)
-    pick = None
-    for c in ["S1701_C02_001E", "S1701_C03_001E", "S1701_C02_002E"]:
-        if c in s1701.columns:
-            pick = c
-            break
-    if pick is None and cand_cols:
-        pick = cand_cols[0]
+    pick = first_nonempty_numeric_col(s1701, [
+        "S1701_C02_001E",
+        "S1701_C03_001E",
+        "S1701_C02_002E",
+    ])
     poverty = safe_num(s1701[pick]) if pick else pd.Series(np.nan, index=s1701.index)
     econ = s1701[["tract_geoid"]].copy()
     econ["poverty_rate"] = poverty
@@ -488,15 +521,11 @@ else:
 # unemployment rate (S2301)
 s2301 = load_census_table("economic", "ACSST5Y2024.S2301")
 if s2301 is not None:
-    # try likely unemployment percent column
-    pick = None
-    for c in ["S2301_C04_001E", "S2301_C02_004E", "S2301_C02_001E"]:
-        if c in s2301.columns:
-            pick = c
-            break
-    if pick is None:
-        pct_cols = [c for c in s2301.columns if c.startswith("S2301_") and c.endswith("E")]
-        pick = pct_cols[0] if pct_cols else None
+    pick = first_nonempty_numeric_col(s2301, [
+        "S2301_C04_001E",
+        "S2301_C02_004E",
+        "S2301_C02_001E",
+    ])
     unemp = safe_num(s2301[pick]) if pick else pd.Series(np.nan, index=s2301.index)
     tmp = s2301[["tract_geoid"]].copy()
     tmp["unemployment_rate"] = unemp
@@ -508,14 +537,11 @@ else:
 # SNAP/public assistance (S2201)
 s2201 = load_census_table("economic", "ACSST5Y2024.S2201")
 if s2201 is not None:
-    pick = None
-    for c in ["S2201_C02_013E", "S2201_C02_015E", "S2201_C02_001E"]:
-        if c in s2201.columns:
-            pick = c
-            break
-    if pick is None:
-        pct_cols = [c for c in s2201.columns if c.startswith("S2201_") and c.endswith("E")]
-        pick = pct_cols[0] if pct_cols else None
+    pick = first_nonempty_numeric_col(s2201, [
+        "S2201_C02_013E",
+        "S2201_C02_015E",
+        "S2201_C02_001E",
+    ])
     snap = safe_num(s2201[pick]) if pick else pd.Series(np.nan, index=s2201.index)
     tmp = s2201[["tract_geoid"]].copy()
     tmp["snap_or_assist_rate"] = snap
@@ -556,9 +582,6 @@ if s1401 is not None:
         "S1401_C02_002E", "S1401_C03_002E", "S1401_C04_002E", "S1401_C05_002E", "S1401_C06_002E",
         "S1401_C02_003E", "S1401_C03_003E", "S1401_C04_003E", "S1401_C05_003E", "S1401_C06_003E",
     ])
-    if pick is None:
-        cols = [c for c in s1401.columns if c.startswith("S1401_") and c.endswith("E")]
-        pick = first_nonempty_numeric_col(s1401, cols)
 
     tmp = s1401[["tract_geoid"]].copy()
     tmp["school_enrollment"] = safe_num(s1401[pick]) if pick else np.nan
@@ -569,41 +592,49 @@ else:
 
 b14005 = load_census_table("education", "ACSDT5Y2024.B14005")
 if b14005 is not None:
-    # Youth disconnection proxy is complicated; start with a simple proxy:
-    # If B14005_001E is total 16-19, use a "not enrolled" share if present.
-    total_col = "B14005_001E" if "B14005_001E" in b14005.columns else None
-    # try to find ANY "not enrolled" column by code pattern
-    not_enrolled_cols = [c for c in b14005.columns if c.startswith("B14005_") and c.endswith("E") and c != total_col]
     tmp = b14005[["tract_geoid"]].copy()
 
-    if total_col and not_enrolled_cols:
+    total_col = "B14005_001E"
+    disconnect_cols = [
+        "B14005_011E", "B14005_014E", "B14005_015E",
+        "B14005_025E", "B14005_028E", "B14005_029E",
+    ]
+
+    if total_col in b14005.columns and all(c in b14005.columns for c in disconnect_cols):
         total = safe_num(b14005[total_col])
-        if len(not_enrolled_cols) == 0:
-            tmp["youth_disconnection_proxy"] = np.nan
-            note = "no not-enrolled columns found; needs metadata-based selection"
-        else:
-            numer = b14005[not_enrolled_cols].apply(pd.to_numeric, errors="coerce").sum(axis=1)
-            tmp["youth_disconnection_proxy"] = np.where(total > 0, numer / total * 100.0, np.nan)
-            note = f"placeholder using sum(non_total)/total; total={total_col}"
+        disconnected = safe_num(b14005[disconnect_cols]).sum(axis=1)
+
+        total = total.where(total > 0, np.nan)
+        tmp["youth_disconnection_proxy"] = np.where(total > 0, disconnected / total * 100.0, np.nan)
+        note = (
+            "share of population age 16-19 who are not enrolled in school and not working; "
+            f"numerator=sum({','.join(disconnect_cols)}); denominator={total_col}"
+        )
     else:
         tmp["youth_disconnection_proxy"] = np.nan
-        note = "needs metadata-based selection"
+        note = "missing required B14005 columns for youth disconnection calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "youth_disconnection_proxy", "education", tracts["youth_disconnection_proxy"], False, "ACS B14005", note)
+    add_indicator(
+        tracts,
+        "youth_disconnection_proxy",
+        "education",
+        tracts["youth_disconnection_proxy"],
+        False,
+        "ACS B14005",
+        note,
+    )
 else:
     tracts["youth_disconnection_proxy"] = np.nan
 
 # HEALTH
 s2701 = load_census_table("health", "ACSST5Y2024.S2701")
 if s2701 is not None:
-    pick = None
-    for c in ["S2701_C02_001E", "S2701_C02_005E", "S2701_C02_004E"]:
-        if c in s2701.columns:
-            pick = c
-            break
-    if pick is None:
-        cols = [c for c in s2701.columns if c.startswith("S2701_") and c.endswith("E")]
-        pick = cols[0] if cols else None
+    pick = first_nonempty_numeric_col(s2701, [
+        "S2701_C02_001E",
+        "S2701_C02_005E",
+        "S2701_C02_004E",
+    ])
     tmp = s2701[["tract_geoid"]].copy()
     tmp["uninsured_rate"] = safe_num(s2701[pick]) if pick else np.nan
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
@@ -613,14 +644,11 @@ else:
 
 s1810 = load_census_table("health", "ACSST5Y2024.S1810")
 if s1810 is not None:
-    pick = None
-    for c in ["S1810_C02_001E", "S1810_C02_002E", "S1810_C02_003E"]:
-        if c in s1810.columns:
-            pick = c
-            break
-    if pick is None:
-        cols = [c for c in s1810.columns if c.startswith("S1810_") and c.endswith("E")]
-        pick = cols[0] if cols else None
+    pick = first_nonempty_numeric_col(s1810, [
+        "S1810_C02_001E",
+        "S1810_C02_002E",
+        "S1810_C02_003E",
+    ])
     tmp = s1810[["tract_geoid"]].copy()
     tmp["disability_rate"] = safe_num(s1810[pick]) if pick else np.nan
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
@@ -638,39 +666,126 @@ else:
     tracts["frequent_mental_distress"] = np.nan
     tracts["poor_physical_health"] = np.nan
 
-# HOUSING 
+# HOUSING
 b25070 = load_census_table("housing", "ACSDT5Y2024.B25070")
 if b25070 is not None:
-    # Rent burden share (>=30%) usually requires summing bins.
-    # Without metadata, take a placeholder percent column if present.
-    pick = "B25070_001E" if "B25070_001E" in b25070.columns else None
     tmp = b25070[["tract_geoid"]].copy()
-    tmp["rent_burden_proxy"] = safe_num(b25070[pick]) if pick else np.nan
+
+    total_col = "B25070_001E"
+    burden_cols = ["B25070_007E", "B25070_008E", "B25070_009E", "B25070_010E"]
+    not_computed_col = "B25070_011E"
+
+    if total_col in b25070.columns and all(c in b25070.columns for c in burden_cols):
+        total = safe_num(b25070[total_col])
+        burden_30_plus = safe_num(b25070[burden_cols]).sum(axis=1)
+
+        if not_computed_col in b25070.columns:
+            denom = total - safe_num(b25070[not_computed_col])
+            note = (
+                "share of renter households with gross rent >=30% of household income; "
+                f"numerator=sum({','.join(burden_cols)}); denominator={total_col}-{not_computed_col}"
+            )
+        else:
+            denom = total
+            note = (
+                "share of renter households with gross rent >=30% of household income; "
+                f"numerator=sum({','.join(burden_cols)}); denominator={total_col}"
+            )
+
+        denom = denom.where(denom > 0, np.nan)
+        tmp["rent_burden_proxy"] = np.where(denom > 0, burden_30_plus / denom * 100.0, np.nan)
+    else:
+        tmp["rent_burden_proxy"] = np.nan
+        note = "missing required B25070 columns for >=30% rent burden calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "rent_burden_proxy", "housing", tracts["rent_burden_proxy"], False, "ACS B25070", f"placeholder column={pick} (replace with >=30% bin sum)")
+    add_indicator(
+        tracts,
+        "rent_burden_proxy",
+        "housing",
+        tracts["rent_burden_proxy"],
+        False,
+        "ACS B25070",
+        note,
+    )
 else:
     tracts["rent_burden_proxy"] = np.nan
 
+
 b25014 = load_census_table("housing", "ACSDT5Y2024.B25014")
 if b25014 is not None:
-    pick = "B25014_001E" if "B25014_001E" in b25014.columns else None
     tmp = b25014[["tract_geoid"]].copy()
-    tmp["overcrowding_proxy"] = safe_num(b25014[pick]) if pick else np.nan
+
+    total_col = "B25014_001E"
+    crowded_cols = [
+        "B25014_005E", "B25014_006E", "B25014_007E",
+        "B25014_011E", "B25014_012E", "B25014_013E",
+    ]
+
+    if total_col in b25014.columns and all(c in b25014.columns for c in crowded_cols):
+        total = safe_num(b25014[total_col])
+        crowded = safe_num(b25014[crowded_cols]).sum(axis=1)
+
+        total = total.where(total > 0, np.nan)
+        tmp["overcrowding_proxy"] = np.where(total > 0, crowded / total * 100.0, np.nan)
+        note = (
+            "share of occupied housing units with >1.0 occupants per room; "
+            f"numerator=sum({','.join(crowded_cols)}); denominator={total_col}"
+        )
+    else:
+        tmp["overcrowding_proxy"] = np.nan
+        note = "missing required B25014 columns for overcrowding calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "overcrowding_proxy", "housing", tracts["overcrowding_proxy"], False, "ACS B25014", f"placeholder column={pick} (replace with >1.0 occupants/room share)")
+    add_indicator(
+        tracts,
+        "overcrowding_proxy",
+        "housing",
+        tracts["overcrowding_proxy"],
+        False,
+        "ACS B25014",
+        note,
+    )
 else:
     tracts["overcrowding_proxy"] = np.nan
 
+
 b07001 = load_census_table("housing", "ACSDT5Y2024.B07001")
 if b07001 is not None:
-    # moved past year proxy (needs bin logic); placeholder
-    pick = "B07001_001E" if "B07001_001E" in b07001.columns else None
     tmp = b07001[["tract_geoid"]].copy()
-    tmp["moved_past_year_proxy"] = safe_num(b07001[pick]) if pick else np.nan
+
+    total_col = "B07001_001E"
+    same_house_col = "B07001_017E"
+
+    if total_col in b07001.columns and same_house_col in b07001.columns:
+        total = safe_num(b07001[total_col])
+        same_house = safe_num(b07001[same_house_col])
+
+        moved = (total - same_house).clip(lower=0)
+        total = total.where(total > 0, np.nan)
+
+        tmp["moved_past_year_proxy"] = np.where(total > 0, moved / total * 100.0, np.nan)
+        note = (
+            "share of population age 1+ who lived in a different house one year ago; "
+            f"formula=({total_col}-{same_house_col})/{total_col}"
+        )
+    else:
+        tmp["moved_past_year_proxy"] = np.nan
+        note = "missing required B07001 columns for residential mobility calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "moved_past_year_proxy", "housing", tracts["moved_past_year_proxy"], False, "ACS B07001", f"placeholder column={pick} (replace with 1 - same-house share)")
+    add_indicator(
+        tracts,
+        "moved_past_year_proxy",
+        "housing",
+        tracts["moved_past_year_proxy"],
+        False,
+        "ACS B07001",
+        note,
+    )
 else:
     tracts["moved_past_year_proxy"] = np.nan
+
 
 b25003 = load_census_table("housing", "ACSDT5Y2024.B25003")
 if b25003 is not None:
@@ -694,18 +809,36 @@ else:
 # SAFETY & ENVIRONMENT 
 s1101 = load_census_table("safety", "ACSST5Y2024.S1101")
 if s1101 is not None:
-    pick = None
-    for c in ["S1101_C02_002E", "S1101_C02_001E", "S1101_C02_009E"]:
-        if c in s1101.columns:
-            pick = c
-            break
-    if pick is None:
-        cols = [c for c in s1101.columns if c.startswith("S1101_") and c.endswith("E")]
-        pick = cols[0] if cols else None
     tmp = s1101[["tract_geoid"]].copy()
-    tmp["single_parent_proxy"] = safe_num(s1101[pick]) if pick else np.nan
+
+    total_col = "S1101_C01_005E"
+    male_single_col = "S1101_C03_005E"
+    female_single_col = "S1101_C04_005E"
+
+    if all(c in s1101.columns for c in [total_col, male_single_col, female_single_col]):
+        total = safe_num(s1101[total_col])
+        single_parent = safe_num(s1101[male_single_col]) + safe_num(s1101[female_single_col])
+
+        total = total.where(total > 0, np.nan)
+        tmp["single_parent_proxy"] = np.where(total > 0, single_parent / total * 100.0, np.nan)
+        note = (
+            "share of households with own children under 18 that are single-parent households; "
+            f"numerator={male_single_col}+{female_single_col}; denominator={total_col}"
+        )
+    else:
+        tmp["single_parent_proxy"] = np.nan
+        note = "missing required S1101 columns for single-parent household calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "single_parent_proxy", "safety_env", tracts["single_parent_proxy"], False, "ACS S1101", f"placeholder column={pick} (replace with true single-parent % logic)")
+    add_indicator(
+        tracts,
+        "single_parent_proxy",
+        "safety_env",
+        tracts["single_parent_proxy"],
+        False,
+        "ACS S1101",
+        note,
+    )
 else:
     tracts["single_parent_proxy"] = np.nan
 
@@ -843,51 +976,87 @@ else:
 
 b08303 = load_census_table("mobility", "ACSDT5Y2024.B08303")
 if b08303 is not None:
-    # long commute share should be computed from bins; placeholder:
-    total = "B08303_001E" if "B08303_001E" in b08303.columns else None
     tmp = b08303[["tract_geoid"]].copy()
-    tmp["commute_time_proxy"] = safe_num(b08303[total]) if total else np.nan
+
+    total_col = "B08303_001E"
+    long_commute_cols = [
+        "B08303_008E", "B08303_009E", "B08303_010E",
+        "B08303_011E", "B08303_012E", "B08303_013E",
+    ]
+
+    if total_col in b08303.columns and all(c in b08303.columns for c in long_commute_cols):
+        total = safe_num(b08303[total_col])
+        long_commute = safe_num(b08303[long_commute_cols]).sum(axis=1)
+
+        total = total.where(total > 0, np.nan)
+        tmp["commute_time_proxy"] = np.where(total > 0, long_commute / total * 100.0, np.nan)
+        note = (
+            "share of workers with travel time to work >=30 minutes; "
+            f"numerator=sum({','.join(long_commute_cols)}); denominator={total_col}"
+        )
+    else:
+        tmp["commute_time_proxy"] = np.nan
+        note = "missing required B08303 columns for long-commute calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "commute_time_proxy", "mobility_connectivity", tracts["commute_time_proxy"], False, "ACS B08303", "placeholder (replace with >=30min bin share)")
+    add_indicator(
+        tracts,
+        "commute_time_proxy",
+        "mobility_connectivity",
+        tracts["commute_time_proxy"],
+        False,
+        "ACS B08303",
+        note,
+    )
 else:
     tracts["commute_time_proxy"] = np.nan
 
 b28002 = load_census_table("mobility", "ACSDT5Y2024.B28002")
 if b28002 is not None:
-    total = "B28002_001E" if "B28002_001E" in b28002.columns else None
-    # broadband often has a specific column; placeholder: take first non-total estimate
-    bb = None
-    if total:
-        for c in b28002.columns:
-            if c.startswith("B28002_") and c.endswith("E") and c != total:
-                bb = c
-                break
     tmp = b28002[["tract_geoid"]].copy()
-    if total and bb:
-        t = safe_num(b28002[total])
-        b = safe_num(b28002[bb])
-        tmp["internet_sub_rate_proxy"] = np.where(t > 0, b / t * 100.0, np.nan)
-        note = f"proxy using {bb}/{total} (replace with true broadband subscription col)"
+
+    total_col = "B28002_001E"
+    broadband_col = "B28002_004E"
+
+    if total_col in b28002.columns and broadband_col in b28002.columns:
+        total = safe_num(b28002[total_col])
+        broadband = safe_num(b28002[broadband_col])
+
+        total = total.where(total > 0, np.nan)
+        tmp["internet_sub_rate_proxy"] = np.where(total > 0, broadband / total * 100.0, np.nan)
+        note = f"share of households with a broadband internet subscription; numerator={broadband_col}; denominator={total_col}"
     else:
         tmp["internet_sub_rate_proxy"] = np.nan
-        note = "missing B28002_001E or broadband column"
+        note = "missing required B28002 columns for broadband subscription calculation"
+
     tracts = tracts.merge(tmp, on="tract_geoid", how="left")
-    add_indicator(tracts, "internet_sub_rate_proxy", "mobility_connectivity", tracts["internet_sub_rate_proxy"], True, "ACS B28002", note)
+    add_indicator(
+        tracts,
+        "internet_sub_rate_proxy",
+        "mobility_connectivity",
+        tracts["internet_sub_rate_proxy"],
+        True,
+        "ACS B28002",
+        note,
+    )
 else:
     tracts["internet_sub_rate_proxy"] = np.nan
 
-# transit access 
-# For now, use PLACES lack transport as a stand-in if present
+# transit access
+# Keep PLACES lack transport only as a diagnostic raw field.
+# Do not score it as a transit-access indicator.
 if "places_LACKTRPT" in tracts.columns:
-    add_indicator(tracts, "lack_transport", "mobility_connectivity", safe_num(tracts["places_LACKTRPT"]), False, "CDC PLACES", "MeasureId=LACKTRPT")
+    tracts["lack_transport"] = safe_num(tracts["places_LACKTRPT"])
 else:
     tracts["lack_transport"] = np.nan
 
-# YOUTH SUPPORTS / WRAPAROUND 
+# YOUTH SUPPORTS / WRAPAROUND
 services_csv = RAW_DOMAINS / "youth" / "services_master.csv"
-if services_csv.exists():
-    svc = pd.read_csv(services_csv, dtype=str)
 
+if services_csv.exists():
+    svc = pd.read_csv(services_csv)
+
+    # find tract id
     tract_col = None
     for cand in ["tract_geoid", "GEOID", "geoid", "tract"]:
         if cand in svc.columns:
@@ -900,15 +1069,15 @@ if services_csv.exists():
     svc = svc[svc["tract_geoid"].notna()].copy()
     svc = sd_only(svc)
 
-    # Safety check (this will prevent silent failures)
     if "tract_geoid" not in svc.columns:
         raise ValueError("sd_only() removed tract_geoid. Update sd_only() to not drop columns.")
 
     # total services per tract
     tot = svc.groupby("tract_geoid").size().reset_index(name="service_count")
 
-    # youth-focused proxy via keywords 
+    # keyword-based diagnostics only
     text_cols = [c for c in svc.columns if svc[c].dtype == object]
+
     def row_text(r):
         return " ".join([str(r[c]) for c in text_cols if pd.notna(r[c])]).lower()
 
@@ -920,18 +1089,19 @@ if services_csv.exists():
     svc["is_mental_health"] = svc["_text"].apply(lambda t: any(k in t for k in mh_kw))
 
     mask_y = svc["is_youth"].fillna(False).astype(bool)
-    youth_ct = svc.loc[mask_y].groupby("tract_geoid").size().reset_index(name="youth_service_count")
     mask_mh = svc["is_mental_health"].fillna(False).astype(bool)
+
+    youth_ct = svc.loc[mask_y].groupby("tract_geoid").size().reset_index(name="youth_service_count")
     mh_ct = svc.loc[mask_mh].groupby("tract_geoid").size().reset_index(name="mh_service_count")
 
     tracts = tracts.merge(tot, on="tract_geoid", how="left")
     tracts = tracts.merge(youth_ct, on="tract_geoid", how="left")
     tracts = tracts.merge(mh_ct, on="tract_geoid", how="left")
 
-    for c in ["service_count", "youth_service_count", "mh_service_count"]:
-        tracts[c] = safe_num(tracts[c]).fillna(0)
+    tracts["service_count"] = safe_num(tracts["service_count"]).fillna(0)
+    tracts["youth_service_count"] = safe_num(tracts["youth_service_count"]).fillna(0)
+    tracts["mh_service_count"] = safe_num(tracts["mh_service_count"]).fillna(0)
 
-    # density per 10k (prefer total_population from ACS B01003)
     if "total_population" in tracts.columns:
         denom = safe_num(tracts["total_population"])
     elif pop_col and pop_col in tracts.columns:
@@ -940,20 +1110,54 @@ if services_csv.exists():
         denom = None
 
     if denom is not None:
-        tracts["services_per_10k"] = np.where(denom > 0, tracts["service_count"] / denom * 10000.0, np.nan)
-        tracts["youth_services_per_10k"] = np.where(denom > 0, tracts["youth_service_count"] / denom * 10000.0, np.nan)
-        tracts["mh_services_per_10k"] = np.where(denom > 0, tracts["mh_service_count"] / denom * 10000.0, np.nan)
+        tracts["services_per_10k"] = np.where(
+            denom > 0,
+            tracts["service_count"] / denom * 10000.0,
+            np.nan
+        )
+        tracts["youth_services_per_10k"] = np.where(
+            denom > 0,
+            tracts["youth_service_count"] / denom * 10000.0,
+            np.nan
+        )
+        tracts["mh_services_per_10k"] = np.where(
+            denom > 0,
+            tracts["mh_service_count"] / denom * 10000.0,
+            np.nan
+        )
     else:
         tracts["services_per_10k"] = np.nan
         tracts["youth_services_per_10k"] = np.nan
         tracts["mh_services_per_10k"] = np.nan
 
-    add_indicator(tracts, "service_count", "youth_supports", tracts["service_count"], True, "services_master", "total services per tract")
-    add_indicator(tracts, "services_per_10k", "youth_supports", tracts["services_per_10k"], True, "services_master + population", "density per 10k")
-    add_indicator(tracts, "youth_services_per_10k", "youth_supports", tracts["youth_services_per_10k"], True, "services_master", "youth-keyword density per 10k")
-    add_indicator(tracts, "mh_services_per_10k", "youth_supports", tracts["mh_services_per_10k"], True, "services_master", "mental-health-keyword density per 10k")
+    add_indicator(
+        tracts,
+        "service_count",
+        "youth_supports",
+        tracts["service_count"],
+        True,
+        "services_master",
+        "total services per tract"
+    )
+    add_indicator(
+        tracts,
+        "services_per_10k",
+        "youth_supports",
+        tracts["services_per_10k"],
+        True,
+        "services_master + population",
+        "density per 10k"
+    )
+
 else:
-    for c in ["service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
+    for c in [
+        "service_count",
+        "youth_service_count",
+        "mh_service_count",
+        "services_per_10k",
+        "youth_services_per_10k",
+        "mh_services_per_10k",
+    ]:
         tracts[c] = np.nan
 
 # Build domain scores + YOI
@@ -987,20 +1191,19 @@ domain_scores = pd.DataFrame({"tract_geoid": tracts["tract_geoid"].astype(str)})
 for d in DOMAINS:
     inds = meta_df.loc[meta_df["domain"] == d, "indicator"].tolist()
     cols = [f"norm_{i}" for i in inds if f"norm_{i}" in tracts.columns]
+
     if not cols:
-        domain_scores[f"{d}_score"] = 0.5
+        domain_scores[f"{d}_score"] = np.nan
         domain_scores[f"{d}_coverage"] = 0.0
     else:
         mat = tracts[cols]
         domain_scores[f"{d}_score"] = mat.mean(axis=1, skipna=True)
-        domain_scores[f"{d}_score"] = domain_scores[f"{d}_score"].fillna(0.5)
         domain_scores[f"{d}_coverage"] = mat.notna().mean(axis=1)
 
-# Equal-weight YOI
-w = 1.0 / len(DOMAINS)
-domain_scores["yoi_raw_0_1"] = 0.0
-for d in DOMAINS:
-    domain_scores["yoi_raw_0_1"] += domain_scores[f"{d}_score"] * w
+score_cols = [f"{d}_score" for d in DOMAINS]
+
+domain_scores["yoi_domain_coverage"] = domain_scores[score_cols].notna().mean(axis=1)
+domain_scores["yoi_raw_0_1"] = domain_scores[score_cols].mean(axis=1, skipna=True)
 domain_scores["yoi_0_100"] = domain_scores["yoi_raw_0_1"] * 100.0
 
 # Attach raw + normalized indicator columns so the frontend can explain each domain
@@ -1018,7 +1221,16 @@ for c in indicator_cols + norm_indicator_cols:
     if c in tracts.columns and c not in keep_raw:
         keep_raw.append(c)
 
-for c in ["crime_rate_per_1k", "service_count", "services_per_10k", "youth_services_per_10k", "mh_services_per_10k"]:
+for c in [
+    "crime_rate_per_1k",
+    "service_count",
+    "youth_service_count",
+    "mh_service_count",
+    "services_per_10k",
+    "youth_services_per_10k",
+    "mh_services_per_10k",
+    "lack_transport",
+]:
     if c in tracts.columns and c not in keep_raw:
         keep_raw.append(c)
 

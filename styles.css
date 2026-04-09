@@ -2815,17 +2815,6 @@ html, body {
   left: 372px !important;
 }
 
-/* little boxes to the right of the main drawer */
-.drawer-tool-stack {
-  position: fixed;
-  top: 12px;
-  left: 470px;
-  z-index: 1300;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .drawer-tool-btn {
   width: 42px;
   height: 42px;
@@ -2915,10 +2904,6 @@ html, body {
     bottom: 16px !important;
   }
 
-  .drawer-tool-stack {
-    left: 352px;
-  }
-
   .drawer-search-flyout {
     left: 406px;
   }
@@ -2928,23 +2913,8 @@ html, body {
   }
 }
 
-/* move the utility buttons left when Location Details is open */
-body.location-panel-open .drawer-tool-stack {
-  left: 630px;
-}
-
 body.location-panel-open .drawer-search-flyout {
   left: 680px;
-}
-
-@media (max-width: 960px) {
-  body.location-panel-open .drawer-tool-stack {
-    left: 320px;
-  }
-
-  body.location-panel-open .drawer-search-flyout {
-    left: 370px;
-  }
 }
 
 /* ===== teal shaded Domain Profile summary box ===== */
@@ -3245,8 +3215,25 @@ body.location-panel-open .drawer-search-flyout {
   left: 372px !important;
 }
 
-/* move floating zoom/home controls down under the header */
+/* little boxes to the right of the main drawer */
 .drawer-tool-stack {
-  top: 895px !important;
-  left: 470px !important;
+  position: fixed;
+  top: 895px;
+  left: 470px;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* only move the custom zoom buttons when Location Details is open */
+#railHomeBtn,
+#railZoomInBtn,
+#railZoomOutBtn {
+  transition: transform 0.22s ease;
+}
+body.location-panel-open #railHomeBtn,
+body.location-panel-open #railZoomInBtn,
+body.location-panel-open #railZoomOutBtn {
+  transform: translateX(160px);
 }

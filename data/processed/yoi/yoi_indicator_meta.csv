@@ -6,23 +6,21 @@ snap_or_assist_rate,economic,False,ACS S2201,column=S2201_C02_013E
 hs_plus,education,True,ACS S1501,hs_col=S1501_C02_015E
 ba_plus,education,True,ACS S1501,ba_col=S1501_C03_016E
 school_enrollment,education,True,ACS S1401,column=S1401_C04_001E
-youth_disconnection_proxy,education,False,ACS B14005,placeholder using sum(non_total)/total; total=B14005_001E
+youth_disconnection_proxy,education,False,ACS B14005,"share of population age 16-19 who are not enrolled in school and not working; numerator=sum(B14005_011E,B14005_014E,B14005_015E,B14005_025E,B14005_028E,B14005_029E); denominator=B14005_001E"
 uninsured_rate,health,False,ACS S2701,column=S2701_C02_001E
 disability_rate,health,False,ACS S1810,column=S1810_C02_001E
 frequent_mental_distress,health,False,CDC PLACES,MeasureId=MHLTH
 poor_physical_health,health,False,CDC PLACES,MeasureId=PHLTH
-rent_burden_proxy,housing,False,ACS B25070,placeholder column=B25070_001E (replace with >=30% bin sum)
-overcrowding_proxy,housing,False,ACS B25014,placeholder column=B25014_001E (replace with >1.0 occupants/room share)
-moved_past_year_proxy,housing,False,ACS B07001,placeholder column=B07001_001E (replace with 1 - same-house share)
+rent_burden_proxy,housing,False,ACS B25070,"share of renter households with gross rent >=30% of household income; numerator=sum(B25070_007E,B25070_008E,B25070_009E,B25070_010E); denominator=B25070_001E-B25070_011E"
+overcrowding_proxy,housing,False,ACS B25014,"share of occupied housing units with >1.0 occupants per room; numerator=sum(B25014_005E,B25014_006E,B25014_007E,B25014_011E,B25014_012E,B25014_013E); denominator=B25014_001E"
+moved_past_year_proxy,housing,False,ACS B07001,share of population age 1+ who lived in a different house one year ago; formula=(B07001_001E-B07001_017E)/B07001_001E
 homeownership_rate,housing,True,ACS B25003,owner=B25003_002E / occupied=B25003_001E
-single_parent_proxy,safety_env,False,ACS S1101,placeholder column=S1101_C02_002E (replace with true single-parent % logic)
+single_parent_proxy,safety_env,False,ACS S1101,share of households with own children under 18 that are single-parent households; numerator=S1101_C03_005E+S1101_C04_005E; denominator=S1101_C01_005E
 vacancy_rate,safety_env,False,ACS B25002,vacant=B25002_003E/total=B25002_001E
+crime_rate_per_1k,safety_env,False,SANDAG ARJIS CIBRS,incidents per 1k using distinct Incident UID
 env_burden,safety_env,False,CalEnviroScreen 4.0,CalEnviroScreen percentile/score (higher burden = worse)
 no_vehicle_rate,mobility_connectivity,False,ACS B08201,no_vehicle=B08201_002E/total=B08201_001E
-commute_time_proxy,mobility_connectivity,False,ACS B08303,placeholder (replace with >=30min bin share)
-internet_sub_rate_proxy,mobility_connectivity,True,ACS B28002,proxy using B28002_002E/B28002_001E (replace with true broadband subscription col)
-lack_transport,mobility_connectivity,False,CDC PLACES,MeasureId=LACKTRPT
+commute_time_proxy,mobility_connectivity,False,ACS B08303,"share of workers with travel time to work >=30 minutes; numerator=sum(B08303_008E,B08303_009E,B08303_010E,B08303_011E,B08303_012E,B08303_013E); denominator=B08303_001E"
+internet_sub_rate_proxy,mobility_connectivity,True,ACS B28002,share of households with a broadband internet subscription; numerator=B28002_004E; denominator=B28002_001E
 service_count,youth_supports,True,services_master,total services per tract
 services_per_10k,youth_supports,True,services_master + population,density per 10k
-youth_services_per_10k,youth_supports,True,services_master,youth-keyword density per 10k
-mh_services_per_10k,youth_supports,True,services_master,mental-health-keyword density per 10k
