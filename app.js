@@ -1187,6 +1187,14 @@ function buildProfileSummaryText(domainData) {
   return `This area shows a ${pattern}. The largest county-relative deficits are in ${drivers.map(d => d.label).join(', ')}.`;
 }
 
+function formatIndicatorDisplayName(name) {
+  return String(name || '')
+    .replace(/^norm_/, '')
+    .replace(/_/g, ' ')
+    .trim()
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function buildDomainBreakdownMarkup(row, domainKey) {
   const boolFromMeta = value => String(value).toLowerCase() === 'true';
 
@@ -1241,6 +1249,7 @@ function buildDomainBreakdownMarkup(row, domainKey) {
         const selectedRaw = row[rawCol];
         const countyRaw = countyAverageForCol(rawCol);
         const selectedNorm = +row[normCol];
+        const displayName = formatIndicatorDisplayName(m.indicator);
 
         const influenceOnDomain = isFiniteNumber(selectedNorm) ? selectedNorm / divisor : NaN;
         const influenceOnOverall = isFiniteNumber(influenceOnDomain)
@@ -1251,7 +1260,7 @@ function buildDomainBreakdownMarkup(row, domainKey) {
           <div class="indicator-row">
             <div class="indicator-row-top">
               <div>
-                <div class="indicator-name">${m.indicator}</div>
+                <div class="indicator-name">${displayName}</div>
                 <div class="indicator-direction">${boolFromMeta(m.higher_is_better) ? 'Higher is better' : 'Lower is better'}</div>
               </div>
               <div class="indicator-chip">${isFiniteNumber(selectedNorm) ? scoreOutOf100(selectedNorm) : 'N/A'}</div>
@@ -2031,6 +2040,47 @@ function renderPanelContent() {
   renderProfileChart();
 }
 
+function syncDrawerToolPositions() {
+  const drawerPanel = document.getElementById('drawerPanel');
+  const toolStack = document.querySelector('.drawer-tool-stack');
+  const searchFlyout = document.querySelector('.drawer-search-flyout');
+
+  if (!drawerPanel || !toolStack) return;
+
+  const rect = drawerPanel.getBoundingClientRect();
+  const gap = 14;
+  const margin = 16;
+
+  const stackWidth = toolStack.offsetWidth || 42;
+  const stackHeight = toolStack.offsetHeight || 150;
+
+  let left = rect.right + gap;
+  let top = rect.top + 890;
+
+  left = Math.min(left, window.innerWidth - stackWidth - margin);
+  top = Math.min(top, window.innerHeight - stackHeight - margin);
+  left = Math.max(margin, left);
+  top = Math.max(margin, top);
+
+  toolStack.style.left = `${Math.round(left)}px`;
+  toolStack.style.top = `${Math.round(top)}px`;
+  toolStack.classList.add('ready');
+
+  if (searchFlyout) {
+    const flyoutWidth = searchFlyout.offsetWidth || 320;
+
+    let flyoutLeft = left + stackWidth + 10;
+    let flyoutTop = top + 44;
+
+    flyoutLeft = Math.min(flyoutLeft, window.innerWidth - flyoutWidth - margin);
+    flyoutLeft = Math.max(margin, flyoutLeft);
+    flyoutTop = Math.max(margin, flyoutTop);
+
+    searchFlyout.style.left = `${Math.round(flyoutLeft)}px`;
+    searchFlyout.style.top = `${Math.round(flyoutTop)}px`;
+  }
+}
+
 // function syncDrawerToolPositions() {
 //   const drawerPanel = document.getElementById('drawerPanel');
 //   const toolStack = document.querySelector('.drawer-tool-stack');
@@ -2162,6 +2212,30 @@ function closeSiteMenu() {
   backdrop.classList.remove('open');
 }
 
+function toggleDrawerPanel(panelName = 'controls') {
+  const drawerPanel = document.getElementById('drawerPanel');
+  if (!drawerPanel) return;
+
+  const isCollapsed = drawerPanel.classList.contains('collapsed');
+  const isSamePanel = state.activePanel === panelName;
+
+  // if the same panel is already open, close it
+  if (!isCollapsed && isSamePanel) {
+    drawerPanel.classList.add('collapsed');
+
+    document.querySelectorAll('.rail-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    document.body.classList.remove('location-panel-open');
+    requestAnimationFrame(syncDrawerToolPositions);
+    return;
+  }
+
+  // otherwise open that panel normally
+  setPanel(panelName);
+}
+
 function bindControls() {
   document.getElementById('toggleChoro')?.addEventListener('change', e => {
   if (e.target.checked) {
@@ -2231,12 +2305,22 @@ document.getElementById('toggleSupervisorDistricts')?.addEventListener('change',
 });
 
 
-  document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
+  document.querySelectorAll('.rail-btn').forEach(btn => {
+  btn.addEventListener('click', () => toggleDrawerPanel(btn.dataset.panel));
+});
+document.querySelector('.legend-icon')?.addEventListener('click', () => {
+  toggleDrawerPanel('controls');
+});
 document.getElementById('closeDrawerBtn').addEventListener('click', () => {
-  document.getElementById('drawerPanel').classList.toggle('collapsed');
+  document.getElementById('drawerPanel').classList.add('collapsed');
+
+  document.querySelectorAll('.rail-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  document.body.classList.remove('location-panel-open');
   requestAnimationFrame(syncDrawerToolPositions);
 });
-
 // document.getElementById('railMenuBtn')?.addEventListener('click', () => {
 //   const drawer = document.getElementById('siteMenuDrawer');
 //   if (drawer?.classList.contains('open')) closeSiteMenu();

@@ -3215,7 +3215,7 @@ body.location-panel-open .drawer-search-flyout {
   left: 372px !important;
 }
 
-/* little boxes to the right of the main drawer */
+/* little boxes to the right of the main drawer
 .drawer-tool-stack {
   position: fixed;
   top: 895px;
@@ -3227,7 +3227,7 @@ body.location-panel-open .drawer-search-flyout {
 }
 
 /* only move the custom zoom buttons when Location Details is open */
-#railHomeBtn,
+/* #railHomeBtn,
 #railZoomInBtn,
 #railZoomOutBtn {
   transition: transform 0.22s ease;
@@ -3236,4 +3236,27 @@ body.location-panel-open #railHomeBtn,
 body.location-panel-open #railZoomInBtn,
 body.location-panel-open #railZoomOutBtn {
   transform: translateX(160px);
+} */ 
+
+.drawer-tool-stack {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.drawer-tool-stack.ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-tool-stack.animated {
+  transition: left 0.22s ease, top 0.22s ease, opacity 0.12s ease;
 }
