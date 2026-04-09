@@ -294,24 +294,167 @@ function geoidFromSearchQuery(query) {
   return `06073${tractSuffix}`;
 }
 
-function searchFeature(query) {
-  const geoFeatures = state.geojson?.features || [];
-  if (!geoFeatures.length) return null;
-
-  const normalized = geoidFromSearchQuery(query);
-  if (normalized) {
-    const exact = geoFeatures.find(f => normalizeGeoid(f.properties?.tract_geoid) === normalized);
-    if (exact) return exact;
-
-    const suffix = tractSuffixFromGeoid(normalized);
-    const suffixMatch = geoFeatures.find(f => tractSuffixFromGeoid(f.properties?.tract_geoid) === suffix);
-    if (suffixMatch) return suffixMatch;
+function searchModeMeta() {
+  if (state.showDataFor === 'zips') {
+    return {
+      placeholder: 'Search ZIP code',
+      helper: 'Start typing a ZIP code to see matching options.',
+      emptyZoomMessage: 'Zoomed to selected ZIP code.',
+      notFound: 'No matching ZIP code found.'
+    };
   }
 
-  const lowered = String(query || '').trim().toLowerCase();
-  if (!lowered) return null;
+  if (state.showDataFor === 'supervisor_districts') {
+    return {
+      placeholder: 'Search supervisor district',
+      helper: 'Start typing a district number to see matching options.',
+      emptyZoomMessage: 'Zoomed to selected supervisor district.',
+      notFound: 'No matching supervisor district found.'
+    };
+  }
 
-  return geoFeatures.find(f => tractLabelFromGeoid(f.properties?.tract_geoid).toLowerCase().includes(lowered));
+  return {
+    placeholder: 'Search census tract',
+    helper: 'Start typing a tract number or GEOID to see matching options.',
+    emptyZoomMessage: 'Zoomed to selected tract.',
+    notFound: 'No matching census tract found. Try a tract number like 20.00 or an 11-digit GEOID.'
+  };
+}
+
+function searchTokensForFeature(key, label) {
+  if (state.showDataFor === 'zips') {
+    const zip = normalizeZip(key);
+    return {
+      text: [label, zip, label.replace(/^ZIP code\s+/i, '')].filter(Boolean),
+      digits: [zip]
+    };
+  }
+
+  if (state.showDataFor === 'supervisor_districts') {
+    const district = normalizeDistrict(key);
+    return {
+      text: [label, district, label.replace(/^Supervisor District\s+/i, '')].filter(Boolean),
+      digits: [district]
+    };
+  }
+
+  const geoid = normalizeGeoid(key);
+  const tractSuffix = tractSuffixFromGeoid(geoid);
+  const tractDisplay = tractLabelFromGeoid(geoid).replace(/^Census tract\s+/i, '');
+
+  return {
+    text: [label, geoid, tractDisplay, tractSuffix].filter(Boolean),
+    digits: [geoid, tractSuffix]
+  };
+}
+
+function currentSearchCandidates() {
+  const features = currentFeatureCollection()?.features || [];
+
+  return features
+    .map(feature => {
+      const key = currentFeatureKey(feature);
+      if (!key) return null;
+
+      const label = currentFeatureLabel(key);
+      const tokens = searchTokensForFeature(key, label);
+
+      return {
+        feature,
+        key,
+        label,
+        text: tokens.text,
+        digits: tokens.digits
+      };
+    })
+    .filter(Boolean);
+}
+
+function matchPriority(candidate, query) {
+  const lowered = String(query || '').trim().toLowerCase();
+  const digits = String(query || '').replace(/\D/g, '');
+
+  if (!lowered && !digits) return 0;
+
+  if (
+    candidate.text.some(token => String(token).toLowerCase() === lowered) ||
+    (digits && candidate.digits.some(token => token === digits))
+  ) {
+    return 0;
+  }
+
+  if (
+    candidate.text.some(token => String(token).toLowerCase().startsWith(lowered)) ||
+    (digits && candidate.digits.some(token => token.startsWith(digits)))
+  ) {
+    return 1;
+  }
+
+  if (
+    candidate.text.some(token => String(token).toLowerCase().includes(lowered)) ||
+    (digits && candidate.digits.some(token => token.includes(digits)))
+  ) {
+    return 2;
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
+function searchCandidates(query = '') {
+  const lowered = String(query || '').trim().toLowerCase();
+  const digits = String(query || '').replace(/\D/g, '');
+
+  return currentSearchCandidates()
+    .filter(candidate => {
+      if (!lowered && !digits) return true;
+
+      return (
+        candidate.text.some(token => String(token).toLowerCase().includes(lowered)) ||
+        (digits && candidate.digits.some(token => token.includes(digits)))
+      );
+    })
+    .sort((a, b) => {
+      const scoreA = matchPriority(a, query);
+      const scoreB = matchPriority(b, query);
+
+      if (scoreA !== scoreB) return scoreA - scoreB;
+      return a.label.localeCompare(b.label, undefined, { numeric: true });
+    });
+}
+
+function searchFeature(query) {
+  const trimmed = String(query || '').trim();
+  if (!trimmed) return null;
+  return searchCandidates(trimmed)[0] || null;
+}
+
+function updateSearchSuggestions(query = '') {
+  const datalist = document.getElementById('searchSuggestions');
+  if (!datalist) return;
+
+  datalist.innerHTML = '';
+
+  searchCandidates(query).slice(0, 25).forEach(candidate => {
+    const option = document.createElement('option');
+    option.value = candidate.label;
+    option.label = candidate.key;
+    datalist.appendChild(option);
+  });
+}
+
+function updateSearchUi() {
+  const input = document.getElementById('searchInput');
+  const helper = document.getElementById('searchHelperText');
+  const meta = searchModeMeta();
+
+  if (input) {
+    input.placeholder = meta.placeholder;
+    updateSearchSuggestions(input.value);
+  }
+
+  if (helper) {
+    helper.textContent = meta.helper;
+  }
 }
 
 function setSearchStatus(message, isError = false) {
@@ -338,39 +481,139 @@ function setRailSearchOpen(isOpen) {
 function runSearch() {
   const input = document.getElementById('searchInput');
   if (!input) return;
+
   const query = input.value;
+  const meta = searchModeMeta();
 
   if (!String(query || '').trim()) {
     if (state.selectedGeoid) {
-      const feature = searchFeature(state.selectedGeoid);
-      if (feature) {
-        map.fitBounds(L.geoJSON(feature).getBounds().pad(0.8));
-        setSearchStatus('Zoomed to selected tract.');
+      const match = searchFeature(state.selectedGeoid);
+      if (match) {
+        map.fitBounds(L.geoJSON(match.feature).getBounds().pad(0.8));
+        setSearchStatus(meta.emptyZoomMessage);
       }
     }
     return;
   }
 
-  const feature = searchFeature(query);
-  if (!feature) {
-    setSearchStatus('No matching tract found. Try an 11-digit GEOID or tract number like 208.01.', true);
+  const match = searchFeature(query);
+  if (!match) {
+    setSearchStatus(meta.notFound, true);
     return;
   }
 
-  const geoid = normalizeGeoid(feature.properties?.tract_geoid);
-  state.selectedGeoid = geoid;
+  const { feature, key, label } = match;
+
+  state.selectedGeoid = key;
   updateAll(true);
   setPanel('location');
   map.fitBounds(L.geoJSON(feature).getBounds().pad(0.8));
-  setSearchStatus(`Found ${tractLabelFromGeoid(geoid)}.`);
+  setSearchStatus(`Found ${label}.`);
 
-  const row = state.tractMap.get(geoid);
+  input.value = label;
+  updateSearchSuggestions(label);
+
+  const row = currentDataMap().get(key);
   if (popupRef) popupRef.remove();
   popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
     .setLatLng(L.geoJSON(feature).getBounds().getCenter())
-    .setContent(popupHtml(row, geoid))
+    .setContent(popupHtml(row, key))
     .openOn(map);
 }
+
+// function geoidFromSearchQuery(query) {
+//   const raw = String(query || '').trim();
+//   if (!raw) return '';
+
+//   const digits = raw.replace(/\D/g, '');
+//   if (!digits) return '';
+
+//   if (digits.length >= 11) return normalizeGeoid(digits);
+
+//   if (digits.length <= 6) return '';
+
+//   // tract-only search like 20801 or 208.01 -> county tract GEOID suffix
+//   const tractSuffix = digits.padStart(6, '0').slice(-6);
+//   return `06073${tractSuffix}`;
+// }
+
+// function searchFeature(query) {
+//   const geoFeatures = state.geojson?.features || [];
+//   if (!geoFeatures.length) return null;
+
+//   const normalized = geoidFromSearchQuery(query);
+//   if (normalized) {
+//     const exact = geoFeatures.find(f => normalizeGeoid(f.properties?.tract_geoid) === normalized);
+//     if (exact) return exact;
+
+//     const suffix = tractSuffixFromGeoid(normalized);
+//     const suffixMatch = geoFeatures.find(f => tractSuffixFromGeoid(f.properties?.tract_geoid) === suffix);
+//     if (suffixMatch) return suffixMatch;
+//   }
+
+//   const lowered = String(query || '').trim().toLowerCase();
+//   if (!lowered) return null;
+
+//   return geoFeatures.find(f => tractLabelFromGeoid(f.properties?.tract_geoid).toLowerCase().includes(lowered));
+// }
+
+// function setSearchStatus(message, isError = false) {
+//   const input = document.getElementById('searchInput');
+//   if (!input) return;
+//   input.setCustomValidity(isError ? message : '');
+//   input.title = message || '';
+//   if (isError && typeof input.reportValidity === 'function') input.reportValidity();
+// }
+
+// function setRailSearchOpen(isOpen) {
+//   const flyout = document.getElementById('railSearchFlyout');
+//   if (!flyout) return;
+
+//   flyout.classList.toggle('open', isOpen);
+
+//   if (isOpen) {
+//     requestAnimationFrame(() => {
+//       document.getElementById('searchInput')?.focus();
+//     });
+//   }
+// }
+
+// function runSearch() {
+//   const input = document.getElementById('searchInput');
+//   if (!input) return;
+//   const query = input.value;
+
+//   if (!String(query || '').trim()) {
+//     if (state.selectedGeoid) {
+//       const feature = searchFeature(state.selectedGeoid);
+//       if (feature) {
+//         map.fitBounds(L.geoJSON(feature).getBounds().pad(0.8));
+//         setSearchStatus('Zoomed to selected tract.');
+//       }
+//     }
+//     return;
+//   }
+
+//   const feature = searchFeature(query);
+//   if (!feature) {
+//     setSearchStatus('No matching tract found. Try an 11-digit GEOID or tract number like 208.01.', true);
+//     return;
+//   }
+
+//   const geoid = normalizeGeoid(feature.properties?.tract_geoid);
+//   state.selectedGeoid = geoid;
+//   updateAll(true);
+//   setPanel('location');
+//   map.fitBounds(L.geoJSON(feature).getBounds().pad(0.8));
+//   setSearchStatus(`Found ${tractLabelFromGeoid(geoid)}.`);
+
+//   const row = state.tractMap.get(geoid);
+//   if (popupRef) popupRef.remove();
+//   popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
+//     .setLatLng(L.geoJSON(feature).getBounds().getCenter())
+//     .setContent(popupHtml(row, geoid))
+//     .openOn(map);
+// }
 
 function normalizeWeights() {
   const total = DOMAINS.reduce((sum, d) => sum + (+state.rawWeights[d] || 0), 0);
@@ -656,9 +899,13 @@ function renderMap() {
         mouseout: e => {
           tractLayer.resetStyle(e.target);
         },
-        click: e => {
+                click: e => {
           state.selectedGeoid = featureKey;
           updateAll(true);
+
+          if (state.showDataFor === 'tracts') {
+            setPanel('location');
+          }
 
           if (popupRef) popupRef.remove();
           popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
@@ -1869,6 +2116,7 @@ function syncGeographyControls() {
     btn.classList.toggle('active', btn.dataset.showDataFor === state.showDataFor);
   });
 
+  updateSearchUi();
   syncPrimaryViewToggles();
 }
 
@@ -1966,19 +2214,31 @@ document.getElementById('toggleSupervisorDistricts')?.addEventListener('change',
   document.querySelectorAll('.rail-btn').forEach(btn => btn.addEventListener('click', () => setPanel(btn.dataset.panel)));
 document.getElementById('closeDrawerBtn').addEventListener('click', () => document.getElementById('drawerPanel').classList.toggle('collapsed'));
 
-document.getElementById('railMenuBtn')?.addEventListener('click', () => {
-  const drawer = document.getElementById('siteMenuDrawer');
-  if (drawer?.classList.contains('open')) closeSiteMenu();
-  else openSiteMenu();
-});
+// document.getElementById('railMenuBtn')?.addEventListener('click', () => {
+//   const drawer = document.getElementById('siteMenuDrawer');
+//   if (drawer?.classList.contains('open')) closeSiteMenu();
+//   else openSiteMenu();
+// });
 
-document.getElementById('railSearchBtn')?.addEventListener('click', () => {
-  const flyout = document.getElementById('railSearchFlyout');
-  setRailSearchOpen(!flyout?.classList.contains('open'));
-});
+// document.getElementById('railSearchBtn')?.addEventListener('click', () => {
+//   const flyout = document.getElementById('railSearchFlyout');
+//   setRailSearchOpen(!flyout?.classList.contains('open'));
+// });
 
-document.getElementById('closeRailSearchBtn')?.addEventListener('click', () => {
-  setRailSearchOpen(false);
+// document.getElementById('closeRailSearchBtn')?.addEventListener('click', () => {
+//   setRailSearchOpen(false);
+// });
+
+// document.getElementById('railZoomInBtn')?.addEventListener('click', () => {
+//   map.zoomIn();
+// });
+
+// document.getElementById('railZoomOutBtn')?.addEventListener('click', () => {
+//   map.zoomOut();
+// });
+
+document.getElementById('railHomeBtn')?.addEventListener('click', () => {
+  goToHomeView();
 });
 
 document.getElementById('railZoomInBtn')?.addEventListener('click', () => {
@@ -2020,13 +2280,24 @@ document.getElementById('copySelectedBtn').addEventListener('click', async () =>
 });
 
 const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('keydown', e => {
+
+searchInput?.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   e.preventDefault();
   runSearch();
 });
-searchInput.addEventListener('focus', () => setSearchStatus(''));
-document.querySelector('.rail-search-shell i')?.addEventListener('click', runSearch);
+
+searchInput?.addEventListener('focus', () => {
+  setSearchStatus('');
+  updateSearchSuggestions(searchInput.value);
+});
+
+searchInput?.addEventListener('input', () => {
+  setSearchStatus('');
+  updateSearchSuggestions(searchInput.value);
+});
+
+document.getElementById('searchBtn')?.addEventListener('click', runSearch);
 //   document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
 //     state.showCoiOverlay = e.target.checked;
 //     clearTransientUi();
@@ -2101,17 +2372,17 @@ function applyInitialMapView() {
   }
 
   if (!fitted) {
-    const bounds = tractLayer.getBounds();
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, {
-  animate: false,
-  paddingTopLeft: [400, 50],
-  paddingBottomRight: [140, 30],
-  maxZoom: 11,
-});
-      fitted = true;
-    }
+  const bounds = tractLayer.getBounds();
+  if (bounds.isValid()) {
+    map.fitBounds(bounds, {
+      animate: false,
+      paddingTopLeft: [400, 110],
+      paddingBottomRight: [140, 40],
+      maxZoom: 11,
+    });
+    fitted = true;
   }
+}
 
   if (fitted) {
     state.hasInitialFit = true;
@@ -2123,6 +2394,22 @@ function applyInitialMapView() {
       });
     });
   }
+}
+
+function goToHomeView() {
+  const bounds = tractLayer?.getBounds?.();
+
+  if (bounds && bounds.isValid()) {
+    map.fitBounds(bounds, {
+      animate: true,
+      paddingTopLeft: [400, 110],
+      paddingBottomRight: [140, 40],
+      maxZoom: 11,
+    });
+    return;
+  }
+
+  map.setView([32.87, -116.96], 10, { animate: true });
 }
 
 function filterExcludedTracts() {

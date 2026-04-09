@@ -15,6 +15,22 @@
 <body>
   <div id="map"></div>
 
+    <header class="page-header dashboard-page-header">
+    <div class="page-header-inner">
+      <a class="brand" href="./index.html">
+        <div class="brand-title">Youth Opportunity Desert Dashboard</div>
+        <div class="brand-subtitle">Halıcıoğlu Data Science Institute – UC San Diego</div>
+      </a>
+
+      <nav class="top-nav">
+        <a class="nav-link active" href="./index.html">Map</a>
+        <a class="nav-link" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link" href="./about.html">About Us</a>
+        <a class="nav-link" href="./contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
   <aside class="left-rail">
   <button class="rail-btn active" data-panel="controls"><i class="bi bi-sliders2"></i><span>Data<br>Controls</span></button>
   <button class="rail-btn" data-panel="overlays"><i class="bi bi-layers"></i><span>Overlays</span></button>
@@ -53,6 +69,25 @@
             <button class="seg-btn active" type="button" data-show-data-for="tracts">Census tracts</button>
             <button class="seg-btn" type="button" data-show-data-for="zips">ZIP codes</button>
             <button class="seg-btn" type="button" data-show-data-for="supervisor_districts">Supervisor districts</button>
+          </div>
+        </div>
+
+                <div class="control-section">
+          <label class="control-label">Search selected geography</label>
+          <div class="drawer-search-row">
+            <input
+              id="searchInput"
+              class="drawer-search-input"
+              type="text"
+              list="searchSuggestions"
+              placeholder="Search census tract"
+              autocomplete="off"
+            />
+            <button id="searchBtn" class="mini-btn" type="button">Search</button>
+          </div>
+          <datalist id="searchSuggestions"></datalist>
+          <div id="searchHelperText" class="helper-text">
+            Start typing a tract number or GEOID to see matching options.
           </div>
         </div>
 
@@ -162,7 +197,8 @@
   <div class="assistant-shell">
     <div id="assistantMessages" class="assistant-messages">
       <div class="assistant-msg assistant-msg-bot">
-        Hi — I can help explain the dashboard, switch views, and turn layers on or off.
+        Hi — I can help explain the dashboard, switch views, and turn layers on or off.<br><br>
+        <strong>Note:</strong> The first response may take about 50–60 seconds while the assistant boots up.
       </div>
     </div>
 
@@ -284,25 +320,22 @@
     </div>
   </section>
 
-  <div class="drawer-tool-stack">
-  <button id="railMenuBtn" class="drawer-tool-btn" type="button" title="Menu">
-    <i class="bi bi-list"></i>
-  </button>
+    <div class="drawer-tool-stack">
+    <button id="railHomeBtn" class="drawer-tool-btn" type="button" title="Reset view">
+      <i class="bi bi-house-door"></i>
+    </button>
 
-  <button id="railSearchBtn" class="drawer-tool-btn" type="button" title="Search">
-    <i class="bi bi-search"></i>
-  </button>
+    <button id="railZoomInBtn" class="drawer-tool-btn" type="button" title="Zoom in">
+      <i class="bi bi-plus-lg"></i>
+    </button>
 
-  <button id="railZoomInBtn" class="drawer-tool-btn" type="button" title="Zoom in">
-    <i class="bi bi-plus-lg"></i>
-  </button>
-
-  <button id="railZoomOutBtn" class="drawer-tool-btn" type="button" title="Zoom out">
-    <i class="bi bi-dash-lg"></i>
-  </button>
+    <button id="railZoomOutBtn" class="drawer-tool-btn" type="button" title="Zoom out">
+      <i class="bi bi-dash-lg"></i>
+    </button>
+  </div>
 </div>
 
-<div id="railSearchFlyout" class="drawer-search-flyout">
+<!-- <div id="railSearchFlyout" class="drawer-search-flyout">
   <div class="rail-search-shell">
     <i class="bi bi-search"></i>
     <input id="searchInput" type="text" placeholder="Search for a tract GEOID">
@@ -310,7 +343,7 @@
       <i class="bi bi-x-lg"></i>
     </button>
   </div>
-</div>
+</div> -->
 
     <div id="menuBackdrop" class="menu-backdrop"></div>
 
