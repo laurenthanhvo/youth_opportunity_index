@@ -756,6 +756,22 @@ function colorForValue(v) {
   return BLUES[BLUES.length - 1];
 }
 
+function colorForScore100(v) {
+  if (!isFiniteNumber(v)) return '#427ea6';
+
+  const t = Math.max(0, Math.min(1, v / 100));
+
+  if (t <= 0.45) {
+    return d3.interpolateRgbBasis(WARM_COLORS)(t / 0.45);
+  }
+
+  if (t <= 0.55) {
+    return d3.interpolateRgbBasis(MID_COLORS)((t - 0.45) / 0.10);
+  }
+
+  return d3.interpolateRgbBasis(COOL_COLORS)((t - 0.55) / 0.45);
+}
+
 function styleFeature(feature) {
   const featureKey = currentFeatureKey(feature);
   const row = currentDataMap().get(featureKey);
@@ -781,25 +797,85 @@ function styleFeature(feature) {
   };
 }
 
+function popupMetricBlock({ label, context, value, badgeText, widthPct, fillColor }) {
+  return `
+    <div class="popup-metric-block">
+      <div class="popup-row">
+        <div>
+          <div class="popup-label">${label}</div>
+          <div class="popup-context">${context}</div>
+        </div>
+        <div class="popup-badge score-badge">${badgeText}</div>
+      </div>
+      ${isFiniteNumber(widthPct)
+        ? `<div class="popup-score-track">
+             <div class="popup-score-fill" style="width:${Math.max(0, Math.min(100, widthPct))}%; --popup-fill:${fillColor || '#427ea6'};"></div>
+           </div>`
+        : ''
+      }
+    </div>
+  `;
+}
+
 function popupHtml(row, geoid) {
-  const value = effectiveShowCoiOverlay() ? currentCoiValue(geoid) : currentValue(row);
-  const badge = effectiveShowCoiOverlay()
-    ? (state.scoreMode === 'score' ? `${Math.round(value)}/100` : currentCoiCategory(geoid))
-    : (state.scoreMode === 'score' ? scoreDisplayValue(value) : valueToCategory(value));
+  const yoiValue = row
+    ? (isFiniteNumber(row.yoi_custom_0_100)
+        ? +row.yoi_custom_0_100
+        : (isFiniteNumber(row.yoi_0_100) ? +row.yoi_0_100 : NaN))
+    : NaN;
+
+  const coiValue = currentCoiValue(geoid);
+
+  const activeValue = effectiveShowCoiOverlay() ? coiValue : currentValue(row);
+  const activeBadge = effectiveShowCoiOverlay()
+    ? `${Math.round(coiValue)}/100`
+    : (state.scoreMode === 'score' ? scoreDisplayValue(activeValue) : valueToCategory(activeValue));
+
+  const coiBlock = isFiniteNumber(coiValue)
+  ? popupMetricBlock({
+      label: 'Child Opportunity Index',
+      context: 'Compared to nation',
+      value: coiValue,
+      badgeText: `${Math.round(coiValue)}/100`,
+      widthPct: coiValue,
+      fillColor: colorForScore100(coiValue),
+    })
+  : '';
+
+  const yoiBlock = isFiniteNumber(yoiValue)
+  ? popupMetricBlock({
+      label: 'Overall YOI',
+      context: 'Compared to county',
+      value: yoiValue,
+      badgeText: `${Math.round(yoiValue)}/100`,
+      widthPct: yoiValue,
+      fillColor: colorForScore100(yoiValue),
+    })
+  : '';
+
+  const singleMetricBlock = popupMetricBlock({
+  label: state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle(),
+  context: 'Compared to county',
+  value: activeValue,
+  badgeText: activeBadge,
+  widthPct: state.mapLayer === 'YOI (0–100)' ? activeValue : activeValue * 100,
+  fillColor: state.mapLayer === 'YOI (0–100)'
+    ? colorForScore100(activeValue)
+    : colorForValue(activeValue),
+});
+
   return `
     <div class="popup-card">
       <div class="popup-title">${currentFeatureLabel(geoid)}</div>
       <div class="popup-subtitle">San Diego County, CA</div>
       <div class="popup-note">Click ${state.showDataFor === 'zips' ? 'ZIP code' : state.showDataFor === 'supervisor_districts' ? 'supervisor district' : 'census tract'} for details</div>
       <div class="popup-divider"></div>
-      <div class="popup-row">
-        <div>
-          <div class="popup-label">${effectiveShowCoiOverlay() ? 'Child Opportunity Index' : (state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle())}</div>
-          <div class="popup-context">${effectiveShowCoiOverlay() ? 'Compared to nation' : 'Compared to county'}</div>
-        </div>
-        <div class="popup-badge ${state.scoreMode === 'score' ? 'score-badge' : ''}">${badge}</div>
-      </div>
-      ${state.scoreMode === 'score' && isFiniteNumber(value) ? `<div class="popup-score-track"><div class="popup-score-fill" style="width:${state.mapLayer === 'YOI (0–100)' ? Math.max(0, Math.min(100, value)) : Math.max(0, Math.min(100, value * 100))}%"></div></div>` : ''}
+
+      ${
+        effectiveShowCoiOverlay()
+          ? `${coiBlock}${yoiBlock}`
+          : singleMetricBlock
+      }
     </div>`;
 }
 

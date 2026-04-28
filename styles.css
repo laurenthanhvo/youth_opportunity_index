@@ -3260,3 +3260,11 @@ body.location-panel-open #railZoomOutBtn {
 .drawer-tool-stack.animated {
   transition: left 0.22s ease, top 0.22s ease, opacity 0.12s ease;
 }
+
+.popup-metric-block + .popup-metric-block {
+  margin-top: 12px;
+}
+
+.popup-score-fill {
+  background: var(--popup-fill, #427ea6) !important;
+}
