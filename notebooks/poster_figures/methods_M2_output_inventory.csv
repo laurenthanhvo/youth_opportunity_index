@@ -1,0 +1,9 @@
+Layer,Count,Role,Key output
+Tract-level YOI,737,Primary analysis unit,yoi_components.csv
+ZIP-level YOI,113,Broader public-facing geography,yoi_zip_components.csv
+Supervisor districts,5,County planning geography,yoi_supervisor_district_components.csv
+Tract boundaries,737,Base choropleth geometry,sd_tracts.geojson
+COI overlay,736,External benchmark layer,sd_coi_2023.csv
+Service locations,5592,Contextual service overlay,service_locations.geojson
+Transit routes,838,Mobility context overlay,transit_routes.geojson
+Transit stops,6220,Mobility access overlay,transit_stops.geojson
