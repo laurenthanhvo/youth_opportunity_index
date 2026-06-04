@@ -1,0 +1,9 @@
+source,variable,n,pearson_corr_with_yoi,spearman_corr_with_yoi
+Child Opportunity Index,coi_score,734,0.8060839554959089,0.8241078043896197
+Child Opportunity Index,coi_ed_score,734,0.6848754391239014,0.7045849738533339
+Child Opportunity Index,coi_he_score,734,0.5080242197663793,0.5371506929864108
+Child Opportunity Index,coi_se_score,733,0.825104473091071,0.840955450857743
+YOI raw health / PLACES-related indicator,frequent_mental_distress,734,-0.7285750693034145,-0.7784212778649395
+YOI raw health / PLACES-related indicator,poor_physical_health,734,-0.7307851692212093,-0.7130224292097737
+YOI raw health / PLACES-related indicator,uninsured_rate,734,-0.03348341024920153,-0.05659828362920838
+YOI raw health / PLACES-related indicator,disability_rate,734,-0.42295290063729885,-0.41348268706744107

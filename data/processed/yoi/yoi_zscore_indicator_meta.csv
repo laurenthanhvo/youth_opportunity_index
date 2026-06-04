@@ -1,0 +1,26 @@
+indicator,domain,higher_is_better,raw_mean_county,raw_std_county,raw_min,raw_max,valid_count,coverage,z_col,source,notes
+poverty_rate,economic,False,446.09090909090907,377.0803154861371,0.0,3145.0,737,1.0,z_poverty_rate,ACS S1701,column=S1701_C02_001E
+median_hh_income,economic,True,113782.6879334258,41965.11878199161,34148.0,247222.0,721,0.9782903663500678,z_median_hh_income,ACS B19013,column=B19013_001E
+unemployment_rate,economic,False,6.115395095367848,3.9038749762608527,0.0,34.0,734,0.9959294436906377,z_unemployment_rate,ACS S2301,column=S2301_C04_001E
+snap_or_assist_rate,economic,False,6.22896174863388,5.221697849381063,0.0,26.9,732,0.9932157394843962,z_snap_or_assist_rate,ACS S2201,column=S2201_C02_013E
+hs_plus,education,True,43.472207084468664,20.95212893998791,2.9,89.6,734,0.9959294436906377,z_hs_plus,ACS S1501,hs_col=S1501_C02_015E
+ba_plus,education,True,369.0081411126187,277.2451558822641,0.0,4624.0,737,1.0,z_ba_plus,ACS S1501,ba_col=S1501_C03_016E
+school_enrollment,education,True,82.71866485013624,11.955847149038094,5.8,100.0,734,0.9959294436906377,z_school_enrollment,ACS S1401,column=S1401_C04_001E
+youth_disconnection_proxy,education,False,5.122270536834778,11.615042722376312,0.0,100.0,721,0.9782903663500678,z_youth_disconnection_proxy,ACS B14005,"share of population age 16-19 who are not enrolled in school and not working; numerator=sum(B14005_011E,B14005_014E,B14005_015E,B14005_025E,B14005_028E,B14005_029E); denominator=B14005_001E"
+uninsured_rate,health,False,4037.986431478969,1646.9043679285664,0.0,16685.0,737,1.0,z_uninsured_rate,ACS S2701,column=S2701_C02_001E
+disability_rate,health,False,478.90909090909093,249.40261029202586,0.0,1438.0,737,1.0,z_disability_rate,ACS S1810,column=S1810_C02_001E
+frequent_mental_distress,health,False,16.566938775510202,2.7728289570081652,8.8,31.1,735,0.9972862957937585,z_frequent_mental_distress,CDC PLACES,MeasureId=MHLTH
+poor_physical_health,health,False,12.137687074829932,2.607656457702503,5.5,23.3,735,0.9972862957937585,z_poor_physical_health,CDC PLACES,MeasureId=PHLTH
+rent_burden_proxy,housing,False,55.81826774429569,16.413815894210398,0.0,100.0,731,0.9918588873812755,z_rent_burden_proxy,ACS B25070,"share of renter households with gross rent >=30% of household income; numerator=sum(B25070_007E,B25070_008E,B25070_009E,B25070_010E); denominator=B25070_001E-B25070_011E"
+overcrowding_proxy,housing,False,6.749906061838862,6.740972426993475,0.0,37.060041407867494,732,0.9932157394843962,z_overcrowding_proxy,ACS B25014,"share of occupied housing units with >1.0 occupants per room; numerator=sum(B25014_005E,B25014_006E,B25014_007E,B25014_011E,B25014_012E,B25014_013E); denominator=B25014_001E"
+moved_past_year_proxy,housing,False,12.792510382876985,8.420428061086973,0.0,47.77864380358535,735,0.9972862957937585,z_moved_past_year_proxy,ACS B07001,share of population age 1+ who lived in a different house one year ago; formula=(B07001_001E-B07001_017E)/B07001_001E
+homeownership_rate,housing,True,55.586057340336424,25.443574805741356,0.0,97.6878612716763,732,0.9932157394843962,z_homeownership_rate,ACS B25003,owner=B25003_002E / occupied=B25003_001E
+single_parent_proxy,safety_env,False,26.33590809202092,17.139770717445355,0.0,100.0,726,0.9850746268656716,z_single_parent_proxy,ACS S1101,share of households with own children under 18 that are single-parent households; numerator=S1101_C03_005E+S1101_C04_005E; denominator=S1101_C01_005E
+vacancy_rate,safety_env,False,6.3329886069723065,7.1071557309781905,0.0,61.05476673427992,732,0.9932157394843962,z_vacancy_rate,ACS B25002,vacant=B25002_003E/total=B25002_001E
+crime_rate_per_1k,safety_env,False,57.88793585557628,734.2550010030753,0.0,19928.571428571428,735,0.9972862957937585,z_crime_rate_per_1k,SANDAG ARJIS CIBRS,incidents per 1k using distinct Incident UID
+env_burden,safety_env,False,37.35563451958131,23.399461467529314,0.572495333,97.03795893,535,0.7259158751696065,z_env_burden,CalEnviroScreen 4.0,CalEnviroScreen percentile/score (higher burden = worse)
+no_vehicle_rate,mobility_connectivity,False,5.505482042889127,6.630810150539153,0.0,100.0,732,0.9932157394843962,z_no_vehicle_rate,ACS B08201,no_vehicle=B08201_002E/total=B08201_001E
+commute_time_proxy,mobility_connectivity,False,36.333574889019836,13.256258185413516,0.0,81.22109158186865,734,0.9959294436906377,z_commute_time_proxy,ACS B08303,"share of workers with travel time to work >=30 minutes; numerator=sum(B08303_008E,B08303_009E,B08303_010E,B08303_011E,B08303_012E,B08303_013E); denominator=B08303_001E"
+internet_sub_rate_proxy,mobility_connectivity,True,94.8540550057162,4.459500551809023,69.2144373673036,100.0,732,0.9932157394843962,z_internet_sub_rate_proxy,ACS B28002,share of households with a broadband internet subscription; numerator=B28002_004E; denominator=B28002_001E
+service_count,youth_supports,True,7.587516960651289,10.001669138584706,0.0,123.0,737,1.0,z_service_count,services_master,total services per tract
+services_per_10k,youth_supports,True,19.708604422629445,56.07637634933116,0.0,1428.5714285714284,735,0.9972862957937585,z_services_per_10k,services_master + population,density per 10k
