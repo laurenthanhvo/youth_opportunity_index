@@ -65,10 +65,11 @@
 
         <div class="control-section">
           <label class="control-label">Level of comparison</label>
-          <div class="segmented three-up">
+          <div class="segmented four-up">
             <button class="seg-btn active" type="button" data-show-data-for="tracts">Census tracts</button>
             <button class="seg-btn" type="button" data-show-data-for="zips">ZIP codes</button>
             <button class="seg-btn" type="button" data-show-data-for="supervisor_districts">Supervisor districts</button>
+            <button class="seg-btn" type="button" data-show-data-for="city_council_districts">City districts</button>
           </div>
         </div>
 
@@ -136,6 +137,16 @@
             <div>
               <div class="overlay-title">Supervisor Districts</div>
               <div class="overlay-desc">Show the Youth Opportunity Index aggregated by supervisor district instead of census tract.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="overlay-item">
+          <label class="toggle-line">
+            <label class="toggle-switch"><input id="toggleCityCouncilDistricts" type="checkbox"><span></span></label>
+            <div>
+              <div class="overlay-title">San Diego City Council Districts</div>
+              <div class="overlay-desc">Show the Youth Opportunity Index aggregated by the 9 City of San Diego council districts.</div>
             </div>
           </label>
         </div>
@@ -220,7 +231,7 @@
   <div class="faq-item open">
     <button class="faq-btn">What does this map show?<i class="bi bi-chevron-down"></i></button>
     <div class="faq-body">
-      This dashboard maps the Youth Opportunity Index for San Diego County. You can compare places by census tract, ZIP code, or supervisor district, inspect overall opportunity or single domains, adjust domain weights, and compare the local YOI against the external Child Opportunity Index overlay.
+      This dashboard maps the Youth Opportunity Index for San Diego County. You can compare places by census tract, ZIP code, supervisor district, or City of San Diego council district, inspect overall opportunity or single domains, adjust domain weights, and compare the local YOI against the external Child Opportunity Index overlay.
     </div>
   </div>
 
@@ -248,7 +259,7 @@
   <div class="faq-item">
     <button class="faq-btn">What is the difference between census tracts, ZIP codes, and supervisor districts?<i class="bi bi-chevron-down"></i></button>
     <div class="faq-body">
-      Census tracts provide the most detailed neighborhood-level view. ZIP codes are broader and may be easier for general audiences to recognize. Supervisor districts are much larger policy geographies that are useful for county planning and stakeholder conversations. The map, selected feature, and profile/location details update to match whichever geography you choose.
+      Census tracts provide the most detailed neighborhood-level view. ZIP codes are broader and may be easier for general audiences to recognize. Supervisor districts are much larger policy geographies that are useful for county planning and stakeholder conversations. City districts show the 9 City of San Diego council districts, which are useful when you specifically want city-level representation rather than countywide supervisor districts. The map, selected feature, and profile/location details update to match whichever geography you choose.
     </div>
   </div>
 
@@ -269,7 +280,7 @@
   <div class="faq-item">
   <button class="faq-btn">What do the overlays do?<i class="bi bi-chevron-down"></i></button>
   <div class="faq-body">
-    Overlays let you turn supporting map layers on and off. These include the YOI choropleth, tract boundaries, supervisor district view, transit routes, transit stops, service locations, and the Child Opportunity Index overlay. The COI overlay is meant as a reference layer, not as the same score system as YOI.
+    Overlays let you turn supporting map layers on and off. These include the YOI choropleth, tract boundaries, supervisor district view, City of San Diego council district view, transit routes, transit stops, service locations, and the Child Opportunity Index overlay. The COI overlay is meant as a reference layer, not as the same score system as YOI.
   </div>
 </div>
 

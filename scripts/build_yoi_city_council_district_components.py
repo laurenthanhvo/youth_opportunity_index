@@ -1,0 +1,250 @@
+from pathlib import Path
+import re
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+
+TRACT_CSV = Path("data/processed/yoi/yoi_components.csv")
+TRACT_GEOJSON = Path("data/processed/boundaries/sd_tracts.geojson")
+CITY_DISTRICT_GEOJSON = Path("data/processed/overlays/sd_city_council_districts.geojson")
+OUT_CSV = Path("data/processed/yoi/yoi_city_council_district_components.csv")
+
+# SanGIS / SANDAG hosted layer. It contains council districts for multiple cities,
+# so this script filters it down to the City of San Diego and should output 9 features.
+COUNCIL_DISTRICTS_SOURCE = Path("data/rawdomains/boundaries/council_districts_source.geojson")
+
+TRACT_ID_COL = "tract_geoid"
+POP_COL = "total_population"
+
+OVERALL_INPUT_CANDIDATES = ["yoi_custom_0_100", "yoi_0_100"]
+
+DOMAIN_SCORE_COLS = [
+    "economic_score",
+    "education_score",
+    "health_score",
+    "housing_score",
+    "safety_env_score",
+    "mobility_connectivity_score",
+    "youth_supports_score",
+]
+
+OCEAN_TRACT_IDS = {
+    "06073990100",
+    "990100",
+    "9901.00",
+}
+
+PROJECTED_CRS = "EPSG:3310"
+
+
+def normalize_tract(v):
+    if pd.isna(v):
+        return None
+    digits = re.sub(r"\D", "", str(v))
+    if not digits:
+        return None
+    return digits.zfill(11)[-11:]
+
+
+def normalize_district(v):
+    if pd.isna(v):
+        return None
+
+    digits = re.sub(r"\D", "", str(v))
+    if not digits:
+        return str(v).strip()
+
+    n = int(digits)
+
+    # SanGIS stores City of San Diego districts as 10,20,...,90.
+    # Convert those to display/use as 1,2,...,9.
+    if n in {10, 20, 30, 40, 50, 60, 70, 80, 90}:
+        return str(n // 10)
+
+    return str(n)
+
+
+def weighted_mean(values, weights):
+    values = pd.Series(values)
+    weights = pd.Series(weights)
+    mask = (~pd.isna(values)) & (~pd.isna(weights)) & (weights > 0)
+    if mask.sum() == 0:
+        return np.nan
+    return np.average(values[mask].astype(float), weights=weights[mask].astype(float))
+
+
+def build_city_council_geojson():
+    CITY_DISTRICT_GEOJSON.parent.mkdir(parents=True, exist_ok=True)
+
+    if not COUNCIL_DISTRICTS_SOURCE.exists():
+        raise FileNotFoundError(f"Missing {COUNCIL_DISTRICTS_SOURCE}")
+
+    districts = gpd.read_file(COUNCIL_DISTRICTS_SOURCE)
+
+    # Be forgiving about exact capitalization from the source service.
+    lower_to_actual = {c.lower(): c for c in districts.columns}
+    district_col = lower_to_actual.get("district")
+    jur_col = lower_to_actual.get("jur_name")
+    code_col = lower_to_actual.get("code")
+    name_col = lower_to_actual.get("name")
+
+    if district_col is None:
+        raise ValueError(f"Could not find district field. Columns: {districts.columns.tolist()}")
+
+    jur = districts[jur_col].astype(str).str.strip().str.lower() if jur_col else pd.Series("", index=districts.index)
+    code = districts[code_col].astype(str).str.strip().str.upper() if code_col else pd.Series("", index=districts.index)
+    name = districts[name_col].astype(str).str.strip().str.lower() if name_col else pd.Series("", index=districts.index)
+
+    # The hosted layer includes districts from multiple cities. This keeps the City of San Diego only.
+    city_mask = (
+        jur.eq("san diego") |
+        jur.eq("city of san diego") |
+        code.eq("SD") |
+        name.str.contains("san diego", na=False)
+    )
+
+    city = districts[city_mask].copy()
+
+    if len(city) != 9:
+        debug_cols = [c for c in [jur_col, code_col, name_col, district_col] if c]
+        print("Available jurisdiction values:")
+        if debug_cols:
+            print(districts[debug_cols].drop_duplicates().sort_values(debug_cols).to_string(index=False))
+        raise ValueError(
+            f"Expected 9 City of San Diego council districts, but found {len(city)}. "
+            "Check jur_name/code/name filtering in build_city_council_geojson()."
+        )
+
+    city["city_distno"] = city[district_col].map(normalize_district)
+    city = city[~city["city_distno"].isin({None, ""})].copy()
+
+    if city.crs is not None:
+        city = city.to_crs(4326)
+
+    city = city[["city_distno", "geometry"]].sort_values("city_distno").copy()
+    city.to_file(CITY_DISTRICT_GEOJSON, driver="GeoJSON")
+
+    print("Saved:", CITY_DISTRICT_GEOJSON)
+    print("City Council districts:", len(city))
+
+
+def main():
+    if not TRACT_CSV.exists():
+        raise FileNotFoundError(f"Missing {TRACT_CSV}")
+    if not TRACT_GEOJSON.exists():
+        raise FileNotFoundError(f"Missing {TRACT_GEOJSON}")
+
+    build_city_council_geojson()
+
+    tract_scores = pd.read_csv(TRACT_CSV)
+
+    overall_input_col = next(
+        (c for c in OVERALL_INPUT_CANDIDATES if c in tract_scores.columns),
+        None,
+    )
+
+    required = [TRACT_ID_COL, POP_COL] + DOMAIN_SCORE_COLS
+    missing = [c for c in required if c not in tract_scores.columns]
+    if missing:
+        raise ValueError(
+            f"Your tract CSV is missing required columns: {missing}\n"
+            f"Available columns: {list(tract_scores.columns)}"
+        )
+
+    if overall_input_col is None:
+        raise ValueError(
+            f"Your tract CSV is missing an overall YOI column. "
+            f"Expected one of: {OVERALL_INPUT_CANDIDATES}\n"
+            f"Available columns: {list(tract_scores.columns)}"
+        )
+
+    tract_scores[TRACT_ID_COL] = tract_scores[TRACT_ID_COL].map(normalize_tract)
+    tract_scores = tract_scores[~tract_scores[TRACT_ID_COL].isin({None, ""})].copy()
+
+    ocean_ids = {normalize_tract(x) for x in OCEAN_TRACT_IDS if x is not None}
+    tract_scores = tract_scores[~tract_scores[TRACT_ID_COL].isin(ocean_ids)].copy()
+
+    tracts = gpd.read_file(TRACT_GEOJSON)
+    if TRACT_ID_COL not in tracts.columns:
+        raise ValueError(
+            f"{TRACT_GEOJSON} must contain '{TRACT_ID_COL}'. "
+            f"Found columns: {list(tracts.columns)}"
+        )
+
+    tracts[TRACT_ID_COL] = tracts[TRACT_ID_COL].map(normalize_tract)
+    tracts = tracts[~tracts[TRACT_ID_COL].isin({None, ""})].copy()
+    tracts = tracts[~tracts[TRACT_ID_COL].isin(ocean_ids)].copy()
+
+    value_cols_for_merge = [
+        c for c in tract_scores.columns
+        if c not in {TRACT_ID_COL, POP_COL}
+        and pd.api.types.is_numeric_dtype(tract_scores[c])
+    ]
+
+    tracts = tracts[[TRACT_ID_COL, "geometry"]].merge(
+        tract_scores[[TRACT_ID_COL, POP_COL] + value_cols_for_merge],
+        on=TRACT_ID_COL,
+        how="inner",
+    )
+
+    city_districts = gpd.read_file(CITY_DISTRICT_GEOJSON)
+    city_districts["city_distno"] = city_districts["city_distno"].map(normalize_district)
+    city_districts = city_districts[~city_districts["city_distno"].isin({None, ""})].copy()
+    city_districts = city_districts[["city_distno", "geometry"]].copy()
+
+    tracts = tracts.to_crs(PROJECTED_CRS)
+    city_districts = city_districts.to_crs(PROJECTED_CRS)
+
+    tracts["tract_area"] = tracts.geometry.area
+
+    inter = gpd.overlay(
+        tracts[[TRACT_ID_COL, POP_COL] + value_cols_for_merge + ["tract_area", "geometry"]],
+        city_districts[["city_distno", "geometry"]],
+        how="intersection",
+        keep_geom_type=False,
+    )
+
+    if inter.empty:
+        raise ValueError("Tract/City-Council-district intersection produced no rows.")
+
+    inter["intersect_area"] = inter.geometry.area
+    inter["area_share"] = inter["intersect_area"] / inter["tract_area"]
+    inter["weighted_pop"] = inter[POP_COL].fillna(0) * inter["area_share"]
+
+    rows = []
+    for city_distno, g in inter.groupby("city_distno", dropna=True):
+        total_pop = g["weighted_pop"].sum()
+
+        row = {
+            "city_distno": city_distno,
+            "total_population": round(total_pop, 2),
+        }
+
+        use_weights = g["weighted_pop"].values
+        fallback_weights = g["area_share"].values
+
+        for col in value_cols_for_merge:
+            val = weighted_mean(g[col].values, use_weights)
+            if pd.isna(val):
+                val = weighted_mean(g[col].values, fallback_weights)
+            row[col] = val
+
+        rows.append(row)
+
+    out = pd.DataFrame(rows).sort_values("city_distno").reset_index(drop=True)
+
+    if overall_input_col != "yoi_custom_0_100":
+        out["yoi_custom_0_100"] = out[overall_input_col]
+    if overall_input_col != "yoi_0_100":
+        out["yoi_0_100"] = out[overall_input_col]
+
+    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(OUT_CSV, index=False)
+
+    print("Saved:", OUT_CSV)
+    print("Rows:", len(out))
+    print(out[["city_distno", "total_population", "yoi_custom_0_100"]].head(9).to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()

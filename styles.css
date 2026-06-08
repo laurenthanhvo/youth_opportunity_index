@@ -183,6 +183,8 @@ body { overflow: hidden; }
   background: #fff;
 }
 .segmented.three-up { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+.segmented.four-up { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
+.segmented.four-up .seg-btn { padding: 8px 6px; font-size: 0.78rem; }
 .seg-btn {
   border: 0;
   background: #fff;
