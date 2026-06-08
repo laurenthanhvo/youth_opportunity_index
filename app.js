@@ -1042,19 +1042,18 @@ function renderMap() {
           tractLayer.resetStyle(e.target);
         },
                 click: e => {
-          state.selectedGeoid = featureKey;
-          updateAll(true);
+  state.selectedGeoid = featureKey;
+  updateAll(true);
 
-          if (state.showDataFor === 'tracts') {
-            setPanel('location');
-          }
+  // Open Location Details for tracts, ZIP codes, supervisor districts, and city council districts.
+  setPanel('location');
 
-          if (popupRef) popupRef.remove();
-          popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
-            .setLatLng(e.latlng)
-            .setContent(popupHtml(row, featureKey))
-            .openOn(map);
-        },
+  if (popupRef) popupRef.remove();
+  popupRef = L.popup({ closeButton: false, autoPan: false, offset: [0, -4] })
+    .setLatLng(e.latlng)
+    .setContent(popupHtml(row, featureKey))
+    .openOn(map);
+},
       });
     },
   }).addTo(map);
@@ -1722,7 +1721,7 @@ function renderLocationDetails() {
       </div>
     </div>
 
-    <div class="location-section" id="locationDomainProfileSection">
+        <div class="location-section" id="locationDomainProfileSection">
       <div class="location-section-head">
         <div>
           <div class="location-section-title">Domain Profile</div>
@@ -1732,7 +1731,20 @@ function renderLocationDetails() {
       <div id="profileChart"></div>
     </div>
 
-    
+    <div class="location-section">
+      <div class="location-section-head">
+        <div>
+          <div class="location-section-title">Domain Details</div>
+          <div class="location-section-subtitle">
+            Overall contribution, county comparison, and indicator availability for this selected geography.
+          </div>
+        </div>
+      </div>
+
+      <div class="domain-accordion-list">
+        ${domainMarkup}
+      </div>
+    </div>
   `;
 
   el.querySelector('[data-jump-to-profile]')?.addEventListener('click', () => {
