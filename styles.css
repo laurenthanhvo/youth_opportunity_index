@@ -3316,3 +3316,128 @@ body.location-panel-open #railZoomOutBtn {
 .service-popup-list strong {
   font-weight: 800;
 }
+
+/* ===== Fix Location Details horizontal overflow ===== */
+
+/* Keep drawer/panel width fixed */
+.drawer-panel {
+  overflow-x: hidden !important;
+}
+
+.drawer-panel.panel-popout {
+  width: 540px !important;
+  max-width: min(540px, calc(100vw - 132px)) !important;
+  overflow-x: hidden !important;
+}
+
+/* Vertical scroll only. Never allow left/right scroll inside drawer. */
+.drawer-body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Make every child respect the panel width */
+.drawer-panel *,
+.drawer-panel *::before,
+.drawer-panel *::after {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Location details containers should never exceed panel width */
+#locationDetails,
+.profile-breakdown-shell,
+.domain-accordion-list,
+.domain-accordion,
+.profile-domain-card,
+.profile-domain-expand,
+.indicator-breakdown,
+.indicator-row,
+.location-section,
+.domain-overview-grid,
+.indicator-grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Force long text like ACS variable lists to wrap inside the card */
+.indicator-row,
+.indicator-row *,
+.indicator-note,
+.indicator-source-line,
+.indicator-source-line strong,
+.domain-overview-note,
+.location-section-subtitle,
+.profile-domain-title,
+.profile-domain-meta {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+/* Make source line wrap cleanly instead of pushing outside */
+.indicator-source-line {
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: start !important;
+}
+
+.indicator-source-line span,
+.indicator-source-line strong {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Keep indicator stat boxes inside the card */
+.indicator-grid,
+.domain-overview-grid,
+.loc-metric-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.indicator-stat,
+.domain-overview-stat,
+.loc-metric {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.indicator-stat strong,
+.domain-overview-stat strong,
+.loc-metric-value {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+/* Mobile/small-screen fallback */
+@media (max-width: 700px) {
+  .drawer-panel.panel-popout {
+    left: 64px !important;
+    width: calc(100vw - 80px) !important;
+    max-width: calc(100vw - 80px) !important;
+  }
+
+  .indicator-grid,
+  .domain-overview-grid,
+  .loc-metric-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.segmented.five-up {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: 100%;
+}
+
+.segmented.five-up .seg-btn {
+  padding: 8px 5px;
+  font-size: 0.72rem;
+}

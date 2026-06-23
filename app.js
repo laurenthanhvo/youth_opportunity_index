@@ -37,6 +37,9 @@ const state = {
   cityCouncilDistrictsGeojson: null,
   cityCouncilDistrictRows: [],
   cityCouncilDistrictMap: new Map(),
+  countyRegionsGeojson: null,
+  countyRegionRows: [],
+  countyRegionMap: new Map(),
   meta: [],
   selectedGeoid: null,
   activePanel: 'controls',
@@ -130,6 +133,39 @@ function normalizeCityDistrict(v) {
   return digits || String(v).trim();
 }
 
+const COUNTY_REGION_LABELS = {
+  metro_san_diego: 'Metro San Diego',
+  north_county: 'North County',
+  south_san_diego: 'South San Diego',
+  east_san_diego: 'East San Diego',
+};
+
+function normalizeCountyRegion(v) {
+  if (v == null) return '';
+  return String(v)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '');
+}
+
+function countyRegionLabelFromKey(v) {
+  const key = normalizeCountyRegion(v);
+  return COUNTY_REGION_LABELS[key] || String(v || '').trim() || 'County region';
+}
+
+function featureCountyRegionKey(feature) {
+  const p = feature?.properties || {};
+  return normalizeCountyRegion(
+    p.county_region_id ??
+    p.county_region ??
+    p.region_id ??
+    p.region ??
+    p.name ??
+    p.NAME
+  );
+}
+
 function effectiveShowCoiOverlay() {
   return state.showCoiOverlay && state.showDataFor === 'tracts';
 }
@@ -164,8 +200,10 @@ function featureCityCouncilDistrictKey(feature) {
   );
 }
 
+
 function currentFeatureKey(feature) {
   if (state.showDataFor === 'zips') return featureZipCode(feature);
+  if (state.showDataFor === 'county_regions') return featureCountyRegionKey(feature);
   if (state.showDataFor === 'supervisor_districts') return featureSupervisorDistrictKey(feature);
   if (state.showDataFor === 'city_council_districts') return featureCityCouncilDistrictKey(feature);
   return featureTractGeoid(feature);
@@ -173,6 +211,7 @@ function currentFeatureKey(feature) {
 
 function currentFeatureLabel(key) {
   if (state.showDataFor === 'zips') return `ZIP code ${normalizeZip(key)}`;
+  if (state.showDataFor === 'county_regions') return countyRegionLabelFromKey(key);
   if (state.showDataFor === 'supervisor_districts') return `Supervisor District ${normalizeDistrict(key)}`;
   if (state.showDataFor === 'city_council_districts') return `San Diego City Council District ${normalizeCityDistrict(key)}`;
   return tractLabelFromGeoid(key);
@@ -180,6 +219,7 @@ function currentFeatureLabel(key) {
 
 function currentDataMap() {
   if (state.showDataFor === 'zips') return state.zipMap;
+  if (state.showDataFor === 'county_regions') return state.countyRegionMap;
   if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictMap;
   if (state.showDataFor === 'city_council_districts') return state.cityCouncilDistrictMap;
   return state.tractMap;
@@ -187,6 +227,7 @@ function currentDataMap() {
 
 function currentRows() {
   if (state.showDataFor === 'zips') return state.zipRows;
+  if (state.showDataFor === 'county_regions') return state.countyRegionRows;
   if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictRows;
   if (state.showDataFor === 'city_council_districts') return state.cityCouncilDistrictRows;
   return state.rawYoi;
@@ -194,14 +235,29 @@ function currentRows() {
 
 function currentIdForRow(row) {
   if (!row) return '';
-  if (state.showDataFor === 'zips') return normalizeZip(row.zip ?? row.ZIP ?? row.zcta ?? row.zip_code);
-  if (state.showDataFor === 'supervisor_districts') return normalizeDistrict(row.distno ?? row.DISTNO ?? row.district ?? row.District ?? row.supervisor_district ?? row.id ?? row.ID);
-  if (state.showDataFor === 'city_council_districts') return normalizeCityDistrict(row.city_distno ?? row.city_district ?? row.council_district ?? row.distno ?? row.district ?? row.District ?? row.ID);
+
+  if (state.showDataFor === 'zips') {
+    return normalizeZip(row.zip ?? row.ZIP ?? row.zcta ?? row.zip_code);
+  }
+
+  if (state.showDataFor === 'county_regions') {
+    return normalizeCountyRegion(row.county_region_id ?? row.county_region ?? row.region_id ?? row.region);
+  }
+
+  if (state.showDataFor === 'supervisor_districts') {
+    return normalizeDistrict(row.distno ?? row.DISTNO ?? row.district ?? row.District ?? row.supervisor_district ?? row.id ?? row.ID);
+  }
+
+  if (state.showDataFor === 'city_council_districts') {
+    return normalizeCityDistrict(row.city_distno ?? row.city_district ?? row.council_district ?? row.distno ?? row.district ?? row.District ?? row.ID);
+  }
+
   return normalizeGeoid(row.tract_geoid);
 }
 
 function currentFeatureCollection() {
   if (state.showDataFor === 'zips') return state.zipGeojson;
+  if (state.showDataFor === 'county_regions') return state.countyRegionsGeojson;
   if (state.showDataFor === 'supervisor_districts') return state.supervisorDistrictsGeojson;
   if (state.showDataFor === 'city_council_districts') return state.cityCouncilDistrictsGeojson;
   return state.geojson;
@@ -209,6 +265,7 @@ function currentFeatureCollection() {
 
 function currentAreaLabelSingular() {
   if (state.showDataFor === 'zips') return 'ZIP code';
+  if (state.showDataFor === 'county_regions') return 'county region';
   if (state.showDataFor === 'supervisor_districts') return 'supervisor district';
   if (state.showDataFor === 'city_council_districts') return 'city council district';
   return 'tract';
@@ -216,6 +273,7 @@ function currentAreaLabelSingular() {
 
 function currentAreaLabelPlural() {
   if (state.showDataFor === 'zips') return 'ZIP codes';
+  if (state.showDataFor === 'county_regions') return 'county regions';
   if (state.showDataFor === 'supervisor_districts') return 'supervisor districts';
   if (state.showDataFor === 'city_council_districts') return 'city council districts';
   return 'tracts';
@@ -223,10 +281,12 @@ function currentAreaLabelPlural() {
 
 function currentSelectedId() {
   if (state.showDataFor === 'zips') return normalizeZip(state.selectedGeoid);
+  if (state.showDataFor === 'county_regions') return normalizeCountyRegion(state.selectedGeoid);
   if (state.showDataFor === 'supervisor_districts') return normalizeDistrict(state.selectedGeoid);
   if (state.showDataFor === 'city_council_districts') return normalizeCityDistrict(state.selectedGeoid);
   return normalizeGeoid(state.selectedGeoid);
 }
+
 
 function isFiniteNumber(v) {
   if (v === null || v === undefined) return false;
@@ -359,6 +419,15 @@ function searchModeMeta() {
     };
   }
 
+  if (state.showDataFor === 'county_regions') {
+    return {
+      placeholder: 'Search county region',
+      helper: 'Start typing Metro, North, South, or East San Diego.',
+      emptyZoomMessage: 'Zoomed to selected county region.',
+      notFound: 'No matching county region found.'
+    };
+  }
+
   if (state.showDataFor === 'city_council_districts') {
     return {
       placeholder: 'Search city council district',
@@ -390,6 +459,21 @@ function searchTokensForFeature(key, label) {
     return {
       text: [label, district, label.replace(/^Supervisor District\s+/i, '')].filter(Boolean),
       digits: [district]
+    };
+  }
+
+  if (state.showDataFor === 'county_regions') {
+    const region = normalizeCountyRegion(key);
+    const labelText = countyRegionLabelFromKey(key);
+
+    return {
+      text: [
+        label,
+        labelText,
+        region,
+        labelText.replace(/\s+San Diego$/i, ''),
+      ].filter(Boolean),
+      digits: []
     };
   }
 
@@ -745,6 +829,7 @@ function recomputeCustomScores() {
 
   state.rawYoi.forEach(applyCustomScore);
   state.zipRows.forEach(applyCustomScore);
+  state.countyRegionRows.forEach(applyCustomScore);
   state.supervisorDistrictRows.forEach(applyCustomScore);
   state.cityCouncilDistrictRows.forEach(applyCustomScore);
 
@@ -766,6 +851,13 @@ function recomputeCustomScores() {
   state.cityCouncilDistrictMap = new Map(
     state.cityCouncilDistrictRows.map(r => [
       normalizeCityDistrict(r.city_distno ?? r.city_district ?? r.council_district ?? r.distno ?? r.district ?? r.District ?? r.ID),
+      r
+    ])
+  );
+
+  state.countyRegionMap = new Map(
+    state.countyRegionRows.map(r => [
+      normalizeCountyRegion(r.county_region_id ?? r.county_region ?? r.region_id ?? r.region),
       r
     ])
   );
@@ -2437,6 +2529,11 @@ document.getElementById('toggleCityCouncilDistricts')?.addEventListener('change'
       return;
     }
 
+    if (mode === 'county_regions') {
+      setPrimaryView('county_regions');
+      return;
+    }
+
     if (mode === 'tracts') {
       setPrimaryView('yoi');
       return;
@@ -2713,26 +2810,41 @@ function syncPrimaryViewToggles() {
 }
 
 function setPrimaryView(view) {
-  if (view === 'supervisor') {
+  if (view === 'county_regions') {
+    if (!state.countyRegionsGeojson || state.countyRegionRows.length === 0) {
+      console.warn('County region mode requires ./data/processed/overlays/county_regions.geojson and ./data/processed/yoi/yoi_county_region_components.csv');
+      return;
+    }
+
+    state.showDataFor = 'county_regions';
+    state.showChoro = false;
+    state.showCoiOverlay = false;
+
+  } else if (view === 'supervisor') {
     if (!state.supervisorDistrictsGeojson || state.supervisorDistrictRows.length === 0) {
       console.warn('Supervisor district mode requires ./data/processed/overlays/supervisor_districts.geojson and ./data/processed/yoi/yoi_supervisor_district_components.csv');
       return;
     }
+
     state.showDataFor = 'supervisor_districts';
     state.showChoro = false;
     state.showCoiOverlay = false;
+
   } else if (view === 'city_council') {
     if (!state.cityCouncilDistrictsGeojson || state.cityCouncilDistrictRows.length === 0) {
       console.warn('City Council district mode requires ./data/processed/overlays/sd_city_council_districts.geojson and ./data/processed/yoi/yoi_city_council_district_components.csv');
       return;
     }
+
     state.showDataFor = 'city_council_districts';
     state.showChoro = false;
     state.showCoiOverlay = false;
+
   } else if (view === 'coi') {
     state.showDataFor = 'tracts';
     state.showChoro = false;
     state.showCoiOverlay = true;
+
   } else {
     state.showDataFor = 'tracts';
     state.showChoro = true;
@@ -2776,7 +2888,7 @@ function buildAssistantContext() {
     showStops: state.showStops,
     showServices: state.showServices,
     availablePanels: ['controls', 'overlays', 'location', 'assistant', 'faqs', 'share'],
-    availablePrimaryViews: ['yoi', 'coi', 'supervisor', 'city_council'],
+    availablePrimaryViews: ['yoi', 'coi', 'county_regions', 'supervisor', 'city_council'],
     selectedRow: selectedRow
       ? {
           yoi_custom_0_100: selectedRow.yoi_custom_0_100 ?? null,
@@ -2917,6 +3029,7 @@ async function init() {
 
   state.rawYoi = await loadCsv('./data/processed/yoi/yoi_components.csv');
   state.zipRows = await loadCsv('./data/processed/yoi/yoi_zip_components.csv').catch(() => []);
+  state.countyRegionRows = await loadCsv('./data/processed/yoi/yoi_county_region_components.csv').catch(() => []);
   state.supervisorDistrictRows = await loadCsv('./data/processed/yoi/yoi_supervisor_district_components.csv').catch(() => []);
   state.cityCouncilDistrictRows = await loadCsv('./data/processed/yoi/yoi_city_council_district_components.csv').catch(() => []);
   state.meta = await loadCsv('./data/processed/yoi/yoi_indicator_meta.csv').catch(() => []);
@@ -2927,6 +3040,7 @@ async function init() {
   state.coiRows = await loadCsv('./data/processed/overlays/sd_coi_2023.csv').catch(() => []);
   state.coiMap = new Map(state.coiRows.map(r => [normalizeGeoid(r.tract_geoid), r]));
   state.servicesGeojson = await loadJson('./data/processed/overlays/service_locations.geojson').catch(() => null);
+  state.countyRegionsGeojson = await loadJson('./data/processed/overlays/county_regions.geojson').catch(() => null);
   state.supervisorDistrictsGeojson = await loadJson('./data/processed/overlays/supervisor_districts.geojson').catch(() => null);
   state.cityCouncilDistrictsGeojson = await loadJson('./data/processed/overlays/sd_city_council_districts.geojson').catch(() => null);
 
