@@ -22,5 +22,8 @@ env_burden,safety_env,False,CalEnviroScreen 4.0,CalEnviroScreen percentile/score
 no_vehicle_rate,mobility_connectivity,False,ACS B08201,no_vehicle=B08201_002E/total=B08201_001E
 commute_time_proxy,mobility_connectivity,False,ACS B08303,"share of workers with travel time to work >=30 minutes; numerator=sum(B08303_008E,B08303_009E,B08303_010E,B08303_011E,B08303_012E,B08303_013E); denominator=B08303_001E"
 internet_sub_rate_proxy,mobility_connectivity,True,ACS B28002,share of households with a broadband internet subscription; numerator=B28002_004E; denominator=B28002_001E
-service_count,youth_supports,True,services_master,total services per tract
-services_per_10k,youth_supports,True,services_master + population,density per 10k
+tier_weighted_youth_program_access,youth_supports,True,service_locations.geojson,Tier-weighted and distance-weighted access to youth service programs within 10 miles.
+youth_development_access,youth_supports,True,service_locations.geojson,"Mentoring, leadership, after-school, teen programming, enrichment, and positive youth development access."
+barrier_reduction_access,youth_supports,True,service_locations.geojson,"Case management, transportation, childcare, benefits navigation, legal aid, family support, and other barrier-reduction access."
+transition_pathway_access,youth_supports,True,service_locations.geojson,"Workforce training, paid work experience, GED/dropout recovery, career, job coaching, and earn-and-learn pathway access."
+segment_specific_support_access,youth_supports,True,service_locations.geojson,"Support access for foster youth, out-of-school youth, parenting youth, disabled youth, LGBTQ+ youth, immigrant/refugee youth, homeless youth, and justice-involved youth."

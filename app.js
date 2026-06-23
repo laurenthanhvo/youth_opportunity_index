@@ -961,10 +961,16 @@ function servicePopupHtml(props) {
     ? Number(props.total_population).toLocaleString()
     : 'N/A';
 
+  const tierDisplay =
+  props.tier_num != null && props.tier_num !== '' && props.tier_label
+    ? `Tier ${props.tier_num} — ${props.tier_label.replace(/^Tier \d+:\s*/, '')}`
+    : 'N/A';
+
   return `
     <div class="popup-card service-popup-card">
       <div class="popup-title">${serviceDisplay(props.name, 'Service Location')}</div>
       <div class="service-popup-list">
+        <div><strong>Tier:</strong> ${serviceDisplay(tierDisplay)}</div>
         <div><strong>Type:</strong> ${serviceDisplay(props.type)}</div>
         <div><strong>Programs:</strong> ${serviceDisplay(props.programs)}</div>
         <div><strong>Address:</strong> ${serviceDisplay(props.address)}</div>
@@ -972,7 +978,7 @@ function servicePopupHtml(props) {
         <div><strong>Tract:</strong> ${serviceDisplay(props.tract_geoid)}</div>
         <div><strong>Tract population:</strong> ${tractPop}</div>
         <div><strong>Closest transit stop:</strong> ${closestStop}</div>
-        <div><strong>Source:</strong> ${serviceDisplay(props.source, 'services_master')}</div>
+        <div><strong>Source:</strong> ${serviceDisplay(props.source, 'N/A')}</div>
       </div>
     </div>
   `;
@@ -1160,6 +1166,9 @@ if (state.showServices && state.servicesGeojson && featureCount(state.servicesGe
         closeButton: false,
         autoPan: true,
         offset: [0, -4],
+        minWidth: 320,
+        maxWidth: 460,
+        className: 'service-popup',
       });
     },
   }).addTo(map);
