@@ -3109,6 +3109,7 @@ const tutorialSteps = [
   copy: 'Use these sliders to change how much each domain contributes to the overall Youth Opportunity Index. Try moving one slider, then click Next when you are ready.',
   placement: 'right',
   interactive: true,
+  scrollBlock: 'center',
 },
   {
   selector: '#levelComparisonTourTarget',
@@ -3116,6 +3117,8 @@ const tutorialSteps = [
   title: 'Change the geography',
   copy: 'Use this section to choose the level of comparison. You can view the dashboard by census tract, ZIP code, county region, supervisor district, or City Council district.',
   placement: 'right',
+  drawerScrollTop: 0,
+  highlightOffsetY: 10,
 },
   {
     selector: '#searchInput',
@@ -3313,8 +3316,18 @@ function renderTourStep() {
   }
 
   if (step.panel && typeof setPanel === 'function') {
-    setPanel(step.panel);
+  setPanel(step.panel);
+}
+
+if (Number.isFinite(step.drawerScrollTop)) {
+  const drawerBody = document.querySelector('.drawer-body');
+  if (drawerBody) {
+    drawerBody.scrollTo({
+      top: step.drawerScrollTop,
+      behavior: 'auto',
+    });
   }
+}
 
   requestAnimationFrame(() => {
     let target = document.querySelector(step.selector);
@@ -3337,21 +3350,32 @@ function renderTourStep() {
     activeTourTarget.classList.add('tour-target-active');
 
     target.scrollIntoView({
-      block: 'center',
-      inline: 'center',
-      behavior: 'smooth',
-    });
+  block: step.scrollBlock || 'center',
+  inline: 'center',
+  behavior: 'smooth',
+});
 
     setTimeout(() => {
       const rect = getSafeRect(target);
-      const pad = 8;
+      const pad = step.selector === '#levelComparisonTourTarget' ? 10 : 8;
+
+      const highlightOffsetX = step.highlightOffsetX || 0;
+      const highlightOffsetY = step.highlightOffsetY || 0;
+
+      const adjustedRect = {
+        ...rect,
+        left: rect.left + highlightOffsetX,
+        right: rect.right + highlightOffsetX,
+        top: rect.top + highlightOffsetY,
+        bottom: rect.bottom + highlightOffsetY,
+      };
 
       const highlight = document.getElementById('tourHighlight');
       if (highlight) {
-        highlight.style.left = `${Math.round(rect.left - pad)}px`;
-        highlight.style.top = `${Math.round(rect.top - pad)}px`;
-        highlight.style.width = `${Math.round(rect.width + pad * 2)}px`;
-        highlight.style.height = `${Math.round(rect.height + pad * 2)}px`;
+        highlight.style.left = `${Math.round(adjustedRect.left - pad)}px`;
+        highlight.style.top = `${Math.round(adjustedRect.top - pad)}px`;
+        highlight.style.width = `${Math.round(adjustedRect.width + pad * 2)}px`;
+        highlight.style.height = `${Math.round(adjustedRect.height + pad * 2)}px`;
       }
 
       document.getElementById('tourStepCount').textContent =
@@ -3366,7 +3390,7 @@ function renderTourStep() {
       if (nextBtn) nextBtn.textContent =
         currentTourStep === tutorialSteps.length - 1 ? 'Finish' : 'Next';
 
-      positionTourCard(rect, step.placement || 'right');
+      positionTourCard(adjustedRect, step.placement || 'right');
 
       const overlay = document.getElementById('tourOverlay');
       overlay?.classList.add('ready');
