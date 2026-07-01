@@ -3308,7 +3308,11 @@ function renderTourStep() {
   }
 
   requestAnimationFrame(() => {
-    const target = document.querySelector(step.selector);
+    let target = document.querySelector(step.selector);
+
+    if (target && step.selector === '#toggleServices') {
+      target = target.closest('.overlay-item') || target;
+    }
 
     if (!target) {
       currentTourStep += 1;
@@ -3413,6 +3417,11 @@ function initOnboardingTour() {
 
   // Show after the dashboard has had a moment to render.
   setTimeout(() => showOnboardingModal(false), 900);
+
+  document.getElementById('restartTourBtn')?.addEventListener('click', () => {
+  localStorage.removeItem(TOUR_STORAGE_KEY);
+  showOnboardingModal(true);
+});
 }
 
 document.addEventListener('DOMContentLoaded', initOnboardingTour);

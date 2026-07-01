@@ -3663,7 +3663,6 @@ body.location-panel-open #railZoomOutBtn {
 }
 
 .tour-target-active {
-  position: relative;
   z-index: 5004 !important;
 }
 
@@ -3688,4 +3687,14 @@ body.location-panel-open #railZoomOutBtn {
     bottom: 18px;
     width: auto;
   }
+}
+
+.faq-tour-action {
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tour-highlight {
+  border-radius: 4px;
 }
