@@ -15,7 +15,7 @@ const DOMAIN_LABELS = {
 
 const EXCLUDED_TRACT_GEOIDS = new Set([
   '06073009902', // tract 99.02, water/ocean
-  '06073990100',
+  '06073990200',
 ]);
 
 // const BLUES = ['#eaf3fb', '#b6d3e9', '#6da3c9', '#275c81', '#0a2f4a'];
