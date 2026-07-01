@@ -3103,12 +3103,20 @@ const tutorialSteps = [
     placement: 'right',
   },
   {
-    selector: '.seg-btn[data-show-data-for="county_regions"]',
-    panel: 'controls',
-    title: 'Change the geography',
-    copy: 'You can compare the data by census tract, ZIP code, county region, supervisor district, or City Council district.',
-    placement: 'right',
-  },
+  selector: '#domainWeightsTourTarget',
+  panel: 'controls',
+  title: 'Try custom domain weights',
+  copy: 'Use these sliders to change how much each domain contributes to the overall Youth Opportunity Index. Try moving one slider, then click Next when you are ready.',
+  placement: 'right',
+  interactive: true,
+},
+  {
+  selector: '#levelComparisonTourTarget',
+  panel: 'controls',
+  title: 'Change the geography',
+  copy: 'Use this section to choose the level of comparison. You can view the dashboard by census tract, ZIP code, county region, supervisor district, or City Council district.',
+  placement: 'right',
+},
   {
     selector: '#searchInput',
     panel: 'controls',
@@ -3198,7 +3206,7 @@ function endGuidedTour(markSeen = true) {
   const overlay = document.getElementById('tourOverlay');
   if (!overlay) return;
 
-  overlay.classList.remove('open', 'ready');
+  overlay.classList.remove('open', 'ready', 'interaction-enabled');
   overlay.setAttribute('aria-hidden', 'true');
 
   if (activeTourTarget) {
@@ -3359,7 +3367,10 @@ function renderTourStep() {
         currentTourStep === tutorialSteps.length - 1 ? 'Finish' : 'Next';
 
       positionTourCard(rect, step.placement || 'right');
-      document.getElementById('tourOverlay')?.classList.add('ready');
+
+      const overlay = document.getElementById('tourOverlay');
+      overlay?.classList.add('ready');
+      overlay?.classList.toggle('interaction-enabled', !!step.interactive);
     }, 180);
   });
 }

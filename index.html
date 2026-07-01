@@ -63,16 +63,16 @@
           </div>
         </div> -->
 
-        <div class="control-section">
-          <label class="control-label">Level of comparison</label>
-          <div class="segmented five-up">
-            <button class="seg-btn active" type="button" data-show-data-for="tracts">Census tracts</button>
-            <button class="seg-btn" type="button" data-show-data-for="zips">ZIP codes</button>
-            <button class="seg-btn" type="button" data-show-data-for="county_regions">County regions</button>
-            <button class="seg-btn" type="button" data-show-data-for="supervisor_districts">Supervisor districts</button>
-            <button class="seg-btn" type="button" data-show-data-for="city_council_districts">City districts</button>
-          </div>
-        </div>
+        <div class="control-section" id="levelComparisonTourTarget">
+  <label class="control-label">Level of comparison</label>
+  <div class="segmented five-up">
+    <button class="seg-btn active" type="button" data-show-data-for="tracts">Census tracts</button>
+    <button class="seg-btn" type="button" data-show-data-for="zips">ZIP codes</button>
+    <button class="seg-btn" type="button" data-show-data-for="county_regions">County regions</button>
+    <button class="seg-btn" type="button" data-show-data-for="supervisor_districts">Supervisor districts</button>
+    <button class="seg-btn" type="button" data-show-data-for="city_council_districts">City districts</button>
+  </div>
+</div>
 
                 <div class="control-section">
           <label class="control-label">Search selected geography</label>
@@ -100,7 +100,7 @@
 
         <div class="section-divider"></div>
 
-        <div class="control-section">
+        <div class="control-section" id="domainWeightsTourTarget">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <label class="control-label mb-0">Custom domain weights</label>
             <button id="resetWeights" class="mini-btn">Reset</button>
