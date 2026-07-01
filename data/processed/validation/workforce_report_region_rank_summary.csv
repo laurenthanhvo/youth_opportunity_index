@@ -1,0 +1,16 @@
+metric,highest_region,highest_value,lowest_region,lowest_value,higher_means,source_reference
+population_ages_14_24,Metro San Diego,180692.0,East San Diego,72778.0,higher,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+high_school_graduation_rate,Metro San Diego,88.0,East San Diego,81.0,higher,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+high_school_dropout_rate,East San Diego,11.6,Metro San Diego,3.7,higher,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+youth_unemployment_rate,South San Diego,31.0,North County,9.0,higher,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+labor_force_participation_rate,North County,44.0,South San Diego,30.0,higher,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+students_14_21,Metro San Diego,125358.0,East San Diego,53244.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+not_in_school_18_24,Metro San Diego,52661.0,East San Diego,20457.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+english_learners,Metro San Diego,65356.0,East San Diego,19454.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+youth_low_income_households,Metro San Diego,29743.0,South San Diego,9432.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+refugees,East San Diego,2527.0,North County,173.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+youth_experiencing_homelessness,Metro San Diego,2352.0,South San Diego,134.0,higher,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions"
+yoi_custom_0_100,Metro San Diego,53.57387081996995,East San Diego,45.92996235928522,more opportunity,Dashboard YOI county-region components
+economic_score,North County,0.5140751901838694,South San Diego,0.3895750757020337,more opportunity,Dashboard YOI county-region components
+education_score,Metro San Diego,0.5890625087840036,North County,0.4287364825926174,more opportunity,Dashboard YOI county-region components
+youth_supports_score,Metro San Diego,0.6241105251864636,North County,0.3058741529618654,more opportunity,Dashboard YOI county-region components

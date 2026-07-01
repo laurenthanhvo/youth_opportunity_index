@@ -1,0 +1,5 @@
+county_region,population_ages_14_24,population_ages_14_18,population_ages_19_24,high_school_graduation_rate,high_school_dropout_rate,postsecondary_enrollment_number,postsecondary_enrollment_pct_ages_19_24,credential_attainment_rate,youth_unemployment_rate,labor_force_participation_rate,source_reference
+Metro San Diego,180692,66428,94976,88.0,3.7,83639,63.0,0.6,15.0,35.0,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+North County,133405,57606,64040,87.0,8.7,44099,50.0,0.3,9.0,44.0,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+South San Diego,89839,43004,39202,82.0,8.7,30685,56.0,0.2,31.0,30.0,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"
+East San Diego,72778,34773,32111,81.0,11.6,22634,52.0,0.3,18.0,34.0,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego"

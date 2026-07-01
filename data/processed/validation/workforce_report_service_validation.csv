@@ -1,0 +1,13 @@
+source_reference,county_region,service_domain,report_service_sites,dashboard_column,dashboard_service_sites,abs_diff,pct_diff,status
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",Metro San Diego,Education-related services,175,dashboard_education_related_service,76,-99,-56.57142857142857,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",North County,Education-related services,72,dashboard_education_related_service,28,-44,-61.111111111111114,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",South San Diego,Education-related services,39,dashboard_education_related_service,11,-28,-71.7948717948718,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",East San Diego,Education-related services,42,dashboard_education_related_service,23,-19,-45.23809523809524,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",Metro San Diego,Employment-related services,154,dashboard_employment_related_service,91,-63,-40.909090909090914,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",North County,Employment-related services,71,dashboard_employment_related_service,24,-47,-66.19718309859155,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",South San Diego,Employment-related services,35,dashboard_employment_related_service,11,-24,-68.57142857142857,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",East San Diego,Employment-related services,29,dashboard_employment_related_service,5,-24,-82.75862068965517,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",Metro San Diego,Wraparound services,230,dashboard_wraparound_service,143,-87,-37.826086956521735,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",North County,Wraparound services,99,dashboard_wraparound_service,67,-32,-32.323232323232325,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",South San Diego,Wraparound services,59,dashboard_wraparound_service,36,-23,-38.983050847457626,review
+"Workforce report Figure 22, p.27: Number of Sites Offering each Service Type, Countywide and per Region",East San Diego,Wraparound services,61,dashboard_wraparound_service,40,-21,-34.42622950819672,review

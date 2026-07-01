@@ -1,0 +1,73 @@
+source_table,source_reference,county_region,metric,report_value,dashboard_column,dashboard_value,abs_diff,pct_diff,status
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,population_ages_14_24,180692.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,population_ages_14_24,133405.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,population_ages_14_24,89839.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,population_ages_14_24,72778.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,population_ages_14_18,66428.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,population_ages_14_18,57606.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,population_ages_14_18,43004.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,population_ages_14_18,34773.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,population_ages_19_24,94976.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,population_ages_19_24,64040.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,population_ages_19_24,39202.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,population_ages_19_24,32111.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,high_school_graduation_rate,88.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,high_school_graduation_rate,87.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,high_school_graduation_rate,82.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,high_school_graduation_rate,81.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,high_school_dropout_rate,3.7,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,high_school_dropout_rate,8.7,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,high_school_dropout_rate,8.7,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,high_school_dropout_rate,11.6,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,postsecondary_enrollment_number,83639.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,postsecondary_enrollment_number,44099.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,postsecondary_enrollment_number,30685.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,postsecondary_enrollment_number,22634.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,postsecondary_enrollment_pct_ages_19_24,63.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,postsecondary_enrollment_pct_ages_19_24,50.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,postsecondary_enrollment_pct_ages_19_24,56.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,postsecondary_enrollment_pct_ages_19_24,52.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,credential_attainment_rate,0.6,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,credential_attainment_rate,0.3,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,credential_attainment_rate,0.2,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,credential_attainment_rate,0.3,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,youth_unemployment_rate,15.0,unemployment_rate,5.879303016965761,-9.12069698303424,-60.80464655356159,review
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,youth_unemployment_rate,9.0,unemployment_rate,5.3521544040674245,-3.6478455959325755,-40.53161773258417,review
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,youth_unemployment_rate,31.0,unemployment_rate,7.868489310468258,-23.131510689531744,-74.61777641784434,review
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,youth_unemployment_rate,18.0,unemployment_rate,6.404167633608628,-11.595832366391372,-64.42129092439652,review
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",Metro San Diego,labor_force_participation_rate,35.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",North County,labor_force_participation_rate,44.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",South San Diego,labor_force_participation_rate,30.0,,,,,missing_dashboard_column
+Figure 10,"Workforce report Figure 10, p.15: Youth Demographic Snapshot: All Four Regions of San Diego",East San Diego,labor_force_participation_rate,34.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,students_14_21,125358.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,students_14_21,96541.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,students_14_21,66448.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,students_14_21,53244.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,not_in_school_18_24,52661.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,not_in_school_18_24,50738.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,not_in_school_18_24,25481.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,not_in_school_18_24,20457.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,black_opportunity_youth,2851.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,black_opportunity_youth,1361.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,black_opportunity_youth,2013.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,black_opportunity_youth,1346.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,english_learners,65356.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,english_learners,41621.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,english_learners,49100.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,english_learners,19454.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,youth_low_income_households,29743.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,youth_low_income_households,9875.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,youth_low_income_households,9432.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,youth_low_income_households,10318.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,refugees,1118.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,refugees,173.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,refugees,912.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,refugees,2527.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,youth_experiencing_homelessness,2352.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,youth_experiencing_homelessness,468.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,youth_experiencing_homelessness,134.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,youth_experiencing_homelessness,1056.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",Metro San Diego,foster_youth_enrolled_in_school,359.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",North County,foster_youth_enrolled_in_school,181.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",South San Diego,foster_youth_enrolled_in_school,97.0,,,,,missing_dashboard_column
+Figure 2,"Workforce report Figure 2, p.6: Youth Population Characteristics Across San Diego's Four Regions",East San Diego,foster_youth_enrolled_in_school,216.0,,,,,missing_dashboard_column
