@@ -348,9 +348,14 @@ function currentBins() {
 }
 
 function currentLegendLabels() {
+  if (effectiveShowCoiOverlay()) {
+    return ['0', '20', '40', '60', '80', '100'];
+  }
+
   if (state.scoreMode === 'score') {
     return ['0', '20', '40', '60', '80', '100'];
   }
+
   return ['Very Low', 'Low', 'Low-Mid', 'Moderate', 'Mid-High', 'High', 'Very High'];
 }
 
@@ -893,6 +898,22 @@ function currentCoiCategory(geoid) {
   return row ? row.coi_level : 'N/A';
 }
 
+function colorForCoiValue(v) {
+  if (!isFiniteNumber(v)) return '#eef2f7';
+
+  const t = Math.max(0, Math.min(1, Number(v) / 100));
+
+  if (t <= 0.45) {
+    return d3.interpolateRgbBasis(WARM_COLORS)(t / 0.45);
+  }
+
+  if (t <= 0.55) {
+    return d3.interpolateRgbBasis(MID_COLORS)((t - 0.45) / 0.10);
+  }
+
+  return d3.interpolateRgbBasis(COOL_COLORS)((t - 0.55) / 0.45);
+}
+
 function colorForValue(v) {
   if (!isFiniteNumber(v)) return '#eef2f7';
 
@@ -951,7 +972,9 @@ function styleFeature(feature) {
   return {
     color: isSelected ? '#ffffff' : (state.showBounds ? 'rgba(27,51,75,0.34)' : 'transparent'),
     weight: isSelected ? 3.2 : (state.showBounds ? 0.6 : 0),
-    fillColor: showFill ? colorForValue(value) : '#ffffff',
+    fillColor: showFill
+  ? (effectiveShowCoiOverlay() ? colorForCoiValue(value) : colorForValue(value))
+  : '#ffffff',
     fillOpacity: showFill ? 0.92 : 0.02,
   };
 }
@@ -1018,9 +1041,11 @@ function popupHtml(row, geoid) {
   value: activeValue,
   badgeText: activeBadge,
   widthPct: state.mapLayer === 'YOI (0–100)' ? activeValue : activeValue * 100,
-  fillColor: state.mapLayer === 'YOI (0–100)'
-    ? colorForScore100(activeValue)
-    : colorForValue(activeValue),
+  fillColor: effectiveShowCoiOverlay()
+  ? colorForCoiValue(activeValue)
+  : (state.mapLayer === 'YOI (0–100)'
+      ? colorForScore100(activeValue)
+      : colorForValue(activeValue)),
 });
 
   return `
@@ -2466,33 +2491,27 @@ function toggleDrawerPanel(panelName = 'controls') {
 }
 
 function bindControls() {
-  document.getElementById('toggleChoro')?.addEventListener('change', e => {
-  if (e.target.checked) {
-    setPrimaryView('yoi');
-  } else {
-    syncPrimaryViewToggles();
-  }
-});
+  function bindPrimaryViewToggle(id, view) {
+  document.getElementById(id)?.addEventListener('change', e => {
+    if (e.target.checked) {
+      setPrimaryView(view);
+    } else {
+      // These behave like radio buttons even though they look like toggles.
+      // Do not allow the user to turn off the current primary geography without selecting another one.
+      syncPrimaryViewToggles();
+    }
+  });
+}
+
+bindPrimaryViewToggle('toggleTracts', 'yoi');
+bindPrimaryViewToggle('toggleZips', 'zips');
+bindPrimaryViewToggle('toggleCountyRegions', 'county_regions');
+bindPrimaryViewToggle('toggleSupervisorDistricts', 'supervisor');
+bindPrimaryViewToggle('toggleCityCouncilDistricts', 'city_council');
 
 document.getElementById('toggleCoiOverlay')?.addEventListener('change', e => {
   if (e.target.checked) {
     setPrimaryView('coi');
-  } else {
-    setPrimaryView('yoi');
-  }
-});
-
-document.getElementById('toggleSupervisorDistricts')?.addEventListener('change', e => {
-  if (e.target.checked) {
-    setPrimaryView('supervisor');
-  } else {
-    setPrimaryView('yoi');
-  }
-});
-
-document.getElementById('toggleCityCouncilDistricts')?.addEventListener('change', e => {
-  if (e.target.checked) {
-    setPrimaryView('city_council');
   } else {
     setPrimaryView('yoi');
   }
@@ -2798,23 +2817,34 @@ function filterExcludedTracts() {
 }
 
 function syncPrimaryViewToggles() {
-  const yoiToggle = document.getElementById('toggleChoro');
+  const tractToggle = document.getElementById('toggleTracts');
+  const zipToggle = document.getElementById('toggleZips');
+  const countyRegionToggle = document.getElementById('toggleCountyRegions');
   const coiToggle = document.getElementById('toggleCoiOverlay');
   const supervisorToggle = document.getElementById('toggleSupervisorDistricts');
   const cityCouncilToggle = document.getElementById('toggleCityCouncilDistricts');
 
-  if (yoiToggle) yoiToggle.checked = state.showDataFor === 'tracts' && state.showChoro && !state.showCoiOverlay;
+  if (tractToggle) tractToggle.checked = state.showDataFor === 'tracts' && !state.showCoiOverlay;
+  if (zipToggle) zipToggle.checked = state.showDataFor === 'zips';
+  if (countyRegionToggle) countyRegionToggle.checked = state.showDataFor === 'county_regions';
   if (coiToggle) coiToggle.checked = state.showDataFor === 'tracts' && state.showCoiOverlay;
   if (supervisorToggle) supervisorToggle.checked = state.showDataFor === 'supervisor_districts';
   if (cityCouncilToggle) cityCouncilToggle.checked = state.showDataFor === 'city_council_districts';
 }
 
 function setPrimaryView(view) {
-  if (view === 'county_regions') {
-    if (!state.countyRegionsGeojson || state.countyRegionRows.length === 0) {
-      console.warn('County region mode requires ./data/processed/overlays/county_regions.geojson and ./data/processed/yoi/yoi_county_region_components.csv');
+  if (view === 'zips') {
+    if (!state.zipGeojson || state.zipRows.length === 0) {
+      console.warn('ZIP code mode requires ./data/processed/boundaries/sd_zip_codes.geojson and ./data/processed/yoi/yoi_zip_components.csv');
+      syncPrimaryViewToggles();
       return;
     }
+
+    state.showDataFor = 'zips';
+    state.showChoro = false;
+    state.showCoiOverlay = false;
+
+  } else if (view === 'county_regions') {
 
     state.showDataFor = 'county_regions';
     state.showChoro = false;

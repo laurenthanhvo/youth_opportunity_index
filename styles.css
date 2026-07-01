@@ -3717,3 +3717,30 @@ body.location-panel-open #railZoomOutBtn {
   opacity: 0;
   visibility: hidden;
 }
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex: 0 0 auto;
+  display: block;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand-title,
+.brand-subtitle {
+  white-space: nowrap;
+}

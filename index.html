@@ -18,9 +18,13 @@
     <header class="page-header dashboard-page-header">
     <div class="page-header-inner">
       <a class="brand" href="./index.html">
-        <div class="brand-title">Youth Opportunity Desert Dashboard</div>
-        <div class="brand-subtitle">School of Computing, Information and Data Sciences – UC San Diego</div>
-      </a>
+  <img class="brand-logo" src="./logo.png" alt="Youth Opportunity Index logo" />
+
+  <div class="brand-text">
+    <div class="brand-title">Youth Opportunity Desert Dashboard</div>
+    <div class="brand-subtitle">Data Science Alliance (DSA)</div>
+  </div>
+</a>
 
       <nav class="top-nav">
         <a class="nav-link active" href="./index.html">Map</a>
@@ -112,45 +116,84 @@
       </div>
 
       <div class="panel-view" id="panel-overlays">
-        <div class="overlay-item">
-          <label class="toggle-line">
-            <label class="toggle-switch"><input id="toggleChoro" type="checkbox" checked><span></span></label>
-            <div>
-              <div class="overlay-title">YOI Choropleth</div>
-              <div class="overlay-desc">Display tract-level opportunity shading on the map.</div>
-            </div>
-          </label>
-        </div>
+  <div class="control-section">
+    <label class="control-label">Level of comparison</label>
+    <div class="helper-text mb-3">
+      Choose the geography used to aggregate and display the Youth Opportunity Index.
+    </div>
+  </div>
 
-        <div class="overlay-item">
-          <label class="toggle-line">
-            <label class="toggle-switch"><input id="toggleCoiOverlay" type="checkbox"><span></span></label>
-            <div>
-              <div class="overlay-title">Child Opportunity Index (COI)</div>
-              <div class="overlay-desc">Replace the YOI choropleth with the San Diego County COI 3.0-2023 overlay.</div>
-            </div>
-          </label>
-        </div>
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleTracts" type="checkbox" checked><span></span></label>
+      <div>
+        <div class="overlay-title">Census Tracts</div>
+        <div class="overlay-desc">Show the Youth Opportunity Index at the most detailed neighborhood geography.</div>
+      </div>
+    </label>
+  </div>
 
-        <div class="overlay-item">
-          <label class="toggle-line">
-            <label class="toggle-switch"><input id="toggleSupervisorDistricts" type="checkbox"><span></span></label>
-            <div>
-              <div class="overlay-title">Supervisor Districts</div>
-              <div class="overlay-desc">Show the Youth Opportunity Index aggregated by supervisor district instead of census tract.</div>
-            </div>
-          </label>
-        </div>
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleZips" type="checkbox"><span></span></label>
+      <div>
+        <div class="overlay-title">ZIP Codes</div>
+        <div class="overlay-desc">Show the Youth Opportunity Index aggregated by ZIP code.</div>
+      </div>
+    </label>
+  </div>
 
-        <div class="overlay-item">
-          <label class="toggle-line">
-            <label class="toggle-switch"><input id="toggleCityCouncilDistricts" type="checkbox"><span></span></label>
-            <div>
-              <div class="overlay-title">San Diego City Council Districts</div>
-              <div class="overlay-desc">Show the Youth Opportunity Index aggregated by the 9 City of San Diego council districts.</div>
-            </div>
-          </label>
-        </div>
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleCountyRegions" type="checkbox"><span></span></label>
+      <div>
+        <div class="overlay-title">County Regions</div>
+        <div class="overlay-desc">Show the Youth Opportunity Index across Metro, North, South, and East San Diego.</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleSupervisorDistricts" type="checkbox"><span></span></label>
+      <div>
+        <div class="overlay-title">Supervisor Districts</div>
+        <div class="overlay-desc">Show the Youth Opportunity Index aggregated by county supervisor district.</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleCityCouncilDistricts" type="checkbox"><span></span></label>
+      <div>
+        <div class="overlay-title">San Diego City Council Districts</div>
+        <div class="overlay-desc">Show the Youth Opportunity Index aggregated by the 9 City of San Diego council districts.</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="control-section">
+    <label class="control-label">Reference overlay</label>
+  </div>
+
+  <div class="overlay-item">
+    <label class="toggle-line">
+      <label class="toggle-switch"><input id="toggleCoiOverlay" type="checkbox"><span></span></label>
+      <div>
+        <div class="overlay-title">Child Opportunity Index (COI)</div>
+        <div class="overlay-desc">Replace the YOI map with the San Diego County COI 3.0-2023 tract overlay.</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="control-section">
+    <label class="control-label">Supporting overlays</label>
+  </div>
 
         <div class="overlay-item">
           <label class="toggle-line">
