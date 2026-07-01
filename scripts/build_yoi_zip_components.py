@@ -27,9 +27,15 @@ DOMAIN_SCORE_COLS = [
 ZIP_FIELD_CANDIDATES = ["ZIP", "zip", "ZCTA5CE10", "GEOID20", "GEOID", "zcta"]
 
 OCEAN_TRACT_IDS = {
-    "06073990100",  # San Diego County tract 9901.00 normalized to 11-digit GEOID
+    "06073990100",
     "990100",
     "9901.00",
+    "99.01",
+
+    "06073990200",
+    "990200",
+    "9902.00",
+    "99.02",
 }
 
 PROJECTED_CRS = "EPSG:3310"  # California Albers, good for area calculations

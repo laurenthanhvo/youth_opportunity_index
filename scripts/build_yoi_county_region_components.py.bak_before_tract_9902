@@ -38,10 +38,7 @@ REGION_BY_PUMA = {
 }
 
 
-EXCLUDED_TRACT_GEOIDS = {
-    "06073990100",
-    "06073990200",
-}
+EXCLUDED_TRACT_GEOIDS = {"06073990100"}
 
 REGION_ID_BY_NAME = {
     "Metro San Diego": "metro_san_diego",
