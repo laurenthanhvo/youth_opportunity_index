@@ -6,8 +6,8 @@ import geopandas as gpd
 
 TRACT_CSV = Path("data/processed/yoi/yoi_components.csv")
 TRACT_GEOJSON = Path("data/processed/boundaries/sd_tracts.geojson")
-DISTRICT_GEOJSON = Path("data/processed/overlays/supervisor_districts.geojson")
-OUT_CSV = Path("data/processed/yoi/yoi_supervisor_district_components.csv")
+ZIP_GEOJSON = Path("data/processed/boundaries/sd_zip_codes.geojson")
+OUT_CSV = Path("data/processed/yoi/yoi_zip_components.csv")
 
 TRACT_ID_COL = "tract_geoid"
 POP_COL = "total_population"
@@ -24,23 +24,21 @@ DOMAIN_SCORE_COLS = [
     "youth_supports_score",
 ]
 
-DISTRICT_FIELD_CANDIDATES = [
-    "distno", "DISTNO", "district", "District", "DISTRICT", "id", "ID"
-]
+ZIP_FIELD_CANDIDATES = ["ZIP", "zip", "ZCTA5CE10", "GEOID20", "GEOID", "zcta"]
 
 OCEAN_TRACT_IDS = {
-    "06073009901",
-    "009901",
-    "9901",
+    "06073990100",
+    "990100",
+    "9901.00",
     "99.01",
 
-    "06073009902",
-    "009902",
-    "9902",
+    "06073990200",
+    "990200",
+    "9902.00",
     "99.02",
 }
 
-PROJECTED_CRS = "EPSG:3310"
+PROJECTED_CRS = "EPSG:3310"  # California Albers, good for area calculations
 
 
 def normalize_tract(v):
@@ -52,19 +50,21 @@ def normalize_tract(v):
     return digits.zfill(11)[-11:]
 
 
-def normalize_district(v):
+def normalize_zip(v):
     if pd.isna(v):
         return None
     digits = re.sub(r"\D", "", str(v))
-    return digits if digits else str(v).strip()
+    if not digits:
+        return None
+    return digits.zfill(5)[-5:]
 
 
-def find_district_field(gdf):
-    for c in DISTRICT_FIELD_CANDIDATES:
+def find_zip_field(gdf):
+    for c in ZIP_FIELD_CANDIDATES:
         if c in gdf.columns:
             return c
     raise ValueError(
-        f"Could not find supervisor district field. Looked for {DISTRICT_FIELD_CANDIDATES}. "
+        f"Could not find ZIP field in ZIP GeoJSON. Looked for: {ZIP_FIELD_CANDIDATES}. "
         f"Found columns: {list(gdf.columns)}"
     )
 
@@ -83,9 +83,10 @@ def main():
         raise FileNotFoundError(f"Missing {TRACT_CSV}")
     if not TRACT_GEOJSON.exists():
         raise FileNotFoundError(f"Missing {TRACT_GEOJSON}")
-    if not DISTRICT_GEOJSON.exists():
-        raise FileNotFoundError(f"Missing {DISTRICT_GEOJSON}")
+    if not ZIP_GEOJSON.exists():
+        raise FileNotFoundError(f"Missing {ZIP_GEOJSON}")
 
+    # --- load tract scores ---
     tract_scores = pd.read_csv(TRACT_CSV)
 
     overall_input_col = next(
@@ -111,10 +112,13 @@ def main():
     tract_scores[TRACT_ID_COL] = tract_scores[TRACT_ID_COL].map(normalize_tract)
     tract_scores = tract_scores[~tract_scores[TRACT_ID_COL].isin({None, ""})].copy()
 
+    # remove ocean tract
     ocean_ids = {normalize_tract(x) for x in OCEAN_TRACT_IDS if x is not None}
     tract_scores = tract_scores[~tract_scores[TRACT_ID_COL].isin(ocean_ids)].copy()
 
+    # --- load tract geometry ---
     tracts = gpd.read_file(TRACT_GEOJSON)
+
     if TRACT_ID_COL not in tracts.columns:
         raise ValueError(
             f"{TRACT_GEOJSON} must contain '{TRACT_ID_COL}'. "
@@ -123,8 +127,11 @@ def main():
 
     tracts[TRACT_ID_COL] = tracts[TRACT_ID_COL].map(normalize_tract)
     tracts = tracts[~tracts[TRACT_ID_COL].isin({None, ""})].copy()
+
+    # remove ocean tract
     tracts = tracts[~tracts[TRACT_ID_COL].isin(ocean_ids)].copy()
 
+    # merge scores into tract geometry
     value_cols_for_merge = [
     c for c in tract_scores.columns
     if c not in {TRACT_ID_COL, POP_COL}
@@ -134,39 +141,45 @@ def main():
     tract_scores[[TRACT_ID_COL, POP_COL] + value_cols_for_merge],
     on=TRACT_ID_COL,
     how="inner",
-    )
+)
 
-    districts = gpd.read_file(DISTRICT_GEOJSON)
-    district_field = find_district_field(districts)
-    districts["distno"] = districts[district_field].map(normalize_district)
-    districts = districts[~districts["distno"].isin({None, ""})].copy()
-    districts = districts[["distno", "geometry"]].copy()
+    # --- load ZIP geometry ---
+    zips = gpd.read_file(ZIP_GEOJSON)
+    zip_field = find_zip_field(zips)
+    zips["zip"] = zips[zip_field].map(normalize_zip)
+    zips = zips[~zips["zip"].isin({None, ""})].copy()
+    zips = zips[["zip", "geometry"]].copy()
 
+    # --- project for area calculations ---
     tracts = tracts.to_crs(PROJECTED_CRS)
-    districts = districts.to_crs(PROJECTED_CRS)
+    zips = zips.to_crs(PROJECTED_CRS)
 
     tracts["tract_area"] = tracts.geometry.area
 
+    # --- intersect tracts with ZIPs ---
     inter = gpd.overlay(
     tracts[[TRACT_ID_COL, POP_COL] + value_cols_for_merge + ["tract_area", "geometry"]],
-    districts[["distno", "geometry"]],
+    zips[["zip", "geometry"]],
     how="intersection",
     keep_geom_type=False,
-    )
+)
 
     if inter.empty:
-        raise ValueError("Tract/supervisor-district intersection produced no rows.")
+        raise ValueError("Tract/ZIP intersection produced no rows.")
 
     inter["intersect_area"] = inter.geometry.area
     inter["area_share"] = inter["intersect_area"] / inter["tract_area"]
+
+    # population-weighted overlap
     inter["weighted_pop"] = inter[POP_COL].fillna(0) * inter["area_share"]
 
+    # if population is missing/zero, fall back to area-share weighting
     rows = []
-    for distno, g in inter.groupby("distno", dropna=True):
+    for zip_code, g in inter.groupby("zip", dropna=True):
         total_pop = g["weighted_pop"].sum()
 
         row = {
-            "distno": distno,
+            "zip": zip_code,
             "total_population": round(total_pop, 2),
         }
 
@@ -181,15 +194,17 @@ def main():
 
         rows.append(row)
 
-    out = pd.DataFrame(rows).sort_values("distno").reset_index(drop=True)
+    out = pd.DataFrame(rows).sort_values("zip").reset_index(drop=True)
 
+    # normalize output column names for the dashboard
     if overall_input_col != "yoi_custom_0_100":
         out["yoi_custom_0_100"] = out[overall_input_col]
+
     if overall_input_col != "yoi_0_100":
         out["yoi_0_100"] = out[overall_input_col]
 
     preferred_order = [
-    "distno",
+    "zip",
     "total_population",
     "yoi_custom_0_100",
     "yoi_0_100",
