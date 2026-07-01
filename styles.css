@@ -3606,7 +3606,22 @@ body.location-panel-open #railZoomOutBtn {
   color: var(--brand-charcoal, #0B151C);
   padding: 18px 18px 16px;
   box-shadow: 0 16px 48px rgba(0,0,0,0.22);
-  transition: left 160ms ease, top 160ms ease;
+  opacity: 0;
+  visibility: hidden;
+  transition: left 160ms ease, top 160ms ease, opacity 120ms ease;
+}
+
+.tour-overlay.ready .tour-card,
+.tour-overlay.ready .tour-highlight,
+.tour-overlay.ready .tour-arrow {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tour-overlay:not(.ready) .tour-card,
+.tour-overlay:not(.ready) .tour-highlight,
+.tour-overlay:not(.ready) .tour-arrow {
+  transition: none;
 }
 
 .tour-step-count {
@@ -3640,6 +3655,8 @@ body.location-panel-open #railZoomOutBtn {
   height: 0;
   border-style: solid;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .tour-arrow.right {
@@ -3697,4 +3714,6 @@ body.location-panel-open #railZoomOutBtn {
 
 .tour-highlight {
   border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
 }

@@ -3187,6 +3187,7 @@ function startGuidedTour() {
   const overlay = document.getElementById('tourOverlay');
   if (!overlay) return;
 
+  overlay.classList.remove('ready');
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
 
@@ -3197,7 +3198,7 @@ function endGuidedTour(markSeen = true) {
   const overlay = document.getElementById('tourOverlay');
   if (!overlay) return;
 
-  overlay.classList.remove('open');
+  overlay.classList.remove('open', 'ready');
   overlay.setAttribute('aria-hidden', 'true');
 
   if (activeTourTarget) {
@@ -3358,6 +3359,7 @@ function renderTourStep() {
         currentTourStep === tutorialSteps.length - 1 ? 'Finish' : 'Next';
 
       positionTourCard(rect, step.placement || 'right');
+      document.getElementById('tourOverlay')?.classList.add('ready');
     }, 180);
   });
 }
