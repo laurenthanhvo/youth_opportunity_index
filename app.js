@@ -3494,12 +3494,13 @@ const tutorialSteps = [
     placement: 'right',
   },
   {
-    selector: '#toggleServices',
-    panel: 'overlays',
-    title: 'View service locations',
-    copy: 'Turn on service locations to see where youth-serving and wraparound service sites are located relative to opportunity patterns.',
-    placement: 'right',
-  },
+  selector: '#serviceLocationsTourTarget',
+  panel: 'overlays',
+  title: 'View service locations',
+  copy: 'Turn on service locations to see where youth-serving and wraparound service sites are located relative to opportunity patterns.',
+  placement: 'right',
+  scrollBlock: 'center',
+},
   {
     selector: '.rail-btn[data-panel="location"]',
     panel: 'location',
@@ -3691,10 +3692,6 @@ if (Number.isFinite(step.drawerScrollTop)) {
   requestAnimationFrame(() => {
     let target = document.querySelector(step.selector);
 
-    if (target && step.selector === '#toggleServices') {
-      target = target.closest('.overlay-item') || target;
-    }
-
     if (!target) {
       currentTourStep += 1;
       renderTourStep();
@@ -3711,7 +3708,7 @@ if (Number.isFinite(step.drawerScrollTop)) {
     target.scrollIntoView({
   block: step.scrollBlock || 'center',
   inline: 'center',
-  behavior: 'smooth',
+  behavior: 'auto',
 });
 
     setTimeout(() => {
