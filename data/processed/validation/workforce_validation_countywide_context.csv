@@ -1,0 +1,9 @@
+indicator,field,value,source,geography,source_type
+CDE adjusted cohort graduation rate,cde_adjusted_cohort_graduation_rate,84.6,CDE ACGR 2023-24,San Diego County,CDE county/school outcome
+CDE four-year cohort dropout rate,cde_four_year_cohort_dropout_rate,7.9,CDE ACGR 2023-24,San Diego County,CDE county/school outcome
+CDE cumulative enrollment,cde_cumulative_enrollment,499683.0,CDE Homeless Student Enrollment,San Diego County,CDE county/school student group
+CDE homeless students,cde_homeless_students,23641.0,CDE Homeless Student Enrollment,San Diego County,CDE county/school student group
+CDE homeless student rate,cde_homeless_student_rate,0.0473119958053405,CDE Homeless Student Enrollment,San Diego County,CDE county/school student group
+CDE English learner students,english_learner_students,74812.0,CDE English Learners by Grade and Language,San Diego County,CDE county/school student group
+ACS PUMS youth unemployment rate ages 16-19,youth_unemployment_rate_16_19_pums,0.187656938786898,2024 ACS 5-year PUMS,San Diego County,ACS PUMS county/PUMA estimate
+ACS PUMS labor force participation rate ages 16-19,labor_force_participation_rate_16_19_pums,0.3295169683188585,2024 ACS 5-year PUMS,San Diego County,ACS PUMS county/PUMA estimate

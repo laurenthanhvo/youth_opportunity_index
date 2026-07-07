@@ -13,10 +13,19 @@ const DOMAIN_LABELS = {
   youth_supports: 'Youth Supports',
 };
 
+const SPECIAL_MAP_LAYERS = {
+  'Education — Workforce aligned': {
+    label: 'Education — Workforce aligned',
+    metric: 'education_workforce_aligned_score_0_100',
+    domain: [0, 100],
+    countyRegionsOnly: true,
+  },
+};
+
 const EXCLUDED_TRACT_GEOIDS = new Set([
-  '06073009902', // tract 99.02, water/ocean
-  '06073990200',
-  '06073990100', 
+  '06073009902', // Census tract 99.02, water/harbor
+  '06073990100', // Census tract 9901.00, water/ocean
+  '06073990200', // Census tract 9902.00, water/ocean
 ]);
 
 // const BLUES = ['#eaf3fb', '#b6d3e9', '#6da3c9', '#275c81', '#0a2f4a'];
@@ -64,6 +73,7 @@ const state = {
   servicesGeojson: null,
   showServices: false,
   profileSort: 'desert',
+  workforceContextRows: [],
 };
 
 let tractLayer = null;
@@ -319,17 +329,20 @@ function featureCount(obj) {
 }
 
 function activeMetricKey() {
+  if (SPECIAL_MAP_LAYERS[state.mapLayer]) return SPECIAL_MAP_LAYERS[state.mapLayer].metric;
   if (state.mapLayer === 'YOI (0–100)') return 'yoi_custom_0_100';
   const d = state.mapLayer.replace(/ score$/, '');
   return `${d}_score`;
 }
 
 function activeLayerTitle() {
+  if (SPECIAL_MAP_LAYERS[state.mapLayer]) return SPECIAL_MAP_LAYERS[state.mapLayer].label;
   if (state.mapLayer === 'YOI (0–100)') return 'Overall YOI';
   return `${DOMAIN_LABELS[state.mapLayer.replace(/ score$/, '')] || state.mapLayer} Domain`;
 }
 
 function metricDomain() {
+  if (SPECIAL_MAP_LAYERS[state.mapLayer]) return SPECIAL_MAP_LAYERS[state.mapLayer].domain;
   return state.mapLayer === 'YOI (0–100)' ? [0, 100] : [0, 1];
 }
 
@@ -377,7 +390,7 @@ function valueToCategory(v) {
 
 function scoreDisplayValue(v) {
   if (!isFiniteNumber(v)) return 'N/A';
-  if (state.mapLayer === 'YOI (0–100)') return `${Math.round(v)}/100`;
+  if (state.mapLayer === 'YOI (0–100)' || SPECIAL_MAP_LAYERS[state.mapLayer]) return `${Math.round(v)}/100`;
   return `${Math.round(v * 100)}/100`;
 }
 
@@ -983,6 +996,15 @@ function styleFeature(feature) {
   };
 }
 
+
+function activeLayerContextText() {
+  if (state.mapLayer === 'Education — Workforce aligned') {
+    return 'Figure 10 graduation/dropout benchmark';
+  }
+
+  return 'Compared to county';
+}
+
 function popupMetricBlock({ label, context, value, badgeText, widthPct, fillColor }) {
   return `
     <div class="popup-metric-block">
@@ -1031,7 +1053,7 @@ function popupHtml(row, geoid) {
   const yoiBlock = isFiniteNumber(yoiValue)
   ? popupMetricBlock({
       label: 'Overall YOI',
-      context: 'Compared to county',
+      context: activeLayerContextText(),
       value: yoiValue,
       badgeText: `${Math.round(yoiValue)}/100`,
       widthPct: yoiValue,
@@ -1041,10 +1063,10 @@ function popupHtml(row, geoid) {
 
   const singleMetricBlock = popupMetricBlock({
   label: state.mapLayer === 'YOI (0–100)' ? 'Overall index' : activeLayerTitle(),
-  context: 'Compared to county',
+  context: activeLayerContextText(),
   value: activeValue,
   badgeText: activeBadge,
-  widthPct: state.mapLayer === 'YOI (0–100)' ? activeValue : activeValue * 100,
+  widthPct: metricDomain()[1] === 100 ? activeValue : activeValue * 100,
   fillColor: effectiveShowCoiOverlay()
   ? colorForCoiValue(activeValue)
   : (state.mapLayer === 'YOI (0–100)'
@@ -1119,9 +1141,13 @@ function updateLegendCard() {
     .split(' ')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
-  subtitleEl.textContent = effectiveShowCoiOverlay()
-    ? 'Child Opportunity Index by Census Tract, nationally normalized for 2023'
-    : `${activeLayerTitle()} by ${areaLabel}, county-normalized for 2024`;
+  if (effectiveShowCoiOverlay()) {
+    subtitleEl.textContent = 'Child Opportunity Index by Census Tract, nationally normalized for 2023';
+  } else if (state.mapLayer === 'Education — Workforce aligned') {
+    subtitleEl.textContent = 'Figure 10 education benchmark by County Region: graduation rate + inverse dropout rate';
+  } else {
+    subtitleEl.textContent = `${activeLayerTitle()} by ${areaLabel}, county-normalized for 2024`;
+  }
 
   if (state.scoreMode === 'score') {
     scale.classList.add('continuous');
@@ -1611,6 +1637,39 @@ function buildDomainBreakdownMarkup(row, domainKey) {
   `;
 }
 
+function workforceContextValue(field) {
+  const row = (state.workforceContextRows || []).find(r => r.field === field);
+  return row ? row.value : null;
+}
+
+function workforceContextSource(field) {
+  const row = (state.workforceContextRows || []).find(r => r.field === field);
+  return row ? `${row.source}; ${row.source_type}` : 'County-level validation/context source';
+}
+
+function formatWorkforceContextValue(field, value) {
+  if (!isFiniteNumber(value)) return 'N/A';
+
+  const n = +value;
+
+  if (
+    field === 'cde_adjusted_cohort_graduation_rate' ||
+    field === 'cde_four_year_cohort_dropout_rate'
+  ) {
+    return `${n.toFixed(1)}%`;
+  }
+
+  if (
+    field === 'cde_homeless_student_rate' ||
+    field === 'youth_unemployment_rate_16_19_pums' ||
+    field === 'labor_force_participation_rate_16_19_pums'
+  ) {
+    return `${(n * 100).toFixed(1)}%`;
+  }
+
+  return Math.round(n).toLocaleString();
+}
+
 function renderLocationDetails() {
   const el = document.getElementById('locationDetails');
 
@@ -1681,6 +1740,22 @@ const notInSchoolShare1424 = isFiniteNumber(row.not_in_school_youth_share_14_24)
         ? notInSchool1424 / youthPop
         : NaN
     );
+
+const students1421Report = isFiniteNumber(row.students_14_21_report_aligned)
+  ? +row.students_14_21_report_aligned
+  : NaN;
+
+const studentShare1421Report = isFiniteNumber(row.students_14_21_share_report_aligned)
+  ? +row.students_14_21_share_report_aligned
+  : NaN;
+
+const notInSchool1824Report = isFiniteNumber(row.not_in_school_youth_18_24_report_aligned)
+  ? +row.not_in_school_youth_18_24_report_aligned
+  : NaN;
+
+const notInSchoolShare1824Report = isFiniteNumber(row.not_in_school_youth_18_24_share_report_aligned)
+  ? +row.not_in_school_youth_18_24_share_report_aligned
+  : NaN;
 
 const popMissing = !Number.isFinite(youthPop);
 const pop = formatCount(youthPop);
@@ -1868,7 +1943,7 @@ const { rank, total, percentile } = percentileForRow(row);
       <div>
         <div class="location-section-title">Youth Population Context</div>
         <div class="location-section-subtitle">
-          ACS 5-year estimates for youth ages 14–24. Age 14 is estimated as one-fifth of the 10–14 age group.
+          ACS 5-year tract estimates. Dashboard fields use ages 14–24; report-aligned fields approximate the Workforce report age bands.
         </div>
       </div>
     </div>
@@ -1890,12 +1965,12 @@ const { rank, total, percentile } = percentileForRow(row);
       </div>
 
       <div class="loc-metric">
-        <div class="loc-metric-label">Student share</div>
+        <div class="loc-metric-label">Student share 14–24</div>
         <div class="loc-metric-value">${formatPct(studentShare1424)}</div>
       </div>
 
       <div class="loc-metric">
-        <div class="loc-metric-label">Not in school</div>
+        <div class="loc-metric-label">Not in school 14–24</div>
         <div class="loc-metric-value">${formatCount(notInSchool1424)}</div>
       </div>
 
@@ -1903,6 +1978,128 @@ const { rank, total, percentile } = percentileForRow(row);
         <div class="loc-metric-label">Not-in-school share</div>
         <div class="loc-metric-value">${formatPct(notInSchoolShare1424)}</div>
       </div>
+    </div>
+  </div>
+
+  <div class="location-section">
+    <div class="location-section-head">
+      <div>
+        <div class="location-section-title">Workforce Report Alignment</div>
+        <div class="location-section-subtitle">
+          These approximate the Workforce report definitions: students ages 14–21 and youth not enrolled in school ages 18–24.
+        </div>
+      </div>
+    </div>
+
+    <div class="loc-metric-grid">
+      <div class="loc-metric">
+        <div class="loc-metric-label">Students 14–21</div>
+        <div class="loc-metric-value">${formatCount(students1421Report)}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Student share 14–21</div>
+        <div class="loc-metric-value">${formatPct(studentShare1421Report)}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Not in school 18–24</div>
+        <div class="loc-metric-value">${formatCount(notInSchool1824Report)}</div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Not-in-school share 18–24</div>
+        <div class="loc-metric-value">${formatPct(notInSchoolShare1824Report)}</div>
+      </div>
+    </div>
+  </div>
+`;
+
+const workforceContextMarkup = `
+  <div class="location-section">
+    <div class="location-section-head">
+      <div>
+        <div class="location-section-title">San Diego Countywide Workforce Context</div>
+        <div class="location-section-subtitle">
+          Countywide school and workforce indicators for San Diego County. These values are shown only for validation/context and do not change by selected tract, ZIP code, or district.
+        </div>
+      </div>
+    </div>
+
+    <div class="loc-metric-grid">
+      <div class="loc-metric">
+        <div class="loc-metric-label">CDE graduation rate</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'cde_adjusted_cohort_graduation_rate',
+            workforceContextValue('cde_adjusted_cohort_graduation_rate')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">CDE dropout rate</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'cde_four_year_cohort_dropout_rate',
+            workforceContextValue('cde_four_year_cohort_dropout_rate')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Homeless students</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'cde_homeless_students',
+            workforceContextValue('cde_homeless_students')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Homeless student rate</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'cde_homeless_student_rate',
+            workforceContextValue('cde_homeless_student_rate')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">English learners</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'english_learner_students',
+            workforceContextValue('english_learner_students')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Youth unemployment 16–19</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'youth_unemployment_rate_16_19_pums',
+            workforceContextValue('youth_unemployment_rate_16_19_pums')
+          )}
+        </div>
+      </div>
+
+      <div class="loc-metric">
+        <div class="loc-metric-label">Labor force participation 16–19</div>
+        <div class="loc-metric-value">
+          ${formatWorkforceContextValue(
+            'labor_force_participation_rate_16_19_pums',
+            workforceContextValue('labor_force_participation_rate_16_19_pums')
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="callout-note mt-3">
+      These values describe San Diego County overall. They support validation against the Workforce report but should not be interpreted as values for the selected tract, ZIP code, or district.
     </div>
   </div>
 `;
@@ -1954,6 +2151,7 @@ const { rank, total, percentile } = percentileForRow(row);
     </div>
 
         ${youthContextMarkup}
+        ${workforceContextMarkup}
 
     <div class="location-section" id="locationDomainProfileSection">
       <div class="location-section-head">
@@ -2509,10 +2707,32 @@ function updateAll(reRenderMap = true) {
 
 function buildLayerSelect() {
   const select = document.getElementById('mapLayerSelect');
-  select.innerHTML = ['YOI (0–100)', ...DOMAINS.map(d => `${d} score`)].map(v => `<option value="${v}">${v === 'YOI (0–100)' ? 'Overall Youth Opportunity' : DOMAIN_LABELS[v.replace(/ score$/, '')] + ' Domain'}</option>`).join('');
+
+  const layerOptions = [
+    { value: 'YOI (0–100)', label: 'Overall Youth Opportunity' },
+    ...DOMAINS.map(d => ({
+      value: `${d} score`,
+      label: `${DOMAIN_LABELS[d]} Domain`,
+    })),
+    {
+      value: 'Education — Workforce aligned',
+      label: 'Education — Workforce aligned',
+    },
+  ];
+
+  select.innerHTML = layerOptions
+    .map(opt => `<option value="${opt.value}">${opt.label}</option>`)
+    .join('');
+
   select.value = state.mapLayer;
-    select.addEventListener('change', e => {
+
+  select.addEventListener('change', e => {
     state.mapLayer = e.target.value;
+
+    if (SPECIAL_MAP_LAYERS[state.mapLayer]?.countyRegionsOnly) {
+      setPrimaryView('county_regions');
+    }
+
     clearTransientUi();
     updateAll();
   });
@@ -3171,6 +3391,7 @@ async function init() {
   state.supervisorDistrictRows = await loadCsv('./data/processed/yoi/yoi_supervisor_district_components.csv').catch(() => []);
   state.cityCouncilDistrictRows = await loadCsv('./data/processed/yoi/yoi_city_council_district_components.csv').catch(() => []);
   state.meta = await loadCsv('./data/processed/yoi/yoi_indicator_meta.csv').catch(() => []);
+  state.workforceContextRows = await loadCsv('./data/processed/workforce/workforce_context_summary.csv').catch(() => []);
   state.geojson = await loadJson('./data/processed/boundaries/sd_tracts.geojson');
   state.zipGeojson = await loadJson('./data/processed/boundaries/sd_zip_codes.geojson').catch(() => null);
   state.routesGeojson = await loadJson('./data/processed/boundaries/transit_routes.geojson').catch(() => null);
@@ -3190,7 +3411,7 @@ async function init() {
   const tract = normalizeGeoid(params.get('tract'));
   const layer = params.get('layer');
   if (tract) state.selectedGeoid = tract;
-  if (layer && ['YOI (0–100)', ...DOMAINS.map(d => `${d} score`)].includes(layer)) {
+  if (layer && ['YOI (0–100)', ...DOMAINS.map(d => `${d} score`), ...Object.keys(SPECIAL_MAP_LAYERS)].includes(layer)) {
     state.mapLayer = layer;
     document.getElementById('mapLayerSelect').value = layer;
   }
@@ -3600,3 +3821,38 @@ function initOnboardingTour() {
 }
 
 document.addEventListener('DOMContentLoaded', initOnboardingTour);
+
+// Remove redundant Domain Details section from Location Details.
+// We keep Domain Profile as the main selected-area domain summary.
+function removeRedundantDomainDetails() {
+  const root = document.getElementById('locationDetails') || document.body;
+
+  root.querySelectorAll('.location-section').forEach(section => {
+    const title = section.querySelector('.location-section-title')?.textContent?.trim().toLowerCase();
+
+    if (title === 'domain details') {
+      section.remove();
+    }
+  });
+}
+
+function attachDomainDetailsCleanup() {
+  removeRedundantDomainDetails();
+
+  const root = document.getElementById('locationDetails') || document.body;
+
+  const observer = new MutationObserver(() => {
+    removeRedundantDomainDetails();
+  });
+
+  observer.observe(root, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachDomainDetailsCleanup);
+} else {
+  attachDomainDetailsCleanup();
+}

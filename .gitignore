@@ -1,2 +1,4 @@
 backend/.env
 backend/.venv/
+# Large raw Census PUMS files
+/data/raw/census/pums_2024/*.zip

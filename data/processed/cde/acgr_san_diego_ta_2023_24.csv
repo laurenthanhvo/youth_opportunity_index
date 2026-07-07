@@ -1,0 +1,404 @@
+academic_year,aggregate_level,county_code,district_code,school_code,county_name,district_name,school_name,reporting_category,cohort_students,regular_hs_diploma_graduates_count,cde_adjusted_cohort_graduation_rate,dropout_count,cde_four_year_cohort_dropout_rate
+2023-24,S,37,10371,0115998,San Diego,San Diego County Office of Education,San Pasqual Academy,TA,18.0,12.0,66.7,3.0,16.7
+2023-24,S,37,10371,0120493,San Diego,San Diego County Office of Education,Monarch,TA,15.0,7.0,46.7,4.0,26.7
+2023-24,S,37,10371,0128520,San Diego,San Diego County Office of Education,San Diego County Community,TA,183.0,59.0,32.2,48.0,26.2
+2023-24,S,37,10371,0128538,San Diego,San Diego County Office of Education,San Diego County Court,TA,66.0,28.0,42.4,16.0,24.2
+2023-24,S,37,10371,0134577,San Diego,San Diego County Office of Education,Audeo Charter II,TA,73.0,49.0,67.1,4.0,5.5
+2023-24,S,37,10371,0137752,San Diego,San Diego County Office of Education,Dimensions Collaborative,TA,35.0,34.0,97.1,0.0,0.0
+2023-24,S,37,10371,0138792,San Diego,San Diego County Office of Education,JCS - Manzanita,TA,,,,,
+2023-24,S,37,10371,1996545,San Diego,San Diego County Office of Education,North Coastal Consortium Schools,TA,,,,,
+2023-24,S,37,10371,6069355,San Diego,San Diego County Office of Education,San Diego County Special Education,TA,,,,,
+2023-24,S,37,10371,6119119,San Diego,San Diego County Office of Education,Literacy First Charter,TA,63.0,60.0,95.2,3.0,4.8
+2023-24,S,37,67983,0134890,San Diego,Borrego Springs Unified,San Diego Workforce Innovation High,TA,917.0,207.0,22.6,215.0,23.4
+2023-24,S,37,67983,3730447,San Diego,Borrego Springs Unified,Borrego Springs High,TA,32.0,29.0,90.6,2.0,6.3
+2023-24,S,37,67991,0140558,San Diego,Cajon Valley Union,Bostonia Global,TA,24.0,23.0,95.8,1.0,4.2
+2023-24,S,37,68023,0138073,San Diego,Chula Vista Elementary,Learning Choice Academy - Chula Vista,TA,32.0,29.0,90.6,0.0,0.0
+2023-24,S,37,68023,6037980,San Diego,Chula Vista Elementary,Mueller Charter (Robert L.),TA,148.0,144.0,97.3,3.0,2.0
+2023-24,S,37,68023,6115778,San Diego,Chula Vista Elementary,Chula Vista Learning Community Charter,TA,95.0,94.0,98.9,1.0,1.1
+2023-24,S,37,68031,3731478,San Diego,Coronado Unified,Coronado High,TA,258.0,252.0,97.7,4.0,1.6
+2023-24,S,37,68049,0129221,San Diego,Dehesa Elementary,MethodSchools,TA,112.0,77.0,68.8,16.0,14.3
+2023-24,S,37,68049,0132506,San Diego,Dehesa Elementary,Cabrillo Point Academy,TA,139.0,126.0,90.6,7.0,5.0
+2023-24,S,37,68049,0136416,San Diego,Dehesa Elementary,Pacific Coast Academy,TA,149.0,137.0,91.9,7.0,4.7
+2023-24,S,37,68049,0136614,San Diego,Dehesa Elementary,Diego Hills Central Public Charter,TA,36.0,16.0,44.4,19.0,52.8
+2023-24,S,37,68106,0000001,San Diego,Escondido Union High,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,68106,0111195,San Diego,Escondido Union High,Classical Academy High,TA,310.0,302.0,97.4,4.0,1.3
+2023-24,S,37,68106,0127241,San Diego,Escondido Union High,Del Lago Academy - Campus of Applied Science,TA,172.0,168.0,97.7,3.0,1.7
+2023-24,S,37,68106,0137034,San Diego,Escondido Union High,Audeo Charter School III,TA,44.0,28.0,63.6,1.0,2.3
+2023-24,S,37,68106,3730058,San Diego,Escondido Union High,San Pasqual High,TA,493.0,454.0,92.1,25.0,5.1
+2023-24,S,37,68106,3731023,San Diego,Escondido Union High,Escondido Charter High,TA,232.0,225.0,97.0,5.0,2.2
+2023-24,S,37,68106,3732054,San Diego,Escondido Union High,Valley High (Continuation),TA,174.0,114.0,65.5,48.0,27.6
+2023-24,S,37,68106,3732062,San Diego,Escondido Union High,Escondido High,TA,465.0,395.0,84.9,46.0,9.9
+2023-24,S,37,68106,3735313,San Diego,Escondido Union High,Orange Glen High,TA,469.0,392.0,83.6,57.0,12.2
+2023-24,S,37,68122,0000001,San Diego,Fallbrook Union High,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,68122,3730967,San Diego,Fallbrook Union High,Oasis High (Alternative),TA,43.0,42.0,97.7,1.0,2.3
+2023-24,S,37,68122,3732179,San Diego,Fallbrook Union High,Fallbrook High,TA,474.0,412.0,86.9,49.0,10.3
+2023-24,S,37,68122,3732195,San Diego,Fallbrook Union High,Ivy High (Continuation),TA,68.0,57.0,83.8,8.0,11.8
+2023-24,S,37,68130,0000001,San Diego,Grossmont Union High,"Nonpublic, Nonsectarian Schools",TA,12.0,0.0,0.0,12.0,100.0
+2023-24,S,37,68130,0128793,San Diego,Grossmont Union High,MERIT Academy,TA,19.0,3.0,15.8,16.0,84.2
+2023-24,S,37,68130,0128819,San Diego,Grossmont Union High,REACH Academy,TA,,,,,
+2023-24,S,37,68130,0132548,San Diego,Grossmont Union High,IDEA Center,TA,50.0,33.0,66.0,14.0,28.0
+2023-24,S,37,68130,0139063,San Diego,Grossmont Union High,The Learning Choice Academy - East County,TA,34.0,28.0,82.4,1.0,2.9
+2023-24,S,37,68130,3730066,San Diego,Grossmont Union High,Valhalla High,TA,506.0,407.0,80.4,73.0,14.4
+2023-24,S,37,68130,3730702,San Diego,Grossmont Union High,West Hills High,TA,358.0,325.0,90.8,23.0,6.4
+2023-24,S,37,68130,3731262,San Diego,Grossmont Union High,Steele Canyon High,TA,519.0,510.0,98.3,6.0,1.2
+2023-24,S,37,68130,3731486,San Diego,Grossmont Union High,Elite Academy,TA,,,,,
+2023-24,S,37,68130,3731536,San Diego,Grossmont Union High,Grossmont Middle College High,TA,29.0,27.0,93.1,2.0,6.9
+2023-24,S,37,68130,3731692,San Diego,Grossmont Union High,El Cajon Valley High,TA,424.0,306.0,72.2,104.0,24.5
+2023-24,S,37,68130,3731809,San Diego,Grossmont Union High,El Capitan High,TA,448.0,385.0,85.9,51.0,11.4
+2023-24,S,37,68130,3732336,San Diego,Grossmont Union High,Granite Hills High,TA,603.0,514.0,85.2,63.0,10.4
+2023-24,S,37,68130,3732559,San Diego,Grossmont Union High,Chaparral High,TA,14.0,3.0,21.4,10.0,71.4
+2023-24,S,37,68130,3732625,San Diego,Grossmont Union High,Grossmont High,TA,506.0,401.0,79.2,88.0,17.4
+2023-24,S,37,68130,3732732,San Diego,Grossmont Union High,Helix High,TA,569.0,557.0,97.9,4.0,0.7
+2023-24,S,37,68130,3734548,San Diego,Grossmont Union High,Monte Vista High,TA,386.0,313.0,81.1,68.0,17.6
+2023-24,S,37,68130,3734761,San Diego,Grossmont Union High,Mount Miguel High,TA,373.0,283.0,75.9,77.0,20.6
+2023-24,S,37,68130,3737905,San Diego,Grossmont Union High,Santana High,TA,437.0,384.0,87.9,48.0,11.0
+2023-24,S,37,68155,6117303,San Diego,Jamul-Dulzura Union Elementary,Greater San Diego Academy,TA,14.0,13.0,92.9,1.0,7.1
+2023-24,S,37,68163,0128421,San Diego,Julian Union Elementary,Harbor Springs Charter,TA,,,,,
+2023-24,S,37,68163,0137109,San Diego,Julian Union Elementary,Diego Valley East Public Charter,TA,156.0,22.0,14.1,38.0,24.4
+2023-24,S,37,68163,0138628,San Diego,Julian Union Elementary,JCS - Cedar Cove,TA,,,,,
+2023-24,S,37,68163,0139402,San Diego,Julian Union Elementary,Brookfield Engineering Science Technology Academy,TA,56.0,44.0,78.6,11.0,19.6
+2023-24,S,37,68163,3731239,San Diego,Julian Union Elementary,Julian Charter,TA,40.0,33.0,82.5,5.0,12.5
+2023-24,S,37,68171,3733219,San Diego,Julian Union High,Julian High,TA,26.0,23.0,88.5,2.0,7.7
+2023-24,S,37,68189,3731072,San Diego,Lakeside Union Elementary,River Valley Charter,TA,48.0,38.0,79.2,10.0,20.8
+2023-24,S,37,68213,0123224,San Diego,Mountain Empire Unified,San Diego Virtual,TA,158.0,128.0,81.0,12.0,7.6
+2023-24,S,37,68213,0127084,San Diego,Mountain Empire Unified,Compass Charter Schools of San Diego,TA,55.0,35.0,63.6,13.0,23.6
+2023-24,S,37,68213,0129668,San Diego,Mountain Empire Unified,Motivated Youth Academy,TA,72.0,41.0,56.9,10.0,13.9
+2023-24,S,37,68213,0136978,San Diego,Mountain Empire Unified,Elite Academic Academy - Mountain Empire,TA,53.0,49.0,92.5,3.0,5.7
+2023-24,S,37,68213,0138636,San Diego,Mountain Empire Unified,JCS - Pine Valley,TA,,,,,
+2023-24,S,37,68213,3730934,San Diego,Mountain Empire Unified,Sunrise High (Continuation),TA,,,,,
+2023-24,S,37,68213,3730991,San Diego,Mountain Empire Unified,Hillside Junior/Senior High,TA,20.0,16.0,80.0,4.0,20.0
+2023-24,S,37,68213,3734878,San Diego,Mountain Empire Unified,Mountain Empire High,TA,93.0,89.0,95.7,3.0,3.2
+2023-24,S,37,68296,0000001,San Diego,Poway Unified,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,68296,0118935,San Diego,Poway Unified,Del Norte High,TA,615.0,592.0,96.3,1.0,0.2
+2023-24,S,37,68296,0141390,San Diego,Poway Unified,Poway to Palomar Middle College High,TA,41.0,40.0,97.6,0.0,0.0
+2023-24,S,37,68296,3730074,San Diego,Poway Unified,Mt. Carmel High,TA,467.0,448.0,95.9,6.0,1.3
+2023-24,S,37,68296,3730819,San Diego,Poway Unified,Rancho Bernardo High,TA,601.0,585.0,97.3,3.0,0.5
+2023-24,S,37,68296,3731528,San Diego,Poway Unified,Westview High,TA,622.0,598.0,96.1,2.0,0.3
+2023-24,S,37,68296,3735842,San Diego,Poway Unified,Abraxas Continuation High,TA,59.0,13.0,22.0,10.0,16.9
+2023-24,S,37,68296,3735867,San Diego,Poway Unified,Poway High,TA,530.0,505.0,95.3,4.0,0.8
+2023-24,S,37,68304,0102178,San Diego,Ramona City Unified,Future Bound Independent Study Secondary,TA,22.0,16.0,72.7,5.0,22.7
+2023-24,S,37,68304,0131250,San Diego,Ramona City Unified,Mountain Valley Academy,TA,18.0,18.0,100.0,0.0,0.0
+2023-24,S,37,68304,3735958,San Diego,Ramona City Unified,Montecito High (Continuation),TA,62.0,50.0,80.6,5.0,8.1
+2023-24,S,37,68304,3735974,San Diego,Ramona City Unified,Ramona High,TA,352.0,333.0,94.6,4.0,1.1
+2023-24,S,37,68338,0000001,San Diego,San Diego Unified,"Nonpublic, Nonsectarian Schools",TA,22.0,4.0,18.2,3.0,13.6
+2023-24,S,37,68338,0106732,San Diego,San Diego Unified,High Tech High International,TA,94.0,91.0,96.8,3.0,3.2
+2023-24,S,37,68338,0106799,San Diego,San Diego Unified,Learning Choice Academy,TA,12.0,9.0,75.0,2.0,16.7
+2023-24,S,37,68338,0107078,San Diego,San Diego Unified,Kearny Digital Media & Design,TA,77.0,73.0,94.8,1.0,1.3
+2023-24,S,37,68338,0107086,San Diego,San Diego Unified,Kearny School of Biomedical Science and Technology,TA,94.0,91.0,96.8,1.0,1.1
+2023-24,S,37,68338,0107094,San Diego,San Diego Unified,Kearny College Connections,TA,84.0,81.0,96.4,3.0,3.6
+2023-24,S,37,68338,0107102,San Diego,San Diego Unified,Kearny Eng Innov & Design,TA,58.0,56.0,96.6,0.0,0.0
+2023-24,S,37,68338,0107177,San Diego,San Diego Unified,Crawford High,TA,266.0,229.0,86.1,7.0,2.6
+2023-24,S,37,68338,0107219,San Diego,San Diego Unified,San Diego High,TA,459.0,413.0,90.0,23.0,5.0
+2023-24,S,37,68338,0107482,San Diego,San Diego Unified,San Diego Metro Career and Tech,TA,24.0,23.0,95.8,0.0,0.0
+2023-24,S,37,68338,0108787,San Diego,San Diego Unified,High Tech High Media Arts,TA,93.0,87.0,93.5,4.0,4.3
+2023-24,S,37,68338,0114025,San Diego,San Diego Unified,Lincoln High,TA,373.0,310.0,83.1,32.0,8.6
+2023-24,S,37,68338,0114462,San Diego,San Diego Unified,Health Sciences High and Middle College,TA,130.0,128.0,98.5,1.0,0.8
+2023-24,S,37,68338,0118315,San Diego,San Diego Unified,East Village Middle College High,TA,34.0,34.0,100.0,0.0,0.0
+2023-24,S,37,68338,0118851,San Diego,San Diego Unified,King-Chavez Community High,TA,69.0,54.0,78.3,15.0,21.7
+2023-24,S,37,68338,0119610,San Diego,San Diego Unified,Gompers Preparatory Academy,TA,157.0,152.0,96.8,1.0,0.6
+2023-24,S,37,68338,0122788,San Diego,San Diego Unified,School for Entrepreneurship and Technology,TA,55.0,53.0,96.4,0.0,0.0
+2023-24,S,37,68338,0124347,San Diego,San Diego Unified,City Heights Preparatory Charter,TA,22.0,18.0,81.8,4.0,18.2
+2023-24,S,37,68338,0126938,San Diego,San Diego Unified,Home & Hosp/Transition Support,TA,,,,,
+2023-24,S,37,68338,0127647,San Diego,San Diego Unified,e3 Civic High,TA,76.0,72.0,94.7,1.0,1.3
+2023-24,S,37,68338,0131979,San Diego,San Diego Unified,Ingenuity Charter,TA,96.0,60.0,62.5,13.0,13.5
+2023-24,S,37,68338,0135913,San Diego,San Diego Unified,Urban Discovery Academy Charter,TA,13.0,10.0,76.9,1.0,7.7
+2023-24,S,37,68338,0136663,San Diego,San Diego Unified,America's Finest Charter,TA,19.0,18.0,94.7,1.0,5.3
+2023-24,S,37,68338,3730173,San Diego,San Diego Unified,Canyon Hills High,TA,262.0,248.0,94.7,9.0,3.4
+2023-24,S,37,68338,3730181,San Diego,San Diego Unified,Mira Mesa High,TA,582.0,544.0,93.5,24.0,4.1
+2023-24,S,37,68338,3730231,San Diego,San Diego Unified,Twain High,TA,333.0,168.0,50.5,17.0,5.1
+2023-24,S,37,68338,3730314,San Diego,San Diego Unified,University City High,TA,388.0,379.0,97.7,3.0,0.8
+2023-24,S,37,68338,3730363,San Diego,San Diego Unified,Whittier K-12,TA,,,,,
+2023-24,S,37,68338,3730371,San Diego,San Diego Unified,San Diego SCPA,TA,173.0,173.0,100.0,0.0,0.0
+2023-24,S,37,68338,3730751,San Diego,San Diego Unified,Mt. Everest Academy,TA,31.0,31.0,100.0,0.0,0.0
+2023-24,S,37,68338,3730884,San Diego,San Diego Unified,Scripps Ranch High,TA,470.0,465.0,98.9,2.0,0.4
+2023-24,S,37,68338,3730959,San Diego,San Diego Unified,Charter School of San Diego,TA,473.0,225.0,47.6,50.0,10.6
+2023-24,S,37,68338,3731056,San Diego,San Diego Unified,TRACE,TA,56.0,0.0,0.0,2.0,3.6
+2023-24,S,37,68338,3731130,San Diego,San Diego Unified,ALBA,TA,,,,,
+2023-24,S,37,68338,3731189,San Diego,San Diego Unified,Preuss School UCSD,TA,113.0,113.0,100.0,0.0,0.0
+2023-24,S,37,68338,3731213,San Diego,San Diego Unified,Clairemont High,TA,218.0,200.0,91.7,6.0,2.8
+2023-24,S,37,68338,3731247,San Diego,San Diego Unified,High Tech High,TA,137.0,137.0,100.0,0.0,0.0
+2023-24,S,37,68338,3731395,San Diego,San Diego Unified,Audeo Charter,TA,127.0,89.0,70.1,12.0,9.4
+2023-24,S,37,68338,3732781,San Diego,San Diego Unified,Henry High,TA,556.0,540.0,97.1,10.0,1.8
+2023-24,S,37,68338,3732997,San Diego,San Diego Unified,Hoover High,TA,445.0,388.0,87.2,24.0,5.4
+2023-24,S,37,68338,3733508,San Diego,San Diego Unified,La Jolla High,TA,318.0,312.0,98.1,0.0,0.0
+2023-24,S,37,68338,3733698,San Diego,San Diego Unified,Madison High,TA,186.0,173.0,93.0,4.0,2.2
+2023-24,S,37,68338,3734431,San Diego,San Diego Unified,Mission Bay High,TA,268.0,260.0,97.0,3.0,1.1
+2023-24,S,37,68338,3734654,San Diego,San Diego Unified,Morse High,TA,395.0,363.0,91.9,12.0,3.0
+2023-24,S,37,68338,3735750,San Diego,San Diego Unified,Point Loma High,TA,371.0,355.0,95.7,8.0,2.2
+2023-24,S,37,68338,3737962,San Diego,San Diego Unified,Garfield High,TA,180.0,45.0,25.0,9.0,5.0
+2023-24,S,37,68338,6040083,San Diego,San Diego Unified,Riley/New Dawn,TA,21.0,9.0,42.9,6.0,28.6
+2023-24,S,37,68338,6061964,San Diego,San Diego Unified,The O'Farrell Charter,TA,116.0,115.0,99.1,0.0,0.0
+2023-24,S,37,68346,0000001,San Diego,San Dieguito Union High,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,68346,0106328,San Diego,San Dieguito Union High,Canyon Crest Academy,TA,543.0,540.0,99.4,2.0,0.4
+2023-24,S,37,68346,3730033,San Diego,San Dieguito Union High,Torrey Pines High,TA,750.0,726.0,96.8,9.0,1.2
+2023-24,S,37,68346,3731007,San Diego,San Dieguito Union High,La Costa Canyon High,TA,462.0,422.0,91.3,21.0,4.5
+2023-24,S,37,68346,3737384,San Diego,San Dieguito Union High,Sunset High (Continuation),TA,57.0,47.0,82.5,8.0,14.0
+2023-24,S,37,68346,3737418,San Diego,San Dieguito Union High,San Dieguito HS Academy,TA,531.0,525.0,98.9,5.0,0.9
+2023-24,S,37,68403,0125401,San Diego,Spencer Valley Elementary,Insight @ San Diego,TA,115.0,72.0,62.6,42.0,36.5
+2023-24,S,37,68403,6120893,San Diego,Spencer Valley Elementary,California Virtual Academy @ San Diego,TA,286.0,227.0,79.4,56.0,19.6
+2023-24,S,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,429.0,291.0,67.8,56.0,13.1
+2023-24,S,37,68411,0000001,San Diego,Sweetwater Union High,"Nonpublic, Nonsectarian Schools",TA,11.0,2.0,18.2,8.0,72.7
+2023-24,S,37,68411,0111831,San Diego,Sweetwater Union High,Olympian High,TA,595.0,567.0,95.3,25.0,4.2
+2023-24,S,37,68411,0115873,San Diego,Sweetwater Union High,East Hills Academy,TA,,,,,
+2023-24,S,37,68411,0140939,San Diego,Sweetwater Union High,Launch Virtual Academy,TA,161.0,117.0,72.7,25.0,15.5
+2023-24,S,37,68411,3730124,San Diego,Sweetwater Union High,Southwest Senior High,TA,397.0,373.0,94.0,13.0,3.3
+2023-24,S,37,68411,3730405,San Diego,Sweetwater Union High,Bonita Vista Senior High,TA,565.0,537.0,95.0,15.0,2.7
+2023-24,S,37,68411,3730801,San Diego,Sweetwater Union High,Castle Park Senior High,TA,348.0,310.0,89.1,21.0,6.0
+2023-24,S,37,68411,3730843,San Diego,Sweetwater Union High,Eastlake High,TA,701.0,665.0,94.9,25.0,3.6
+2023-24,S,37,68411,3731064,San Diego,Sweetwater Union High,Chula Vista Senior High,TA,538.0,488.0,90.7,28.0,5.2
+2023-24,S,37,68411,3731155,San Diego,Sweetwater Union High,Options Secondary,TA,16.0,16.0,100.0,0.0,0.0
+2023-24,S,37,68411,3731304,San Diego,Sweetwater Union High,MAAC Community Charter,TA,112.0,41.0,36.6,68.0,60.7
+2023-24,S,37,68411,3731460,San Diego,Sweetwater Union High,Alta Vista Academy,TA,12.0,8.0,66.7,4.0,33.3
+2023-24,S,37,68411,3731502,San Diego,Sweetwater Union High,San Ysidro High,TA,534.0,472.0,88.4,52.0,9.7
+2023-24,S,37,68411,3731627,San Diego,Sweetwater Union High,Otay Ranch Senior High,TA,633.0,607.0,95.9,14.0,2.2
+2023-24,S,37,68411,3732047,San Diego,Sweetwater Union High,Palomar High,TA,186.0,91.0,48.9,17.0,9.1
+2023-24,S,37,68411,3732849,San Diego,Sweetwater Union High,Hilltop Senior High,TA,463.0,435.0,94.0,18.0,3.9
+2023-24,S,37,68411,3733953,San Diego,Sweetwater Union High,Mar Vista Senior High,TA,304.0,277.0,91.1,21.0,6.9
+2023-24,S,37,68411,3738226,San Diego,Sweetwater Union High,Sweetwater High,TA,677.0,618.0,91.3,41.0,6.1
+2023-24,S,37,68411,3738234,San Diego,Sweetwater Union High,Montgomery Senior High,TA,461.0,430.0,93.3,22.0,4.8
+2023-24,S,37,68452,0000001,San Diego,Vista Unified,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,68452,0106120,San Diego,Vista Unified,SIATech,TA,575.0,126.0,21.9,435.0,75.7
+2023-24,S,37,68452,0114264,San Diego,Vista Unified,North County Trade Tech High,TA,34.0,32.0,94.1,2.0,5.9
+2023-24,S,37,68452,0115451,San Diego,Vista Unified,Major General Raymond Murray High,TA,113.0,64.0,56.6,3.0,2.7
+2023-24,S,37,68452,0118430,San Diego,Vista Unified,Mission Vista High,TA,370.0,359.0,97.0,8.0,2.2
+2023-24,S,37,68452,0124917,San Diego,Vista Unified,Guajome Learning Centers,TA,18.0,16.0,88.9,2.0,11.1
+2023-24,S,37,68452,0126300,San Diego,Vista Unified,Vista Visions Academy,TA,25.0,18.0,72.0,4.0,16.0
+2023-24,S,37,68452,3730207,San Diego,Vista Unified,Vista Adult Transition Center,TA,,,,,
+2023-24,S,37,68452,3730728,San Diego,Vista Unified,Rancho Buena Vista High,TA,420.0,369.0,87.9,30.0,7.1
+2023-24,S,37,68452,3730942,San Diego,Vista Unified,Guajome Park Academy Charter,TA,114.0,111.0,97.4,2.0,1.8
+2023-24,S,37,68452,3732039,San Diego,Vista Unified,Alta Vista High (Continuation),TA,67.0,33.0,49.3,8.0,11.9
+2023-24,S,37,68452,3738705,San Diego,Vista Unified,Vista High,TA,514.0,466.0,90.7,24.0,4.7
+2023-24,S,37,73551,0127423,San Diego,Carlsbad Unified,Sage Creek High,TA,367.0,361.0,98.4,3.0,0.8
+2023-24,S,37,73551,3730017,San Diego,Carlsbad Unified,Carlsbad Village Academy,TA,34.0,24.0,70.6,7.0,20.6
+2023-24,S,37,73551,3730694,San Diego,Carlsbad Unified,Carlsbad High,TA,603.0,572.0,94.9,11.0,1.8
+2023-24,S,37,73551,3731163,San Diego,Carlsbad Unified,Carlsbad Seaside Academy,TA,14.0,13.0,92.9,0.0,0.0
+2023-24,S,37,73569,0000001,San Diego,Oceanside Unified,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,73569,0136267,San Diego,Oceanside Unified,Coastal Academy Charter,TA,144.0,140.0,97.2,1.0,0.7
+2023-24,S,37,73569,0140079,San Diego,Oceanside Unified,Surfside Academy,TA,97.0,83.0,85.6,11.0,11.3
+2023-24,S,37,73569,3731221,San Diego,Oceanside Unified,Pacific View Charter,TA,214.0,114.0,53.3,47.0,22.0
+2023-24,S,37,73569,3735206,San Diego,Oceanside Unified,Oceanside High,TA,392.0,350.0,89.3,13.0,3.3
+2023-24,S,37,73569,3739018,San Diego,Oceanside Unified,El Camino High,TA,594.0,565.0,95.1,15.0,2.5
+2023-24,S,37,73569,3739026,San Diego,Oceanside Unified,Surfside High (Continuation),TA,93.0,43.0,46.2,45.0,48.4
+2023-24,S,37,73791,0000001,San Diego,San Marcos Unified,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,73791,0105726,San Diego,San Marcos Unified,Mission Hills High,TA,697.0,671.0,96.3,18.0,2.6
+2023-24,S,37,73791,0138222,San Diego,San Marcos Unified,Pivot Charter School - San Diego II,TA,16.0,11.0,68.8,5.0,31.3
+2023-24,S,37,73791,3730215,San Diego,San Marcos Unified,Twin Oaks High,TA,104.0,95.0,91.3,2.0,1.9
+2023-24,S,37,73791,3730793,San Diego,San Marcos Unified,Foothills High,TA,38.0,29.0,76.3,9.0,23.7
+2023-24,S,37,73791,3737632,San Diego,San Marcos Unified,San Marcos High,TA,863.0,837.0,97.0,16.0,1.9
+2023-24,S,37,75416,0132472,San Diego,Warner Unified,California Pacific Charter - San Diego,TA,40.0,37.0,92.5,1.0,2.5
+2023-24,S,37,75416,0138651,San Diego,Warner Unified,San Diego Mission Academy,TA,79.0,30.0,38.0,16.0,20.3
+2023-24,S,37,75416,0139378,San Diego,Warner Unified,Sage Oak Charter School - South,TA,23.0,22.0,95.7,1.0,4.3
+2023-24,S,37,75416,0139386,San Diego,Warner Unified,Excel Academy Charter,TA,42.0,35.0,83.3,1.0,2.4
+2023-24,S,37,75416,0139451,San Diego,Warner Unified,Pathways Academy Charter School - Adult Education,TA,311.0,14.0,4.5,82.0,26.4
+2023-24,S,37,75416,3730975,San Diego,Warner Unified,Warner Junior/Senior High,TA,13.0,11.0,84.6,2.0,15.4
+2023-24,S,37,75416,6119275,San Diego,Warner Unified,All Tribes Charter,TA,,,,,
+2023-24,S,37,75614,3731114,San Diego,Valley Center-Pauma Unified,Valley Center High,TA,272.0,257.0,94.5,7.0,2.6
+2023-24,S,37,75614,3731312,San Diego,Valley Center-Pauma Unified,Oak Glen High,TA,34.0,24.0,70.6,10.0,29.4
+2023-24,S,37,75614,3731601,San Diego,Valley Center-Pauma Unified,Valley Center Prep,TA,32.0,28.0,87.5,4.0,12.5
+2023-24,S,37,76471,0114678,San Diego,SBC - High Tech High,High Tech High Chula Vista,TA,153.0,152.0,99.3,0.0,0.0
+2023-24,S,37,76471,0114694,San Diego,SBC - High Tech High,High Tech High North County,TA,93.0,92.0,98.9,0.0,0.0
+2023-24,S,37,76471,0137067,San Diego,SBC - High Tech High,High Tech High Mesa,TA,99.0,98.0,99.0,1.0,1.0
+2023-24,S,37,76851,0000001,San Diego,Bonsall Unified,"Nonpublic, Nonsectarian Schools",TA,,,,,
+2023-24,S,37,76851,0129320,San Diego,Bonsall Unified,Bonsall High,TA,84.0,71.0,84.5,11.0,13.1
+2023-24,S,37,77099,0136077,San Diego,SBE - Grossmont Secondary,Grossmont Secondary,TA,121.0,64.0,52.9,5.0,4.1
+2023-24,S,37,77107,0136473,San Diego,SBE - Sweetwater Secondary,Sweetwater Secondary,TA,133.0,82.0,61.7,9.0,6.8
+2023-24,S,37,77156,0137323,San Diego,SBE - Vista Springs Charter,Vista Springs Charter,TA,,,,,
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,464.0,254.0,54.7,79.0,17.0
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,103.0,98.0,95.1,3.0,2.9
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,361.0,156.0,43.2,76.0,21.1
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,288.0,107.0,37.2,72.0,25.0
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,288.0,107.0,37.2,72.0,25.0
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,176.0,147.0,83.5,7.0,4.0
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,103.0,98.0,95.1,3.0,2.9
+2023-24,D,37,10371,0000000,San Diego,San Diego County Office of Education,District Office,TA,73.0,49.0,67.1,4.0,5.5
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,949.0,236.0,24.9,217.0,22.9
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,32.0,29.0,90.6,2.0,6.3
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,917.0,207.0,22.6,215.0,23.4
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,32.0,29.0,90.6,2.0,6.3
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,32.0,29.0,90.6,2.0,6.3
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,917.0,207.0,22.6,215.0,23.4
+2023-24,D,37,67983,0000000,San Diego,Borrego Springs Unified,District Office,TA,917.0,207.0,22.6,215.0,23.4
+2023-24,D,37,67991,0000000,San Diego,Cajon Valley Union,District Office,TA,24.0,23.0,95.8,1.0,4.2
+2023-24,D,37,67991,0000000,San Diego,Cajon Valley Union,District Office,TA,24.0,23.0,95.8,1.0,4.2
+2023-24,D,37,67991,0000000,San Diego,Cajon Valley Union,District Office,TA,24.0,23.0,95.8,1.0,4.2
+2023-24,D,37,67991,0000000,San Diego,Cajon Valley Union,District Office,TA,24.0,23.0,95.8,1.0,4.2
+2023-24,D,37,68023,0000000,San Diego,Chula Vista Elementary,District Office,TA,275.0,267.0,97.1,4.0,1.5
+2023-24,D,37,68023,0000000,San Diego,Chula Vista Elementary,District Office,TA,275.0,267.0,97.1,4.0,1.5
+2023-24,D,37,68023,0000000,San Diego,Chula Vista Elementary,District Office,TA,275.0,267.0,97.1,4.0,1.5
+2023-24,D,37,68023,0000000,San Diego,Chula Vista Elementary,District Office,TA,275.0,267.0,97.1,4.0,1.5
+2023-24,D,37,68031,0000000,San Diego,Coronado Unified,District Office,TA,258.0,252.0,97.7,4.0,1.6
+2023-24,D,37,68031,0000000,San Diego,Coronado Unified,District Office,TA,258.0,252.0,97.7,4.0,1.6
+2023-24,D,37,68031,0000000,San Diego,Coronado Unified,District Office,TA,258.0,252.0,97.7,4.0,1.6
+2023-24,D,37,68031,0000000,San Diego,Coronado Unified,District Office,TA,258.0,252.0,97.7,4.0,1.6
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,436.0,356.0,81.7,49.0,11.2
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,400.0,340.0,85.0,30.0,7.5
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,36.0,16.0,44.4,19.0,52.8
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,436.0,356.0,81.7,49.0,11.2
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,400.0,340.0,85.0,30.0,7.5
+2023-24,D,37,68049,0000000,San Diego,Dehesa Elementary,District Office,TA,36.0,16.0,44.4,19.0,52.8
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,2361.0,2080.0,88.1,189.0,8.0
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,2143.0,1938.0,90.4,140.0,6.5
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,218.0,142.0,65.1,49.0,22.5
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,1775.0,1525.0,85.9,179.0,10.1
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,1601.0,1411.0,88.1,131.0,8.2
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,174.0,114.0,65.5,48.0,27.6
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,586.0,555.0,94.7,10.0,1.7
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,542.0,527.0,97.2,9.0,1.7
+2023-24,D,37,68106,0000000,San Diego,Escondido Union High,District Office,TA,44.0,28.0,63.6,1.0,2.3
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,586.0,511.0,87.2,59.0,10.1
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,518.0,454.0,87.6,51.0,9.8
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,68.0,57.0,83.8,8.0,11.8
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,586.0,511.0,87.2,59.0,10.1
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,518.0,454.0,87.6,51.0,9.8
+2023-24,D,37,68122,0000000,San Diego,Fallbrook Union High,District Office,TA,68.0,57.0,83.8,8.0,11.8
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,5299.0,4479.0,84.5,671.0,12.7
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,5260.0,4473.0,85.0,639.0,12.1
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,39.0,6.0,15.4,32.0,82.1
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,4177.0,3384.0,81.0,660.0,15.8
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,4138.0,3378.0,81.6,628.0,15.2
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,39.0,6.0,15.4,32.0,82.1
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,1122.0,1095.0,97.6,11.0,1.0
+2023-24,D,37,68130,0000000,San Diego,Grossmont Union High,District Office,TA,1122.0,1095.0,97.6,11.0,1.0
+2023-24,D,37,68155,0000000,San Diego,Jamul-Dulzura Union Elementary,District Office,TA,14.0,13.0,92.9,1.0,7.1
+2023-24,D,37,68155,0000000,San Diego,Jamul-Dulzura Union Elementary,District Office,TA,14.0,13.0,92.9,1.0,7.1
+2023-24,D,37,68155,0000000,San Diego,Jamul-Dulzura Union Elementary,District Office,TA,14.0,13.0,92.9,1.0,7.1
+2023-24,D,37,68155,0000000,San Diego,Jamul-Dulzura Union Elementary,District Office,TA,14.0,13.0,92.9,1.0,7.1
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,266.0,110.0,41.4,54.0,20.3
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,110.0,88.0,80.0,16.0,14.5
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,156.0,22.0,14.1,38.0,24.4
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,266.0,110.0,41.4,54.0,20.3
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,110.0,88.0,80.0,16.0,14.5
+2023-24,D,37,68163,0000000,San Diego,Julian Union Elementary,District Office,TA,156.0,22.0,14.1,38.0,24.4
+2023-24,D,37,68171,0000000,San Diego,Julian Union High,District Office,TA,26.0,23.0,88.5,2.0,7.7
+2023-24,D,37,68171,0000000,San Diego,Julian Union High,District Office,TA,26.0,23.0,88.5,2.0,7.7
+2023-24,D,37,68171,0000000,San Diego,Julian Union High,District Office,TA,26.0,23.0,88.5,2.0,7.7
+2023-24,D,37,68171,0000000,San Diego,Julian Union High,District Office,TA,26.0,23.0,88.5,2.0,7.7
+2023-24,D,37,68189,0000000,San Diego,Lakeside Union Elementary,District Office,TA,48.0,38.0,79.2,10.0,20.8
+2023-24,D,37,68189,0000000,San Diego,Lakeside Union Elementary,District Office,TA,48.0,38.0,79.2,10.0,20.8
+2023-24,D,37,68189,0000000,San Diego,Lakeside Union Elementary,District Office,TA,48.0,38.0,79.2,10.0,20.8
+2023-24,D,37,68189,0000000,San Diego,Lakeside Union Elementary,District Office,TA,48.0,38.0,79.2,10.0,20.8
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,469.0,373.0,79.5,48.0,10.2
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,229.0,196.0,85.6,24.0,10.5
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,240.0,177.0,73.8,24.0,10.0
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,123.0,113.0,91.9,9.0,7.3
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,113.0,105.0,92.9,7.0,6.2
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,,,,,
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,346.0,260.0,75.1,39.0,11.3
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,116.0,91.0,78.4,17.0,14.7
+2023-24,D,37,68213,0000000,San Diego,Mountain Empire Unified,District Office,TA,230.0,169.0,73.5,22.0,9.6
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,2944.0,2783.0,94.5,28.0,1.0
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,2885.0,2770.0,96.0,18.0,0.6
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,59.0,13.0,22.0,10.0,16.9
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,2944.0,2783.0,94.5,28.0,1.0
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,2885.0,2770.0,96.0,18.0,0.6
+2023-24,D,37,68296,0000000,San Diego,Poway Unified,District Office,TA,59.0,13.0,22.0,10.0,16.9
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,455.0,417.0,91.6,14.0,3.1
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,393.0,367.0,93.4,9.0,2.3
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,62.0,50.0,80.6,5.0,8.1
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,455.0,417.0,91.6,14.0,3.1
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,393.0,367.0,93.4,9.0,2.3
+2023-24,D,37,68304,0000000,San Diego,Ramona City Unified,District Office,TA,62.0,50.0,80.6,5.0,8.1
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,8563.0,7398.0,86.4,324.0,3.8
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,7327.0,6802.0,92.8,215.0,2.9
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,1236.0,596.0,48.2,109.0,8.8
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,6761.0,5967.0,88.3,216.0,3.2
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,6221.0,5745.0,92.3,182.0,2.9
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,540.0,222.0,41.1,34.0,6.3
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,1802.0,1431.0,79.4,108.0,6.0
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,1106.0,1057.0,95.6,33.0,3.0
+2023-24,D,37,68338,0000000,San Diego,San Diego Unified,District Office,TA,696.0,374.0,53.7,75.0,10.8
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,2347.0,2262.0,96.4,47.0,2.0
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,2290.0,2215.0,96.7,39.0,1.7
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,57.0,47.0,82.5,8.0,14.0
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,2347.0,2262.0,96.4,47.0,2.0
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,2290.0,2215.0,96.7,39.0,1.7
+2023-24,D,37,68346,0000000,San Diego,San Dieguito Union High,District Office,TA,57.0,47.0,82.5,8.0,14.0
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,401.0,299.0,74.6,98.0,24.4
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,286.0,227.0,79.4,56.0,19.6
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,115.0,72.0,62.6,42.0,36.5
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,401.0,299.0,74.6,98.0,24.4
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,286.0,227.0,79.4,56.0,19.6
+2023-24,D,37,68403,0000000,San Diego,Spencer Valley Elementary,District Office,TA,115.0,72.0,62.6,42.0,36.5
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,7149.0,6345.0,88.8,475.0,6.6
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,6839.0,6205.0,90.7,386.0,5.6
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,310.0,140.0,45.2,89.0,28.7
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,7037.0,6304.0,89.6,407.0,5.8
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,6839.0,6205.0,90.7,386.0,5.6
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,198.0,99.0,50.0,21.0,10.6
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,112.0,41.0,36.6,68.0,60.7
+2023-24,D,37,68411,0000000,San Diego,Sweetwater Union High,District Office,TA,112.0,41.0,36.6,68.0,60.7
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,2257.0,1595.0,70.7,522.0,23.1
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,1466.0,1340.0,91.4,74.0,5.0
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,791.0,255.0,32.2,448.0,56.6
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,1516.0,1310.0,86.4,81.0,5.3
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,1334.0,1213.0,90.9,70.0,5.2
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,182.0,97.0,53.3,11.0,6.0
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,741.0,285.0,38.5,441.0,59.5
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,132.0,127.0,96.2,4.0,3.0
+2023-24,D,37,68452,0000000,San Diego,Vista Unified,District Office,TA,609.0,158.0,25.9,437.0,71.8
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,1019.0,970.0,95.2,22.0,2.2
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,985.0,946.0,96.0,15.0,1.5
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,34.0,24.0,70.6,7.0,20.6
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,1019.0,970.0,95.2,22.0,2.2
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,985.0,946.0,96.0,15.0,1.5
+2023-24,D,37,73551,0000000,San Diego,Carlsbad Unified,District Office,TA,34.0,24.0,70.6,7.0,20.6
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,1537.0,1296.0,84.3,134.0,8.7
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,1230.0,1139.0,92.6,42.0,3.4
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,307.0,157.0,51.1,92.0,30.0
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,1179.0,1042.0,88.4,86.0,7.3
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,1086.0,999.0,92.0,41.0,3.8
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,93.0,43.0,46.2,45.0,48.4
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,358.0,254.0,70.9,48.0,13.4
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,144.0,140.0,97.2,1.0,0.7
+2023-24,D,37,73569,0000000,San Diego,Oceanside Unified,District Office,TA,214.0,114.0,53.3,47.0,22.0
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,1720.0,1643.0,95.5,51.0,3.0
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,1578.0,1519.0,96.3,40.0,2.5
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,142.0,124.0,87.3,11.0,7.7
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,1704.0,1632.0,95.8,46.0,2.7
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,1562.0,1508.0,96.5,35.0,2.2
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,142.0,124.0,87.3,11.0,7.7
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,16.0,11.0,68.8,5.0,31.3
+2023-24,D,37,73791,0000000,San Diego,San Marcos Unified,District Office,TA,16.0,11.0,68.8,5.0,31.3
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,515.0,154.0,29.9,105.0,20.4
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,125.0,110.0,88.0,7.0,5.6
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,390.0,44.0,11.3,98.0,25.1
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,13.0,11.0,84.6,2.0,15.4
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,13.0,11.0,84.6,2.0,15.4
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,502.0,143.0,28.5,103.0,20.5
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,112.0,99.0,88.4,5.0,4.5
+2023-24,D,37,75416,0000000,San Diego,Warner Unified,District Office,TA,390.0,44.0,11.3,98.0,25.1
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,338.0,309.0,91.4,21.0,6.2
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,304.0,285.0,93.8,11.0,3.6
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,34.0,24.0,70.6,10.0,29.4
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,338.0,309.0,91.4,21.0,6.2
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,304.0,285.0,93.8,11.0,3.6
+2023-24,D,37,75614,0000000,San Diego,Valley Center-Pauma Unified,District Office,TA,34.0,24.0,70.6,10.0,29.4
+2023-24,D,37,76471,0000000,San Diego,SBC - High Tech High,District Office,TA,345.0,342.0,99.1,1.0,0.3
+2023-24,D,37,76471,0000000,San Diego,SBC - High Tech High,District Office,TA,345.0,342.0,99.1,1.0,0.3
+2023-24,D,37,76471,0000000,San Diego,SBC - High Tech High,District Office,TA,345.0,342.0,99.1,1.0,0.3
+2023-24,D,37,76471,0000000,San Diego,SBC - High Tech High,District Office,TA,345.0,342.0,99.1,1.0,0.3
+2023-24,D,37,76851,0000000,San Diego,Bonsall Unified,District Office,TA,84.0,71.0,84.5,11.0,13.1
+2023-24,D,37,76851,0000000,San Diego,Bonsall Unified,District Office,TA,84.0,71.0,84.5,11.0,13.1
+2023-24,D,37,76851,0000000,San Diego,Bonsall Unified,District Office,TA,84.0,71.0,84.5,11.0,13.1
+2023-24,D,37,76851,0000000,San Diego,Bonsall Unified,District Office,TA,84.0,71.0,84.5,11.0,13.1
+2023-24,D,37,77099,0000000,San Diego,SBE - Grossmont Secondary,District Office,TA,121.0,64.0,52.9,5.0,4.1
+2023-24,D,37,77099,0000000,San Diego,SBE - Grossmont Secondary,District Office,TA,121.0,64.0,52.9,5.0,4.1
+2023-24,D,37,77099,0000000,San Diego,SBE - Grossmont Secondary,District Office,TA,121.0,64.0,52.9,5.0,4.1
+2023-24,D,37,77099,0000000,San Diego,SBE - Grossmont Secondary,District Office,TA,121.0,64.0,52.9,5.0,4.1
+2023-24,D,37,77107,0000000,San Diego,SBE - Sweetwater Secondary,District Office,TA,133.0,82.0,61.7,9.0,6.8
+2023-24,D,37,77107,0000000,San Diego,SBE - Sweetwater Secondary,District Office,TA,133.0,82.0,61.7,9.0,6.8
+2023-24,D,37,77107,0000000,San Diego,SBE - Sweetwater Secondary,District Office,TA,133.0,82.0,61.7,9.0,6.8
+2023-24,D,37,77107,0000000,San Diego,SBE - Sweetwater Secondary,District Office,TA,133.0,82.0,61.7,9.0,6.8
+2023-24,D,37,77156,0000000,San Diego,SBE - Vista Springs Charter,District Office,TA,,,,,
+2023-24,D,37,77156,0000000,San Diego,SBE - Vista Springs Charter,District Office,TA,,,,,
+2023-24,D,37,77156,0000000,San Diego,SBE - Vista Springs Charter,District Office,TA,,,,,
+2023-24,D,37,77156,0000000,San Diego,SBE - Vista Springs Charter,District Office,TA,,,,,
+2023-24,C,37,,,San Diego,,,TA,41406.0,35048.0,84.6,3255.0,7.9
+2023-24,C,37,,,San Diego,,,TA,35580.0,32573.0,91.5,1851.0,5.2
+2023-24,C,37,,,San Diego,,,TA,5826.0,2475.0,42.5,1404.0,24.1
+2023-24,C,37,,,San Diego,,,TA,32662.0,29022.0,88.9,1968.0,6.0
+2023-24,C,37,,,San Diego,,,TA,30682.0,27987.0,91.2,1644.0,5.4
+2023-24,C,37,,,San Diego,,,TA,1980.0,1035.0,52.3,324.0,16.4
+2023-24,C,37,,,San Diego,,,TA,8744.0,6026.0,68.9,1287.0,14.7
+2023-24,C,37,,,San Diego,,,TA,4898.0,4586.0,93.6,207.0,4.2
+2023-24,C,37,,,San Diego,,,TA,3846.0,1440.0,37.4,1080.0,28.1

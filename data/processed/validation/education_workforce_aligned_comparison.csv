@@ -1,0 +1,5 @@
+county_region_clean,fig10_grad_rate,fig10_dropout_rate,fig10_grad_norm_0_100,fig10_dropout_inverse_norm_0_100,education_workforce_aligned_score_0_100,education_workforce_aligned_rank_high_to_low,education_current_score_0_100,education_gap_current_vs_workforce_aligned
+Metro San Diego,88.0,3.7,100.0,100.0,100.0,1,58.8691464685418,-41.1308535314582
+North County,87.0,8.7,85.71428571428571,36.708860759493675,61.21157323688969,2,42.40783814658285,-18.803735090306844
+South San Diego,82.0,8.7,14.285714285714285,36.708860759493675,25.49728752260398,3,51.08660552139271,25.589317998788733
+East San Diego,81.0,11.6,0.0,0.0,0.0,4,44.93093742138295,44.93093742138295

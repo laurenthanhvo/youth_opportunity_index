@@ -1,0 +1,5 @@
+county_region,overall_yoi_0_100,overall_rank_low_to_high,economic_0_100,economic_rank_low_to_high,education_0_100,health_0_100,housing_0_100,safety_env_0_100,mobility_connectivity_0_100,youth_supports_0_100,lowest_domain,lowest_domain_score,strongest_domain,strongest_domain_score,youth_population_basis
+North County,44.3,1,46.3,3,42.4,41.6,44.2,53.3,53.9,28.2,Youth Supports,28.2,Mobility / Connectivity,53.9,132527
+East San Diego,44.6,2,44.3,2,44.9,34.0,49.9,53.4,45.0,40.3,Health,34.0,Safety / Env,53.4,73290
+South San Diego,45.7,3,38.0,1,51.1,38.6,47.4,47.8,41.9,55.3,Economic,38.0,Youth Supports,55.3,90127
+Metro San Diego,51.7,4,46.7,4,58.9,48.4,41.9,47.5,55.3,63.3,Housing,41.9,Youth Supports,63.3,181273

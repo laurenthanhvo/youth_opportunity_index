@@ -39,8 +39,8 @@ REGION_BY_PUMA = {
 
 
 EXCLUDED_TRACT_GEOIDS = {
-    "06073009901",
-    "06073009902",
+    "06073990100",  # Census tract 9901.00, water/ocean
+    "06073990200",  # Census tract 9902.00, water/ocean
 }
 
 REGION_ID_BY_NAME = {

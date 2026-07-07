@@ -1,0 +1,2 @@
+academic_year,aggregate_level,county_code,district_code,school_code,county_name,district_name,school_name,reporting_category,cohort_students,regular_hs_diploma_graduates_count,cde_adjusted_cohort_graduation_rate,dropout_count,cde_four_year_cohort_dropout_rate,source_note
+2023-24,C,37,,,San Diego,,,TA,41406.0,35048.0,84.6,3255.0,7.9,"CDE 2023-24 Four-Year Adjusted Cohort Graduation Rate and Outcome Data; San Diego County total, ReportingCategory TA."

@@ -3732,6 +3732,9 @@ body.location-panel-open #railZoomOutBtn {
   object-fit: contain;
   flex: 0 0 auto;
   display: block;
+
+  /* move logo left */
+  margin-left: -12px;
 }
 
 .brand-text {

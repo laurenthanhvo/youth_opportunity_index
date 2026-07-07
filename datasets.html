@@ -14,7 +14,7 @@
     <div class="page-header-inner">
       <a class="brand" href="./index.html">
         <div class="brand-title">Youth Opportunity Desert Dashboard</div>
-<div class="brand-subtitle">Halıcıoğlu Data Science Institute – UC San Diego</div>
+<div class="brand-subtitle">Data Science Alliance (DSA)</div>
       </a>
 
       <nav class="top-nav">
@@ -32,10 +32,43 @@
     <h1>Youth Opportunity Index methodology</h1>
     <p>
       This page documents how the Youth Opportunity Index (YOI) is constructed in the current dashboard build.
-      The census tract is the base geography. Raw indicators are cleaned at tract level, converted to county-relative
-      percentile scores, reverse-coded when lower values indicate worse conditions, averaged into domain scores,
-      and then equally weighted across seven domains to create the overall YOI.
+      The dashboard is a working prototype for exploring youth opportunity patterns across San Diego County.
+      It combines tract-level indicators, aggregated geographies, service-access layers, and Workforce-report
+      validation context. The methodology is showcase-ready, but the indicator list and validation layer are still
+      being refined.
     </p>
+  </section>
+
+  <section class="card">
+    <h2>Methodology status</h2>
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">Current status</div>
+        <div class="column-desc">
+          The dashboard should be interpreted as a <strong>working decision-support prototype</strong>, not as an
+          official final index. The seven-domain YOI structure is stable enough for demonstration, but the exact
+          indicator list, service taxonomy, and Workforce-aligned validation layers are still being improved.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">What is stable</div>
+        <div class="column-desc">
+          The dashboard currently supports multiple comparison geographies, domain-level scoring, custom domain
+          weights, location details, service overlays, Child Opportunity Index comparison, and countywide
+          Workforce-report context indicators.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">What is still being refined</div>
+        <div class="column-desc">
+          The main areas still under refinement are the <strong>Youth Supports service taxonomy</strong>,
+          exact <strong>Workforce-report regional validation metrics</strong>, and the distinction between the
+          broad YOI domain scores and report-specific benchmark layers such as the Workforce-aligned education layer.
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="card">
@@ -44,17 +77,27 @@
       <div class="column-row">
         <div class="column-name">Base geography</div>
         <div class="column-desc">
-          <strong>Census tract</strong> is the primary analysis level. The main processed output is
-          <code>data/processed/yoi/yoi_components.csv</code>, joined to
+          <strong>Census tract</strong> is the primary analysis geography. The main tract output is
+          <code>data/processed/yoi/yoi_components.csv</code>, which is joined to
           <code>data/processed/boundaries/sd_tracts.geojson</code>.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Excluded water tracts</div>
+        <div class="column-desc">
+          Water or harbor tracts are removed from the dashboard so that ocean or harbor areas do not appear as
+          youth-opportunity geographies. The current excluded tract GEOIDs are
+          <code>06073009902</code>, <code>06073990100</code>, and <code>06073990200</code>.
         </div>
       </div>
 
       <div class="column-row">
         <div class="column-name">Normalization</div>
         <div class="column-desc">
-          Each indicator is converted to a percentile rank within San Diego County. Indicators where
-          lower values are worse are reverse-coded so that higher normalized values always mean higher opportunity.
+          Each raw indicator is converted into a county-relative percentile score within San Diego County.
+          Indicators where lower raw values indicate better conditions are reverse-coded so that
+          <strong>higher normalized values always represent higher opportunity</strong>.
         </div>
       </div>
 
@@ -62,26 +105,29 @@
         <div class="column-name">Domain scoring</div>
         <div class="column-desc">
           Indicators are grouped into seven domains:
-          Economic, Education, Health, Housing, Safety / Environment, Mobility / Connectivity, and Youth Supports.
-          The normalized indicators available within each domain are averaged to create the tract-level domain score.
+          <strong>Economic</strong>, <strong>Education</strong>, <strong>Health</strong>,
+          <strong>Housing</strong>, <strong>Safety / Environment</strong>,
+          <strong>Mobility / Connectivity</strong>, and <strong>Youth Supports</strong>.
+          Within each domain, available normalized indicators are averaged to create a domain score.
         </div>
       </div>
 
       <div class="column-row">
         <div class="column-name">Overall YOI</div>
         <div class="column-desc">
-          The current build uses equal domain weights across all seven domains.
-          The overall score is stored as <code>yoi_raw_0_1</code> and scaled to
-          <code>yoi_0_100</code> / <code>yoi_custom_0_100</code> for dashboard display.
+          The current build uses equal domain weights across the seven domains by default. The overall score is
+          stored as a 0–1 value and displayed in the dashboard on a 0–100 scale as
+          <code>yoi_custom_0_100</code>. Users can change the domain weights interactively in the dashboard to
+          explore how different priorities affect the map.
         </div>
       </div>
 
       <div class="column-row">
         <div class="column-name">Indicator metadata</div>
         <div class="column-desc">
-          The frontend explanation panels read
-          <code>data/processed/yoi/yoi_indicator_meta.csv</code>, which stores each indicator’s domain,
-          source label, directionality, and notes used throughout the dashboard.
+          Indicator descriptions, source labels, domains, and notes are stored in
+          <code>data/processed/yoi/yoi_indicator_meta.csv</code>. These metadata support the frontend explanation
+          panels and methodology documentation.
         </div>
       </div>
     </div>
@@ -89,33 +135,219 @@
 
   <section class="card">
     <h2>Geographic levels shown in the dashboard</h2>
+    <p>
+      The tract-level YOI is the base layer. Other geographies are aggregated from tract-level results so that users
+      can compare opportunity patterns at neighborhood, regional, and policy-relevant scales.
+    </p>
+
     <div class="column-list">
       <div class="column-row">
-        <div class="column-name">Census tract</div>
+        <div class="column-name">Census tracts</div>
         <div class="column-desc">
-          <strong>Level of detail:</strong> primary analysis geography.<br>
-          <strong>Used where:</strong> main choropleth, location details, domain explanations.<br>
-          <strong>Last updated in current build:</strong> current processed tract CSV and tract boundary GeoJSON.
+          <strong>Primary analysis geography.</strong> Used for the most detailed map view, location details, and
+          tract-level domain profiles.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">ZIP code</div>
+        <div class="column-name">ZIP codes</div>
         <div class="column-desc">
-          <strong>Level of detail:</strong> aggregated view built from tract-level YOI outputs.<br>
-          <strong>Used where:</strong> alternative comparison geography in the dashboard.<br>
-          <strong>How built:</strong> tract scores are spatially overlaid with ZIP boundaries and aggregated into
-          <code>data/processed/yoi/yoi_zip_components.csv</code>.
+          ZIP-level results are aggregated from tract-level YOI outputs and displayed as an alternative comparison
+          geography.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">Supervisor district</div>
+        <div class="column-name">County regions</div>
         <div class="column-desc">
-          <strong>Level of detail:</strong> aggregated policy geography built from tract-level YOI outputs.<br>
-          <strong>Used where:</strong> alternative comparison geography in the dashboard.<br>
-          <strong>How built:</strong> tract scores are spatially overlaid with supervisor district boundaries and aggregated into
-          <code>data/processed/yoi/yoi_supervisor_district_components.csv</code>.
+          County-region results summarize the four major regions used in the Workforce report:
+          <strong>Metro San Diego</strong>, <strong>North County</strong>,
+          <strong>South San Diego</strong>, and <strong>East San Diego</strong>.
+          This level is especially useful for comparing dashboard patterns against the Workforce report.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Supervisor districts</div>
+        <div class="column-desc">
+          Supervisor district results aggregate tract-level scores into County of San Diego policy districts.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">City council districts</div>
+        <div class="column-desc">
+          City council district results aggregate tract-level scores into San Diego City Council districts.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Current dashboard domains</h2>
+    <p>
+      The seven domains are stable for the current showcase build, but the exact indicator list should still be
+      treated as under review. The dashboard is designed to support exploration and discussion, not to declare a
+      permanent official scoring formula.
+    </p>
+
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">Economic</div>
+        <div class="column-desc">
+          Captures economic stability and labor-market-related conditions using ACS-based indicators such as
+          poverty, median household income, unemployment, and public assistance or SNAP-related measures.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Education</div>
+        <div class="column-desc">
+          Captures education opportunity using ACS-based indicators such as educational attainment,
+          school enrollment, and youth disconnection proxies. This is a broad YOI domain and is not identical to
+          the Workforce report’s graduation/dropout table.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Health</div>
+        <div class="column-desc">
+          Captures health-related opportunity using indicators such as uninsured rate, disability rate,
+          frequent mental distress, and poor physical health.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Housing</div>
+        <div class="column-desc">
+          Captures housing stability and housing conditions using indicators such as rent burden,
+          overcrowding, residential mobility, and homeownership.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Safety / Environment</div>
+        <div class="column-desc">
+          Captures safety and environmental conditions using indicators such as crime, vacancy, family structure
+          proxies, and environmental burden.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Mobility / Connectivity</div>
+        <div class="column-desc">
+          Captures transportation and digital connectivity using indicators such as no-vehicle access,
+          transportation barriers, commute-related proxies, and internet subscription proxies.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Youth Supports</div>
+        <div class="column-desc">
+          Captures access to youth-supporting services and programs. This domain currently includes service-access
+          indicators derived from the local service inventory. This is the domain most actively under review because
+          services can be classified in multiple ways.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Education domain and Workforce-aligned education layer</h2>
+    <p>
+      The dashboard now distinguishes between the broad YOI Education domain and a separate
+      <strong>Education — Workforce aligned</strong> validation layer.
+    </p>
+
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">YOI Education domain</div>
+        <div class="column-desc">
+          The standard Education domain is part of the overall YOI score. It uses broad ACS-based education
+          opportunity indicators and is available across the dashboard geographies.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Education — Workforce aligned</div>
+        <div class="column-desc">
+          This is a <strong>validation layer</strong>, not part of the default YOI score. It is based on the
+          Workforce report Figure 10 education outcomes: high school graduation rate and high school dropout rate.
+          The score combines normalized graduation rate with inverse normalized dropout rate.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Purpose</div>
+        <div class="column-desc">
+          This layer helps compare the dashboard more directly against the Workforce report without forcing the
+          broad YOI Education domain to match only graduation and dropout. It is shown at the county-region level
+          because Figure 10 is reported for Metro, North, South, and East San Diego.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Interpretation</div>
+        <div class="column-desc">
+          A higher Workforce-aligned education score means a stronger graduation/dropout profile according to the
+          Figure 10 benchmark. It should be used for validation and explanation, not as a replacement for the
+          broader YOI Education domain unless the methodology is intentionally changed in a future version.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Youth Supports and service methodology</h2>
+    <p>
+      Service locations are used in two ways: they appear as a visible map overlay, and service-access indicators
+      contribute to the Youth Supports domain. Because services can be categorized differently depending on the
+      taxonomy, this part of the methodology is still under review.
+    </p>
+
+    <div class="column-list">
+      <div class="column-row">
+        <div class="column-name">Service overlay</div>
+        <div class="column-desc">
+          The service overlay displays youth-serving locations from the local service inventory. It helps users see
+          where services are located relative to opportunity gaps.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Service-access scoring</div>
+        <div class="column-desc">
+          The Youth Supports domain includes service-access indicators based on service type, distance, and
+          availability. These indicators are intended to estimate access to support infrastructure, not program
+          quality, capacity, or outcomes.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Current service categories</div>
+        <div class="column-desc">
+          The current service-access logic includes youth development, barrier reduction, transition pathways,
+          segment-specific supports, and related support categories. Some categories, especially employment and
+          transition-pathway services, may overlap conceptually with the Economic domain, so their final placement
+          should be reviewed.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Current limitation</div>
+        <div class="column-desc">
+          The Workforce report uses a defined service taxonomy, while the dashboard service layer uses a local
+          service inventory and classification logic. Therefore, service-count comparisons should be interpreted
+          directionally, especially for employment-related services.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Next step</div>
+        <div class="column-desc">
+          The next methodology improvement is to audit the service taxonomy and decide whether transition-pathway
+          and employment-related services should remain in Youth Supports, move into Economic, or be shown as a
+          separate Workforce-aligned service validation layer.
         </div>
       </div>
     </div>
@@ -127,7 +359,8 @@
       <div class="column-row">
         <div class="column-name">What it is</div>
         <div class="column-desc">
-          The Child Opportunity Index (COI) is an external benchmark layer used as a comparison overlay, not as part of the YOI calculation.
+          The Child Opportunity Index (COI) is an external benchmark layer used for comparison. It is not part of
+          the YOI calculation.
           <br><br>
           <strong>Link:</strong>
           <a href="https://diversitydatakids.org/child-opportunity-index/" target="_blank" rel="noopener noreferrer">
@@ -137,325 +370,183 @@
       </div>
 
       <div class="column-row">
-        <div class="column-name">How it is used in this dashboard</div>
+        <div class="column-name">How it is used</div>
         <div class="column-desc">
-          The dashboard loads a processed San Diego–only COI file,
-          <code>data/processed/overlays/sd_coi_2023.csv</code>.
-          The current pipeline filters COI to <strong>San Diego County</strong> and to <strong>year 2023</strong>,
-          then keeps national COI fields such as <code>r_COI_nat</code> and <code>c5_COI_nat</code>.
+          The dashboard loads a processed San Diego–only COI file and displays it as a comparison overlay.
+          This allows users to visually compare YOI patterns against an external child-opportunity benchmark.
         </div>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Domain methodology</h2>
+    <h2>Workforce report validation context</h2>
     <p>
-      Each domain below lists the indicators currently used in the build script, the source table or dataset,
-      the raw columns used or derived, the geography level, and the current update logic reflected in the pipeline.
+      The dashboard includes a validation/context layer based on the San Diego Youth Workforce report. This is used
+      to check whether the YOI dashboard tells a similar regional story, especially around youth population,
+      education, employment, and service access.
     </p>
-  </section>
 
-  <section class="card">
-    <h2>Economic</h2>
     <div class="column-list">
       <div class="column-row">
-        <div class="column-name">poverty_rate</div>
+        <div class="column-name">Countywide context indicators</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1701</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S1701_C02_001E</code>, <code>S1701_C03_001E</code>, or <code>S1701_C02_002E</code><br>
-          <strong>Geography:</strong> census tract base; ZIP and supervisor views are aggregated from tract output<br>
-          <strong>Used where:</strong> Economic domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1701</code>)
+          The dashboard currently includes countywide context indicators for CDE graduation rate, CDE dropout rate,
+          homeless students, homeless student rate, English learner students, ACS PUMS youth unemployment ages
+          16–19, and ACS PUMS labor-force participation ages 16–19.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">median_hh_income</div>
+        <div class="column-name">Why they are countywide</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B19013</a><br>
-          <strong>Columns used:</strong> <code>B19013_001E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Economic domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B19013</code>)
+          These values come from sources that are not all tract-level. CDE graduation, dropout, homelessness, and
+          English learner data are school/county-based. PUMS unemployment is estimated at PUMA/county scale.
+          Therefore, these values are shown as countywide context and should not be interpreted as selected-tract
+          values.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">unemployment_rate</div>
+        <div class="column-name">Current benchmark values</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2301</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S2301_C04_001E</code>, <code>S2301_C02_004E</code>, or <code>S2301_C02_001E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Economic domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2301</code>)
+          Current countywide validation values include: graduation rate 84.6%, dropout rate 7.9%, homeless students
+          23,641, homeless student rate 4.7%, English learner students 74,812, youth unemployment ages 16–19 at
+          18.8%, and labor-force participation ages 16–19 at 33.0%.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">snap_or_assist_rate</div>
+        <div class="column-name">Validation interpretation</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2201</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S2201_C02_013E</code>, <code>S2201_C02_015E</code>, or <code>S2201_C02_001E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Economic domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2201</code>)
+          Validation is directional, not exact. The dashboard matches strongly on regional youth population scale,
+          countywide education outcomes, South San Diego economic distress, and Metro San Diego’s role as a major
+          youth/service hub. It only partially matches the report on North County and East San Diego because the
+          YOI uses broader opportunity domains than the Workforce report’s specific education and labor-market
+          metrics.
         </div>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Education</h2>
+    <h2>Current validation summary</h2>
     <div class="column-list">
       <div class="column-row">
-        <div class="column-name">hs_plus / ba_plus</div>
+        <div class="column-name">Strong matches</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1501</a><br>
-          <strong>Columns used:</strong> high school and bachelor’s attainment percent columns selected heuristically from <code>S1501_C02_013E</code> through <code>S1501_C02_016E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Education domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1501</code>)
+          The dashboard strongly matches the Workforce report on regional youth population scale, countywide
+          graduation/dropout context, South San Diego’s economic distress, and Metro San Diego’s role as the largest
+          youth/service hub.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">school_enrollment</div>
+        <div class="column-name">Partial matches</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1401</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S1401_C02_001E</code>, <code>S1401_C02_002E</code>, or <code>S1401_C02_003E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Education domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1401</code>)
+          The dashboard only partially matches the Workforce report on North County’s economic strength and East
+          San Diego’s education weakness. North County appears weaker in the current YOI because of low Youth
+          Supports and Education scores, while the Workforce report emphasizes North County’s stronger
+          labor-force attachment.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">youth_disconnection_proxy</div>
+        <div class="column-name">Main conclusion</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B14005</a><br>
-          <strong>Columns used:</strong> <code>B14005_001E</code> total plus a placeholder sum of non-total columns<br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Education domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B14005</code>)
+          The YOI dashboard supports <strong>directional alignment</strong> with the Workforce report, but it should
+          not be described as an exact replication. It is best understood as a complementary multi-domain spatial
+          tool.
         </div>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Health</h2>
+    <h2>Known limitations</h2>
     <div class="column-list">
       <div class="column-row">
-        <div class="column-name">uninsured_rate</div>
+        <div class="column-name">Different geographies</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S2701</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S2701_C02_001E</code>, <code>S2701_C02_005E</code>, or <code>S2701_C02_004E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Health domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S2701</code>)
+          Not every source is available at the same geography. Some indicators are tract-level, some are school or
+          county-level, and some are PUMA-level. This limits exact one-to-one comparison across all metrics.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">disability_rate</div>
+        <div class="column-name">Different years</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1810</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S1810_C02_001E</code>, <code>S1810_C02_002E</code>, or <code>S1810_C02_003E</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Health domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1810</code>)
+          The dashboard currently combines the latest available processed sources, which may not all come from the
+          same year. Workforce report comparisons should therefore be interpreted carefully when years differ.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">frequent_mental_distress / poor_physical_health</div>
+        <div class="column-name">Service taxonomy</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://www.cdc.gov/places/" target="_blank" rel="noopener noreferrer">CDC PLACES</a><br>
-          <strong>Columns used:</strong> <code>MeasureId=MHLTH</code> and <code>MeasureId=PHLTH</code><br>
-          <strong>Geography:</strong> census tract base<br>
-          <strong>Used where:</strong> Health domain score<br>
-          <strong>Last updated in current build:</strong> latest PLACES tract file and latest available <code>Year</code> found at build time
+          Service classifications are still approximate. Some services may fit more than one category, and the
+          dashboard taxonomy may not exactly match the Workforce report taxonomy.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Indicator placeholders</div>
+        <div class="column-desc">
+          Some ACS-based indicators are currently proxy measures or heuristic column selections. These should be
+          audited before the index is treated as final or used for formal policy evaluation.
+        </div>
+      </div>
+
+      <div class="column-row">
+        <div class="column-name">Index interpretation</div>
+        <div class="column-desc">
+          The YOI is a relative opportunity score within San Diego County. A score does not measure program
+          effectiveness, individual youth outcomes, or causal impact.
         </div>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h2>Housing</h2>
+    <h2>Next methodology steps</h2>
     <div class="column-list">
       <div class="column-row">
-        <div class="column-name">rent_burden_proxy</div>
+        <div class="column-name">1. Workforce-aligned regional metrics</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25070</a><br>
-          <strong>Columns used:</strong> placeholder pull from <code>B25070_001E</code><br>
-          <strong>Used where:</strong> Housing domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25070</code>)
+          Add exact Metro/North/South/East values for youth unemployment, labor-force participation, graduation,
+          dropout, postsecondary enrollment, credential attainment, and youth segment counts.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">overcrowding_proxy</div>
+        <div class="column-name">2. Service taxonomy audit</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25014</a><br>
-          <strong>Columns used:</strong> placeholder pull from <code>B25014_001E</code><br>
-          <strong>Used where:</strong> Housing domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25014</code>)
+          Review service classifications, especially employment-related and transition-pathway services, so the
+          dashboard categories better match the Workforce report and stakeholder expectations.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">moved_past_year_proxy</div>
+        <div class="column-name">3. Education domain refinement</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B07001</a><br>
-          <strong>Columns used:</strong> placeholder pull from <code>B07001_001E</code><br>
-          <strong>Used where:</strong> Housing domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B07001</code>)
+          Keep the broad YOI Education domain, but document which indicators belong in it and maintain the separate
+          Workforce-aligned education benchmark for Figure 10 validation.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">homeownership_rate</div>
+        <div class="column-name">4. Full youth segment integration</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25003</a><br>
-          <strong>Columns used:</strong> <code>B25003_002E / B25003_001E</code><br>
-          <strong>Used where:</strong> Housing domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25003</code>)
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Safety / Environment</h2>
-    <div class="column-list">
-      <div class="column-row">
-        <div class="column-name">single_parent_proxy</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS S1101</a><br>
-          <strong>Columns used:</strong> heuristic pick from <code>S1101_C02_002E</code>, <code>S1101_C02_001E</code>, or <code>S1101_C02_009E</code><br>
-          <strong>Used where:</strong> Safety / Environment domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSST5Y2024.S1101</code>)
+          Add report-style regional fields for students, not-in-school youth, English learners, youth in low-income
+          households, refugees, youth experiencing homelessness, foster youth, and other priority youth segments.
         </div>
       </div>
 
       <div class="column-row">
-        <div class="column-name">vacancy_rate</div>
+        <div class="column-name">5. Data dictionary and source audit</div>
         <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B25002</a><br>
-          <strong>Columns used:</strong> <code>B25002_003E / B25002_001E</code><br>
-          <strong>Used where:</strong> Safety / Environment domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B25002</code>)
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">crime_rate_per_1k</div>
-        <div class="column-desc">
-          <strong>Source:</strong> SANDAG ARJIS CIBRS<br>
-          <strong>Columns used:</strong> distinct incident UID counts aggregated to tract, then divided by tract population<br>
-          <strong>Used where:</strong> Safety / Environment domain score<br>
-          <strong>Last updated in current build:</strong> latest full crime year available in the raw CIBRS data at build time
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">env_burden</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://oehha.ca.gov/calenviroscreen" target="_blank" rel="noopener noreferrer">CalEnviroScreen 4.0</a><br>
-          <strong>Columns used:</strong> environmental burden / percentile field merged to tract GEOID<br>
-          <strong>Used where:</strong> Safety / Environment domain score<br>
-          <strong>Last updated in current build:</strong> CalEnviroScreen 4.0 shapefile used in the pipeline
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Mobility / Connectivity</h2>
-    <div class="column-list">
-      <div class="column-row">
-        <div class="column-name">no_vehicle_rate</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B08201</a><br>
-          <strong>Columns used:</strong> <code>B08201_002E / B08201_001E</code><br>
-          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B08201</code>)
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">commute_time_proxy</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B08303</a><br>
-          <strong>Columns used:</strong> placeholder pull from <code>B08303_001E</code><br>
-          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B08303</code>)
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">internet_sub_rate_proxy</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://data.census.gov/" target="_blank" rel="noopener noreferrer">ACS B28002</a><br>
-          <strong>Columns used:</strong> proxy broadband subscription share from a non-total estimate divided by <code>B28002_001E</code><br>
-          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
-          <strong>Last updated in current build:</strong> ACS 5-year 2024 table folder (<code>ACSDT5Y2024.B28002</code>)
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">lack_transport</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <a href="https://www.cdc.gov/places/" target="_blank" rel="noopener noreferrer">CDC PLACES</a><br>
-          <strong>Columns used:</strong> <code>MeasureId=LACKTRPT</code><br>
-          <strong>Used where:</strong> Mobility / Connectivity domain score<br>
-          <strong>Last updated in current build:</strong> latest PLACES tract file and latest available <code>Year</code> found at build time
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Youth Supports</h2>
-    <div class="column-list">
-      <div class="column-row">
-        <div class="column-name">service_count</div>
-        <div class="column-desc">
-          <strong>Source:</strong> local <code>services_master.csv</code> inventory<br>
-          <strong>Columns used:</strong> service records grouped by tract GEOID<br>
-          <strong>Used where:</strong> Youth Supports domain score<br>
-          <strong>Last updated in current build:</strong> current <code>data/rawdomains/youth/services_master.csv</code> file
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">services_per_10k</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <code>services_master.csv</code> + tract population<br>
-          <strong>Columns used:</strong> <code>service_count / total_population * 10000</code><br>
-          <strong>Used where:</strong> Youth Supports domain score<br>
-          <strong>Geography:</strong> tract base, aggregated upward for ZIP and supervisor district views
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">youth_services_per_10k</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <code>services_master.csv</code><br>
-          <strong>Columns used:</strong> keyword-filtered youth-focused services divided by tract population<br>
-          <strong>Used where:</strong> Youth Supports domain score<br>
-          <strong>Keywords used:</strong> youth, teen, child, children, after school, school, tutoring
-        </div>
-      </div>
-
-      <div class="column-row">
-        <div class="column-name">mh_services_per_10k</div>
-        <div class="column-desc">
-          <strong>Source:</strong> <code>services_master.csv</code><br>
-          <strong>Columns used:</strong> keyword-filtered mental-health-related services divided by tract population<br>
-          <strong>Used where:</strong> Youth Supports domain score<br>
-          <strong>Keywords used:</strong> mental, behavioral, therapy, counsel, psychi, substance, sud
+          Produce a final data dictionary listing each indicator, source, year, geography, directionality,
+          transformation, and domain assignment.
         </div>
       </div>
     </div>
