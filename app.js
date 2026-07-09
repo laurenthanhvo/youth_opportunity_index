@@ -2607,23 +2607,45 @@ function syncDrawerToolPositions() {
 
   if (!drawerPanel || !toolStack) return;
 
-  const rect = drawerPanel.getBoundingClientRect();
-  const gap = 14;
+  // Keep the tool buttons as a body-level fixed element.
+  // This prevents drawer overflow/absolute-position bugs.
+  if (toolStack.parentElement !== document.body) {
+    document.body.appendChild(toolStack);
+  }
+
+  if (searchFlyout && searchFlyout.parentElement !== document.body) {
+    document.body.appendChild(searchFlyout);
+  }
+
+  if (drawerPanel.classList.contains('collapsed')) {
+    toolStack.classList.remove('ready');
+    return;
+  }
+
   const margin = 16;
+  const gap = 14;
 
   const stackWidth = toolStack.offsetWidth || 42;
   const stackHeight = toolStack.offsetHeight || 150;
 
-  let left = rect.right + gap;
-  let top = rect.top + 890;
+  // Use layout values instead of getBoundingClientRect().
+  // getBoundingClientRect() changes during transform animation and causes jumps.
+  const drawerRight = drawerPanel.offsetLeft + drawerPanel.offsetWidth;
+  const drawerBottom = drawerPanel.offsetTop + drawerPanel.offsetHeight;
+
+  let left = drawerRight + gap;
+  let top = drawerBottom - stackHeight - 18;
 
   left = Math.min(left, window.innerWidth - stackWidth - margin);
-  top = Math.min(top, window.innerHeight - stackHeight - margin);
   left = Math.max(margin, left);
+
+  top = Math.min(top, window.innerHeight - stackHeight - margin);
   top = Math.max(margin, top);
 
   toolStack.style.left = `${Math.round(left)}px`;
   toolStack.style.top = `${Math.round(top)}px`;
+  toolStack.style.right = 'auto';
+  toolStack.style.bottom = 'auto';
   toolStack.classList.add('ready');
 
   if (searchFlyout) {
@@ -2634,7 +2656,6 @@ function syncDrawerToolPositions() {
 
     flyoutLeft = Math.min(flyoutLeft, window.innerWidth - flyoutWidth - margin);
     flyoutLeft = Math.max(margin, flyoutLeft);
-    flyoutTop = Math.max(margin, flyoutTop);
 
     searchFlyout.style.left = `${Math.round(flyoutLeft)}px`;
     searchFlyout.style.top = `${Math.round(flyoutTop)}px`;
@@ -2685,7 +2706,9 @@ function setPanel(panelName) {
 
   document.body.classList.toggle('location-panel-open', panelName === 'location');
 
-  syncDrawerToolPositions();
+  requestAnimationFrame(() => {
+    syncDrawerToolPositions();
+  });
 }
 
 function updateTransitAvailabilityNote() {
@@ -2908,12 +2931,10 @@ document.querySelector('.legend-icon')?.addEventListener('click', () => {
 document.getElementById('closeDrawerBtn').addEventListener('click', () => {
   document.getElementById('drawerPanel').classList.add('collapsed');
 
-  document.querySelectorAll('.rail-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
-  document.body.classList.remove('location-panel-open');
-  requestAnimationFrame(syncDrawerToolPositions);
+  const toolStack = document.querySelector('.drawer-tool-stack');
+  if (toolStack) {
+    toolStack.classList.remove('ready');
+  }
 });
 // document.getElementById('railMenuBtn')?.addEventListener('click', () => {
 //   const drawer = document.getElementById('siteMenuDrawer');

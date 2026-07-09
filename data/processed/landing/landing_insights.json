@@ -1,0 +1,586 @@
+{
+  "metrics": {
+    "tract_count": 735,
+    "geography_levels": 5,
+    "domain_count": 7,
+    "total_youth_pop_14_24": 477216,
+    "low_opportunity_tracts": 125,
+    "youth_in_low_opportunity_tracts": 126563,
+    "bottom_quintile_main_driver": "Economic",
+    "lowest_overall_score": 24.7,
+    "median_overall_score": 50.5
+  },
+  "top_need_tracts": [
+    {
+      "name": "Census tract 211.02",
+      "geoid": "06073021102",
+      "overall_yoi": 24.7,
+      "youth_pop_14_24": 468,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 49.4,
+      "domain_scores": {
+        "Economic": 17.5,
+        "Education": 9.7,
+        "Health": 32.2,
+        "Housing": 48.9,
+        "Safety / Env": 49.4,
+        "Mobility / Connectivity": 13.5,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 100.13",
+      "geoid": "06073010013",
+      "overall_yoi": 25.2,
+      "youth_pop_14_24": 990,
+      "lowest_domain": "Mobility / Connectivity",
+      "lowest_domain_score": 15.1,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 46.9,
+      "domain_scores": {
+        "Economic": 19.3,
+        "Education": 46.9,
+        "Health": 26.7,
+        "Housing": 28.2,
+        "Safety / Env": 16.0,
+        "Mobility / Connectivity": 15.1,
+        "Youth Supports": 24.2
+      }
+    },
+    {
+      "name": "Census tract 100.05",
+      "geoid": "06073010005",
+      "overall_yoi": 26.0,
+      "youth_pop_14_24": 695,
+      "lowest_domain": "Mobility / Connectivity",
+      "lowest_domain_score": 4.2,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 56.9,
+      "domain_scores": {
+        "Economic": 5.2,
+        "Education": 56.9,
+        "Health": 9.4,
+        "Housing": 31.8,
+        "Safety / Env": 46.4,
+        "Mobility / Connectivity": 4.2,
+        "Youth Supports": 28.2
+      }
+    },
+    {
+      "name": "Census tract 164.04",
+      "geoid": "06073016404",
+      "overall_yoi": 26.1,
+      "youth_pop_14_24": 415,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 3.1,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 45.7,
+      "domain_scores": {
+        "Economic": 3.1,
+        "Education": 45.7,
+        "Health": 14.0,
+        "Housing": 24.8,
+        "Safety / Env": 43.4,
+        "Mobility / Connectivity": 8.3,
+        "Youth Supports": 43.3
+      }
+    },
+    {
+      "name": "Census tract 200.29",
+      "geoid": "06073020029",
+      "overall_yoi": 26.2,
+      "youth_pop_14_24": 921,
+      "lowest_domain": "Health",
+      "lowest_domain_score": 10.4,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 56.7,
+      "domain_scores": {
+        "Economic": 29.7,
+        "Education": 56.7,
+        "Health": 10.4,
+        "Housing": 15.1,
+        "Safety / Env": 15.5,
+        "Mobility / Connectivity": 26.4,
+        "Youth Supports": 29.8
+      }
+    }
+  ],
+  "top_youth_support_gap_tracts": [
+    {
+      "name": "Census tract 211.02",
+      "geoid": "06073021102",
+      "overall_yoi": 24.7,
+      "youth_pop_14_24": 468,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 49.4,
+      "domain_scores": {
+        "Economic": 17.5,
+        "Education": 9.7,
+        "Health": 32.2,
+        "Housing": 48.9,
+        "Safety / Env": 49.4,
+        "Mobility / Connectivity": 13.5,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 210.01",
+      "geoid": "06073021001",
+      "overall_yoi": 48.5,
+      "youth_pop_14_24": 105,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Housing",
+      "strongest_domain_score": 83.9,
+      "domain_scores": {
+        "Economic": 62.0,
+        "Education": 31.7,
+        "Health": 64.3,
+        "Housing": 83.9,
+        "Safety / Env": 41.9,
+        "Mobility / Connectivity": 53.7,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 209.03",
+      "geoid": "06073020903",
+      "overall_yoi": 31.5,
+      "youth_pop_14_24": 128,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Health",
+      "strongest_domain_score": 51.6,
+      "domain_scores": {
+        "Economic": 47.0,
+        "Education": 8.7,
+        "Health": 51.6,
+        "Housing": 48.7,
+        "Safety / Env": 36.2,
+        "Mobility / Connectivity": 26.9,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 212.02",
+      "geoid": "06073021202",
+      "overall_yoi": 38.5,
+      "youth_pop_14_24": 530,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Housing",
+      "strongest_domain_score": 74.9,
+      "domain_scores": {
+        "Economic": 73.8,
+        "Education": 21.2,
+        "Health": 49.5,
+        "Housing": 74.9,
+        "Safety / Env": 36.8,
+        "Mobility / Connectivity": 11.7,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 213.02",
+      "geoid": "06073021302",
+      "overall_yoi": 35.1,
+      "youth_pop_14_24": 893,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.8,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 56.1,
+      "domain_scores": {
+        "Economic": 37.5,
+        "Education": 25.2,
+        "Health": 30.1,
+        "Housing": 48.3,
+        "Safety / Env": 56.1,
+        "Mobility / Connectivity": 46.8,
+        "Youth Supports": 1.8
+      }
+    }
+  ],
+  "top_economic_gap_tracts": [
+    {
+      "name": "Census tract 51.03",
+      "geoid": "06073005103",
+      "overall_yoi": 28.2,
+      "youth_pop_14_24": 487,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 1.5,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 83.7,
+      "domain_scores": {
+        "Economic": 1.5,
+        "Education": 46.7,
+        "Health": 20.3,
+        "Housing": 23.4,
+        "Safety / Env": 4.9,
+        "Mobility / Connectivity": 17.0,
+        "Youth Supports": 83.7
+      }
+    },
+    {
+      "name": "Census tract 164.04",
+      "geoid": "06073016404",
+      "overall_yoi": 26.1,
+      "youth_pop_14_24": 415,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 3.1,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 45.7,
+      "domain_scores": {
+        "Economic": 3.1,
+        "Education": 45.7,
+        "Health": 14.0,
+        "Housing": 24.8,
+        "Safety / Env": 43.4,
+        "Mobility / Connectivity": 8.3,
+        "Youth Supports": 43.3
+      }
+    },
+    {
+      "name": "Census tract 125.01",
+      "geoid": "06073012501",
+      "overall_yoi": 36.1,
+      "youth_pop_14_24": 553,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 4.5,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 68.6,
+      "domain_scores": {
+        "Economic": 4.5,
+        "Education": 61.6,
+        "Health": 26.0,
+        "Housing": 38.3,
+        "Safety / Env": 24.7,
+        "Mobility / Connectivity": 29.1,
+        "Youth Supports": 68.6
+      }
+    },
+    {
+      "name": "Census tract 100.05",
+      "geoid": "06073010005",
+      "overall_yoi": 26.0,
+      "youth_pop_14_24": 695,
+      "lowest_domain": "Mobility / Connectivity",
+      "lowest_domain_score": 4.2,
+      "strongest_domain": "Education",
+      "strongest_domain_score": 56.9,
+      "domain_scores": {
+        "Economic": 5.2,
+        "Education": 56.9,
+        "Health": 9.4,
+        "Housing": 31.8,
+        "Safety / Env": 46.4,
+        "Mobility / Connectivity": 4.2,
+        "Youth Supports": 28.2
+      }
+    },
+    {
+      "name": "Census tract 157.04",
+      "geoid": "06073015704",
+      "overall_yoi": 29.1,
+      "youth_pop_14_24": 807,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 6.0,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 53.6,
+      "domain_scores": {
+        "Economic": 6.0,
+        "Education": 42.8,
+        "Health": 9.9,
+        "Housing": 25.3,
+        "Safety / Env": 33.6,
+        "Mobility / Connectivity": 32.4,
+        "Youth Supports": 53.6
+      }
+    }
+  ],
+  "top_education_gap_tracts": [
+    {
+      "name": "Census tract 209.03",
+      "geoid": "06073020903",
+      "overall_yoi": 31.5,
+      "youth_pop_14_24": 128,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Health",
+      "strongest_domain_score": 51.6,
+      "domain_scores": {
+        "Economic": 47.0,
+        "Education": 8.7,
+        "Health": 51.6,
+        "Housing": 48.7,
+        "Safety / Env": 36.2,
+        "Mobility / Connectivity": 26.9,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 211.02",
+      "geoid": "06073021102",
+      "overall_yoi": 24.7,
+      "youth_pop_14_24": 468,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 1.7,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 49.4,
+      "domain_scores": {
+        "Economic": 17.5,
+        "Education": 9.7,
+        "Health": 32.2,
+        "Housing": 48.9,
+        "Safety / Env": 49.4,
+        "Mobility / Connectivity": 13.5,
+        "Youth Supports": 1.7
+      }
+    },
+    {
+      "name": "Census tract 191.07",
+      "geoid": "06073019107",
+      "overall_yoi": 44.2,
+      "youth_pop_14_24": 265,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 2.5,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 76.9,
+      "domain_scores": {
+        "Economic": 47.4,
+        "Education": 13.2,
+        "Health": 61.4,
+        "Housing": 69.0,
+        "Safety / Env": 76.9,
+        "Mobility / Connectivity": 39.1,
+        "Youth Supports": 2.5
+      }
+    },
+    {
+      "name": "Census tract 190.01",
+      "geoid": "06073019001",
+      "overall_yoi": 38.8,
+      "youth_pop_14_24": 510,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 3.2,
+      "strongest_domain": "Housing",
+      "strongest_domain_score": 73.1,
+      "domain_scores": {
+        "Economic": 54.3,
+        "Education": 16.9,
+        "Health": 30.7,
+        "Housing": 73.1,
+        "Safety / Env": 54.7,
+        "Mobility / Connectivity": 39.0,
+        "Youth Supports": 3.2
+      }
+    },
+    {
+      "name": "Census tract 185.12",
+      "geoid": "06073018512",
+      "overall_yoi": 35.3,
+      "youth_pop_14_24": 320,
+      "lowest_domain": "Education",
+      "lowest_domain_score": 17.0,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 46.0,
+      "domain_scores": {
+        "Economic": 39.5,
+        "Education": 17.0,
+        "Health": 38.3,
+        "Housing": 41.4,
+        "Safety / Env": 31.9,
+        "Mobility / Connectivity": 33.4,
+        "Youth Supports": 46.0
+      }
+    }
+  ],
+  "bottom_quintile_driver_counts": [
+    {
+      "domain": "Economic",
+      "tract_count": 48
+    },
+    {
+      "domain": "Youth Supports",
+      "tract_count": 26
+    },
+    {
+      "domain": "Health",
+      "tract_count": 25
+    },
+    {
+      "domain": "Mobility / Connectivity",
+      "tract_count": 23
+    },
+    {
+      "domain": "Housing",
+      "tract_count": 12
+    },
+    {
+      "domain": "Safety / Env",
+      "tract_count": 12
+    },
+    {
+      "domain": "Education",
+      "tract_count": 1
+    }
+  ],
+  "domain_averages": [
+    {
+      "domain": "Health",
+      "score": 49.9
+    },
+    {
+      "domain": "Housing",
+      "score": 49.9
+    },
+    {
+      "domain": "Safety / Env",
+      "score": 49.9
+    },
+    {
+      "domain": "Economic",
+      "score": 50.1
+    },
+    {
+      "domain": "Education",
+      "score": 50.1
+    },
+    {
+      "domain": "Mobility / Connectivity",
+      "score": 50.1
+    },
+    {
+      "domain": "Youth Supports",
+      "score": 50.1
+    }
+  ],
+  "yoi_distribution": [
+    {
+      "range": "0\u201320",
+      "tract_count": 0
+    },
+    {
+      "range": "20\u201340",
+      "tract_count": 125
+    },
+    {
+      "range": "40\u201360",
+      "tract_count": 490
+    },
+    {
+      "range": "60\u201380",
+      "tract_count": 120
+    },
+    {
+      "range": "80\u2013100",
+      "tract_count": 0
+    }
+  ],
+  "county_regions": [
+    {
+      "region": "East San Diego",
+      "overall_yoi": 44.6,
+      "economic": 44.3,
+      "education": 44.9,
+      "health": 34.0,
+      "housing": 49.9,
+      "safety_env": 53.4,
+      "mobility_connectivity": 45.0,
+      "youth_supports": 40.3,
+      "youth_pop_14_24": 726,
+      "lowest_domain": "Health",
+      "lowest_domain_score": 34.0,
+      "strongest_domain": "Safety / Env",
+      "strongest_domain_score": 53.4
+    },
+    {
+      "region": "Metro San Diego",
+      "overall_yoi": 51.7,
+      "economic": 46.7,
+      "education": 58.9,
+      "health": 48.4,
+      "housing": 41.9,
+      "safety_env": 47.5,
+      "mobility_connectivity": 55.3,
+      "youth_supports": 63.3,
+      "youth_pop_14_24": 1595,
+      "lowest_domain": "Housing",
+      "lowest_domain_score": 41.9,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 63.3
+    },
+    {
+      "region": "North County",
+      "overall_yoi": 44.3,
+      "economic": 46.3,
+      "education": 42.4,
+      "health": 41.6,
+      "housing": 44.2,
+      "safety_env": 53.3,
+      "mobility_connectivity": 53.9,
+      "youth_supports": 28.2,
+      "youth_pop_14_24": 3904,
+      "lowest_domain": "Youth Supports",
+      "lowest_domain_score": 28.2,
+      "strongest_domain": "Mobility / Connectivity",
+      "strongest_domain_score": 53.9
+    },
+    {
+      "region": "South San Diego",
+      "overall_yoi": 45.7,
+      "economic": 38.0,
+      "education": 51.1,
+      "health": 38.6,
+      "housing": 47.4,
+      "safety_env": 47.8,
+      "mobility_connectivity": 41.9,
+      "youth_supports": 55.3,
+      "youth_pop_14_24": 866,
+      "lowest_domain": "Economic",
+      "lowest_domain_score": 38.0,
+      "strongest_domain": "Youth Supports",
+      "strongest_domain_score": 55.3
+    }
+  ],
+  "workforce_context": [
+    {
+      "label": "Graduation rate",
+      "value": "84.6%",
+      "source": "CDE ACGR 2023-24"
+    },
+    {
+      "label": "Dropout rate",
+      "value": "7.9%",
+      "source": "CDE ACGR 2023-24"
+    },
+    {
+      "label": "Homeless students",
+      "value": "23,641",
+      "source": "CDE Homeless Student Enrollment"
+    },
+    {
+      "label": "Homeless student rate",
+      "value": "4.7%",
+      "source": "CDE Homeless Student Enrollment"
+    },
+    {
+      "label": "English learners",
+      "value": "74,812",
+      "source": "CDE English Learners by Grade and Language"
+    },
+    {
+      "label": "Youth unemployment 16\u201319",
+      "value": "18.8%",
+      "source": "2024 ACS 5-year PUMS"
+    },
+    {
+      "label": "Labor force participation 16\u201319",
+      "value": "33.0%",
+      "source": "2024 ACS 5-year PUMS"
+    }
+  ]
+}
