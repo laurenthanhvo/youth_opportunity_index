@@ -138,69 +138,6 @@
         Loading correlation insights…
       </div>
 
-      <div class="landing-card pro-card chart-definitions-card" id="chartDefinitions">
-        <div class="pro-card-head">
-          <h3>How to read these charts</h3>
-          <span class="pro-tag">Definitions</span>
-        </div>
-
-        <p class="landing-card-subtitle">
-          These charts show how different local conditions relate to youth opportunity across Census tracts.
-        </p>
-
-        <div class="chart-definition-grid">
-          <div class="chart-definition-item">
-            <h4>Overall YOI score</h4>
-            <p>
-              The overall Youth Opportunity Index score for a place, shown on a 0–100 scale.
-              Higher scores indicate stronger opportunity conditions.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Domain score</h4>
-            <p>
-              A 0–100 score for one part of the index, such as Economic, Education, Health,
-              Housing, Safety / Environment, Mobility / Connectivity, or Youth Supports.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Standardized YOI (z-score)</h4>
-            <p>
-              A standardized version of the Youth Opportunity Index. A value of 0 is around
-              the county average, positive values are above average, and negative values are below average.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Correlation (r)</h4>
-            <p>
-              Correlation shows how strongly two variables move together. Values closer to +1
-              mean a stronger positive relationship, values closer to −1 mean a stronger negative
-              relationship, and values near 0 mean little clear relationship.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Each point</h4>
-            <p>
-              In scatterplots, each point represents one Census tract. Hovering over a point shows
-              the tract and the two values being compared.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>What to look for</h4>
-            <p>
-              Use these visuals to see which conditions tend to rise or fall with youth opportunity,
-              and which domains may be most connected to lower or higher opportunity scores.
-            </p>
-          </div>
-        </div>
-      </div>
-
-
       <div class="correlation-callout" id="correlationCallout"></div>
 
       <div class="landing-card-grid two-col correlation-grid">
@@ -975,10 +912,6 @@
             duration: 450,
             easing: "easeOutQuart"
           },
-          interaction: {
-            mode: "nearest",
-            intersect: true
-          },
           plugins: {
             legend: {
               display: false
@@ -993,17 +926,11 @@
               displayColors: false,
               padding: 10,
               callbacks: {
-                title: items => {
-                  const point = items[0]?.raw || {};
-                  return point.name || "Census tract";
-                },
-                label: item => {
-                  const point = item.raw || {};
-                  return [
-                    `${scatter.x_label}: ${Number(point.x).toFixed(1)}`,
-                    `${scatter.y_label}: ${Number(point.y).toFixed(1)}`
-                  ];
-                }
+                title: items => items[0].raw.name || "Census tract",
+                label: item => [
+                  `${scatter.x_label}: ${Number(item.raw.x).toFixed(1)}`,
+                  `${scatter.y_label}: ${Number(item.raw.y).toFixed(1)}`
+                ]
               }
             }
           },
