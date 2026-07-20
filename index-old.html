@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Youth Opportunity Index | Insights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="landing-page pro-landing">
+  <header class="page-header dashboard-page-header landing-header">
+    <div class="page-header-inner">
+      <a class="brand" href="./index.html">
+        <img class="brand-logo" src="./logo.png" alt="Youth Opportunity Index logo" />
+        <div class="brand-text">
+          <div class="brand-title">Youth Opportunity Desert Dashboard</div>
+          <div class="brand-subtitle">Data Science Alliance (DSA)</div>
+        </div>
+      </a>
+
+      <nav class="top-nav">
+        <a class="nav-link active" href="./index.html">Insights</a>
+        <a class="nav-link" href="./map.html">Map</a>
+        <a class="nav-link" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link" href="./about.html">About Us</a>
+        <a class="nav-link" href="./contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  
+  
+<main class="landing-shell insights-story-page">
+  <section class="story-hero">
+    <div class="story-hero-bg"></div>
+
+    <div class="story-hero-inner">
+      <p class="landing-eyebrow">San Diego County youth opportunity</p>
+      <h1>Mapping youth opportunity gaps across San Diego County</h1>
+      <p>
+        The Youth Opportunity Index shows where young people may face the greatest barriers to opportunity across neighborhoods, regions, and the county.
+      </p>
+
+      <div class="landing-actions">
+        <a class="landing-primary-btn" href="./map.html">
+          <i class="bi bi-map"></i>
+          Open interactive map
+        </a>
+        <a class="landing-secondary-btn" href="#local-story">
+          <i class="bi bi-geo-alt"></i>
+          View local areas
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="story-section" id="county-story">
+    <div class="story-section-intro">
+      <div>
+        <p class="landing-eyebrow orange">1 · Countywide pattern</p>
+        <h2>Countywide opportunity at a glance</h2>
+        <p id="countyLead">Loading countywide insight…</p>
+      </div>
+
+      <div id="countyFacts" class="story-fact-grid">
+        <div class="landing-loading">Loading metrics…</div>
+      </div>
+    </div>
+
+    <div class="county-visual-grid">
+      <article class="story-card scatter-card">
+        <div class="story-card-head">
+          <div>
+            <h3>Economic strength is strongly linked to opportunity</h3>
+            <p>Each point represents one Census tract.</p>
+          </div>
+          <span id="scatterBadge">r = —</span>
+        </div>
+        <div class="scatter-canvas-wrap">
+          <canvas id="mainScatterCanvas"></canvas>
+        </div>
+      </article>
+
+      <article class="story-card relation-card">
+        <div class="story-card-head">
+          <div>
+            <h3>Conditions most linked to overall opportunity</h3>
+            <p>Correlation with overall YOI.</p>
+          </div>
+          <span>Correlation</span>
+        </div>
+        <div class="relation-canvas-wrap">
+          <canvas id="relationBarCanvas"></canvas>
+        </div>
+      </article>
+
+      <aside class="story-card meaning-card" id="scatterMeaning">
+        <div class="meaning-icon">
+          <i class="bi bi-info-circle"></i>
+        </div>
+        <h3>What this means</h3>
+        <p>
+          Loading relationship summary…
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="story-section region-story" id="region-story">
+    <div class="region-section-grid">
+      <div class="story-section-copy">
+        <p class="landing-eyebrow orange">2 · Regional comparison</p>
+        <h2>Opportunity varies by region</h2>
+        <p id="regionLead">Loading regional insight…</p>
+
+        <a class="story-outline-btn" href="./map.html">
+          <i class="bi bi-map"></i>
+          Explore regions on map
+        </a>
+      </div>
+
+      <div id="regionalActionGrid" class="region-card-grid"></div>
+    </div>
+  </section>
+
+  <section class="story-section local-story" id="local-story">
+    <div class="local-section-grid">
+      <div class="story-section-copy local-copy">
+        <p class="landing-eyebrow orange">3 · Local focus</p>
+        <h2>Zoom in on the lowest-scoring local areas</h2>
+        <p id="localLead">Loading local insight…</p>
+
+        <div class="small-note-card">
+          <i class="bi bi-shield-check"></i>
+          <p>These areas are starting points for closer review and local action.</p>
+        </div>
+      </div>
+
+      <article class="story-card local-card">
+        <div id="topNeedList" class="local-slide"></div>
+
+        <div class="local-controls">
+          <button id="localPrevBtn" type="button" aria-label="Previous area">
+            <i class="bi bi-arrow-left"></i>
+          </button>
+          <div id="localDots" class="local-dots"></div>
+          <button id="localNextBtn" type="button" aria-label="Next area">
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </article>
+
+      <article class="story-card local-map-card">
+        <div id="topTractsMiniMap" class="top-tracts-mini-map story-map"></div>
+        <div id="topTractsMiniMapLegend" class="mini-map-legend"></div>
+      </article>
+    </div>
+
+    <div class="military-note">
+      <i class="bi bi-exclamation-circle"></i>
+      Military and low-residential ZIP codes can have unusual population patterns, so they should be reviewed separately before priority-setting.
+    </div>
+  </section>
+
+  <footer class="story-footer">
+    <div class="story-footer-brand">
+      <img src="./logo.png" alt="Youth Opportunity Index logo" />
+      <div>
+        <strong>Youth Opportunity Desert Dashboard</strong>
+        <span>A project of the Data Science Alliance (DSA)</span>
+      </div>
+    </div>
+
+    <div class="story-footer-links">
+      <a href="./datasets.html">Data & Methods</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+    </div>
+  </footer>
+
+  <div class="legacy-landing-dummies" hidden>
+    <div id="landingMetrics"></div>
+    <div id="executiveSummary"></div>
+    <div id="distributionChart"></div>
+    <div id="driverBars"></div>
+    <div id="correlationStatus"></div>
+    <div id="chartDefinitions"></div>
+    <div id="correlationCallout"></div>
+    <div id="domainCorrelationCanvas"></div>
+    <div id="indicatorCorrelationCanvas"></div>
+    <div id="domainPairCorrelationCanvas"></div>
+    <div id="scatterCorrelationCanvas"></div>
+    <div id="whyDashboardMatters"></div>
+    <div id="regionBars"></div>
+    <div id="domainAverageBars"></div>
+    <div id="youthSupportsGapList"></div>
+    <div id="economicGapList"></div>
+    <div id="workforceCards"></div>
+    <div id="priorityCarouselTabs"></div>
+  </div>
+</main>
+
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  const STORY_COLORS = {
+    navy: "#072843",
+    teal: "#246E7E",
+    teal2: "#2B989E",
+    aqua: "#7CC6BB",
+    yellow: "#EEC574",
+    orange: "#E59A22",
+    rust: "#B6442C",
+    slate: "#64748b"
+  };
+
+  let scatterChart = null;
+  let relationChart = null;
+  let regionChart = null;
+  let miniMap = null;
+  let cachedTractGeojson = null;
+  let currentTopNeedTracts = [];
+  let activeLocalIndex = 0;
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || Number.isNaN(Number(value))) return "N/A";
+    return Number(value).toLocaleString();
+  }
+
+  function pct(numerator, denominator, digits = 1) {
+    const n = Number(numerator || 0);
+    const d = Number(denominator || 0);
+    if (!d) return "N/A";
+    return `${((n / d) * 100).toFixed(digits)}%`;
+  }
+
+  function normalizeGeoid(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.padStart(11, "0").slice(-11);
+  }
+
+  function tractLabel(item) {
+    if (item.name) return item.name;
+    if (item.geoid) return `Census tract ${String(item.geoid).slice(-6)}`;
+    return "Census tract";
+  }
+
+  function localTitle(item, index) {
+    const candidate =
+      item.neighborhood ||
+      item.community ||
+      item.community_name ||
+      item.planning_area ||
+      item.display_name ||
+      item.area_name;
+
+    if (candidate && !String(candidate).toLowerCase().includes("census tract")) {
+      return candidate;
+    }
+
+    return `Area ${index + 1}`;
+  }
+
+  function domainAction(domain) {
+    const d = String(domain || "").toLowerCase();
+
+    if (d.includes("economic")) return "employment, income stability, and workforce access";
+    if (d.includes("youth")) return "youth services and wraparound support";
+    if (d.includes("health")) return "health access and neighborhood health conditions";
+    if (d.includes("housing")) return "housing affordability and stability";
+    if (d.includes("mobility")) return "transportation and connectivity";
+    if (d.includes("education")) return "education pathways and attainment";
+    if (d.includes("safety")) return "safety and environmental conditions";
+
+    return "the underlying indicators";
+  }
+
+  function getFeatureGeoid(feature) {
+    const p = feature?.properties || {};
+    return normalizeGeoid(
+      p.tract_geoid ||
+      p.GEOID ||
+      p.GEOID20 ||
+      p.geoid ||
+      p.TRACT_GEOID ||
+      p.TRACTCE ||
+      ""
+    );
+  }
+
+  function factCard(label, value, note, accent, icon) {
+    return `
+      <article class="story-fact-card ${accent}">
+        <div class="fact-icon"><i class="bi ${icon}"></i></div>
+        <span>${label}</span>
+        <strong>${value}</strong>
+        <p>${note}</p>
+      </article>
+    `;
+  }
+
+  function renderCounty(data) {
+    const metrics = data.metrics || {};
+    const tractShare = pct(metrics.low_opportunity_tracts, metrics.tract_count);
+    const youthShare = pct(metrics.youth_in_low_opportunity_tracts, metrics.total_youth_pop_14_24);
+
+    const lead = document.getElementById("countyLead");
+    if (lead) {
+      lead.innerHTML = `
+        Opportunity varies widely across the county. <strong>${formatNumber(metrics.low_opportunity_tracts)}</strong>
+        mapped tracts score below 40/100, representing about
+        <strong>${formatNumber(metrics.youth_in_low_opportunity_tracts)}</strong> youth ages 14–24.
+      `;
+    }
+
+    const facts = document.getElementById("countyFacts");
+    if (facts) {
+      facts.innerHTML = [
+        factCard("Tracts below 40", formatNumber(metrics.low_opportunity_tracts), `${tractShare} of mapped tracts`, "orange", "bi-bar-chart-fill"),
+        factCard("Youth in those areas", formatNumber(metrics.youth_in_low_opportunity_tracts), `${youthShare} of estimated youth 14–24`, "teal", "bi-people-fill"),
+        factCard("Lowest overall YOI", `${metrics.lowest_overall_score ?? "N/A"}/100`, "Lowest observed tract score", "yellow", "bi-speedometer2"),
+        factCard("Most common gap", metrics.bottom_quintile_main_driver || "N/A", "Most frequent weakest domain", "aqua", "bi-exclamation-triangle-fill")
+      ].join("");
+    }
+  }
+
+  function chooseScatter(corr) {
+    return (
+      (corr.scatter_plots || []).find(d => String(d.title || "").toLowerCase().includes("economic")) ||
+      (corr.scatter_plots || [])[0]
+    );
+  }
+
+  function renderScatter(corr) {
+    const canvas = document.getElementById("mainScatterCanvas");
+    const badge = document.getElementById("scatterBadge");
+    const meaning = document.getElementById("scatterMeaning");
+
+    if (!canvas || !window.Chart) return;
+
+    const scatter = chooseScatter(corr || {});
+
+    if (!scatter || !Array.isArray(scatter.points) || !scatter.points.length) {
+      if (meaning) {
+        meaning.innerHTML = `
+          <div class="meaning-icon"><i class="bi bi-info-circle"></i></div>
+          <h3>Relationship chart unavailable</h3>
+          <p>Run <code>python scripts/build_landing_correlation_insights.py</code> to generate the scatterplot data.</p>
+        `;
+      }
+      return;
+    }
+
+    const r = Number(scatter.r || 0);
+    const strength = Math.abs(r) >= 0.7 ? "strong" : Math.abs(r) >= 0.35 ? "moderate" : "weak";
+    const direction = r >= 0 ? "positive" : "negative";
+
+    if (badge) badge.textContent = `Correlation r = ${r.toFixed(2)}`;
+
+    if (meaning) {
+      meaning.innerHTML = `
+        <div class="meaning-icon"><i class="bi bi-info-circle"></i></div>
+        <h3>What this means</h3>
+        <p>
+          The scatterplot shows a <strong>${strength} ${direction} relationship</strong> between
+          ${scatter.x_label.toLowerCase()} and overall opportunity. This does not prove cause and effect,
+          but it helps show which conditions move with YOI across the county.
+        </p>
+        <p>
+          Use this as a guide for where to inspect the map and domain details more closely.
+        </p>
+      `;
+    }
+
+    if (scatterChart) scatterChart.destroy();
+
+    scatterChart = new Chart(canvas, {
+      type: "scatter",
+      data: {
+        datasets: [{
+          data: scatter.points.map(point => ({
+            x: Number(point.x),
+            y: Number(point.y),
+            name: point.name
+          })),
+          backgroundColor: "rgba(36, 110, 126, 0.62)",
+          borderColor: STORY_COLORS.navy,
+          borderWidth: 1,
+          pointRadius: 2.8,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: "nearest",
+          intersect: true
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: STORY_COLORS.navy,
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            padding: 10,
+            callbacks: {
+              title: items => items[0]?.raw?.name || "Census tract",
+              label: item => [
+                `${scatter.x_label}: ${Number(item.raw.x).toFixed(1)}`,
+                `${scatter.y_label}: ${Number(item.raw.y).toFixed(1)}`
+              ]
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: scatter.x_label,
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 12, weight: "600" }
+            },
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: { color: "#d8e1e8" },
+            border: { color: "#cfd9e2" }
+          },
+          y: {
+            title: {
+              display: true,
+              text: scatter.y_label,
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 12, weight: "600" }
+            },
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: { color: "#d8e1e8" },
+            border: { color: "#cfd9e2" }
+          }
+        }
+      }
+    });
+  }
+
+  function relationRows(corr) {
+    const rows = [
+      ...(corr.top_positive_indicators || []),
+      ...(corr.top_negative_indicators || [])
+    ]
+      .filter(row => {
+        const label = String(row.indicator || "");
+        return !/overall|yoi$|standardized yoi|score z/i.test(label);
+      })
+      .sort((a, b) => Math.abs(Number(b.r || 0)) - Math.abs(Number(a.r || 0)))
+      .slice(0, 8);
+
+    if (rows.length) {
+      return rows.map(row => ({
+        label: row.indicator,
+        value: Number(row.r || 0)
+      }));
+    }
+
+    return (corr.domain_to_overall || []).slice(0, 7).map(row => ({
+      label: row.domain,
+      value: Number(row.r || 0)
+    }));
+  }
+
+  function renderRelationChart(corr) {
+    const canvas = document.getElementById("relationBarCanvas");
+    if (!canvas || !window.Chart) return;
+
+    const rows = relationRows(corr || {});
+
+    if (!rows.length) return;
+
+    if (relationChart) relationChart.destroy();
+
+    relationChart = new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: rows.map(row => row.label),
+        datasets: [{
+          data: rows.map(row => row.value),
+          backgroundColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderWidth: 1,
+          borderRadius: 3,
+          barPercentage: 0.7,
+          categoryPercentage: 0.72
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: STORY_COLORS.navy,
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            callbacks: {
+              label: item => `r = ${Number(item.raw).toFixed(2)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: -1,
+            max: 1,
+            title: {
+              display: true,
+              text: "Correlation (r)",
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 12, weight: "600" }
+            },
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: {
+              color: ctx => ctx.tick.value === 0 ? STORY_COLORS.navy : "#d8e1e8",
+              lineWidth: ctx => ctx.tick.value === 0 ? 1.2 : 1
+            },
+            border: { color: "#cfd9e2" }
+          },
+          y: {
+            ticks: {
+              color: "#0f172a",
+              font: { family: "Inter", size: 11, weight: "600" }
+            },
+            grid: { display: false },
+            border: { color: "#cfd9e2" }
+          }
+        }
+      }
+    });
+  }
+
+  function regionCard(region, index) {
+    const weak = region.lowest_domain || "N/A";
+    const weakScore = region.lowest_domain_score ?? "N/A";
+
+    return `
+      <article class="story-region-card ${index === 0 ? "lowest" : ""}">
+        <div class="region-icon">${index + 1}</div>
+        <h3>${region.region}</h3>
+        <div class="region-score">${region.overall_yoi ?? "N/A"}/100</div>
+
+        <div class="region-mini-metrics">
+          <span>Overall YOI</span>
+          <strong>Youth 14–24: ${formatNumber(region.youth_pop_14_24)}</strong>
+          <strong>Weakest domain: ${weak}</strong>
+          <em>${weakScore}/100</em>
+        </div>
+
+        <p>Start by reviewing ${domainAction(weak)}.</p>
+      </article>
+    `;
+  }
+
+  function renderRegions(data) {
+    const regions = (data.county_regions || [])
+      .slice()
+      .sort((a, b) => Number(a.overall_yoi || 0) - Number(b.overall_yoi || 0));
+
+    const lead = document.getElementById("regionLead");
+    if (lead && regions.length) {
+      const lowest = regions[0];
+      const highest = regions[regions.length - 1];
+
+      lead.innerHTML = `
+        Compare the same index at the geography used for planning and policy. 
+        <strong>${lowest.region}</strong> has the lowest regional score, while
+        <strong>${highest.region}</strong> has the highest.
+      `;
+    }
+
+    const grid = document.getElementById("regionalActionGrid");
+    if (grid) {
+      grid.innerHTML = regions.map(regionCard).join("");
+    }
+
+  }
+
+  function renderRegionChart(regions) {
+    const canvas = document.getElementById("regionChartCanvas");
+    if (!canvas || !window.Chart || !regions.length) return;
+
+    if (regionChart) regionChart.destroy();
+
+    regionChart = new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: regions.map(r => r.region),
+        datasets: [{
+          data: regions.map(r => Number(r.overall_yoi || 0)),
+          backgroundColor: regions.map((_, i) => i === 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderRadius: 4,
+          barPercentage: 0.52,
+          categoryPercentage: 0.7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: STORY_COLORS.navy,
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            callbacks: {
+              label: item => `Overall YOI: ${Number(item.raw).toFixed(1)}/100`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: { color: "#d8e1e8" },
+            border: { color: "#cfd9e2" }
+          },
+          x: {
+            ticks: {
+              color: "#0f172a",
+              font: { family: "Inter", size: 10, weight: "600" },
+              maxRotation: 0,
+              autoSkip: false
+            },
+            grid: { display: false },
+            border: { color: "#cfd9e2" }
+          }
+        }
+      }
+    });
+  }
+
+  function renderLocalPanel() {
+    const panel = document.getElementById("topNeedList");
+    const dots = document.getElementById("localDots");
+
+    if (!panel || !currentTopNeedTracts.length) return;
+
+    const item = currentTopNeedTracts[activeLocalIndex];
+    const gap = item.lowest_domain || "N/A";
+
+    panel.innerHTML = `
+      <div class="local-card-head">
+        <div>
+          <span>Lowest-scoring area ${activeLocalIndex + 1}</span>
+          <h3>${localTitle(item, activeLocalIndex)}</h3>
+          <p>${tractLabel(item)}</p>
+        </div>
+        <strong>${activeLocalIndex + 1} of ${currentTopNeedTracts.length}</strong>
+      </div>
+
+      <div class="local-card-grid">
+        <div>
+          <span>Overall YOI</span>
+          <strong>${item.overall_yoi ?? "N/A"}/100</strong>
+        </div>
+        <div>
+          <span>Youth 14–24</span>
+          <strong>${formatNumber(item.youth_pop_14_24)}</strong>
+        </div>
+      </div>
+
+      <div class="local-gap-row">
+        <span>Main gap</span>
+        <strong>${gap}</strong>
+        <em>${item.lowest_domain_score ?? "N/A"}/100</em>
+      </div>
+
+      <div class="local-review-row">
+        <span>Review first</span>
+        <p>${domainAction(gap)}.</p>
+      </div>
+    `;
+
+    if (dots) {
+      dots.innerHTML = currentTopNeedTracts.map((_, i) => `
+        <button class="${i === activeLocalIndex ? "active" : ""}" data-index="${i}" type="button" aria-label="Show area ${i + 1}"></button>
+      `).join("");
+
+      dots.querySelectorAll("[data-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeLocalIndex = Number(button.dataset.index);
+          renderLocalPanel();
+          renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+        });
+      });
+    }
+  }
+
+  function setupLocalControls() {
+    const prev = document.getElementById("localPrevBtn");
+    const next = document.getElementById("localNextBtn");
+
+    if (prev) {
+      prev.onclick = () => {
+        if (!currentTopNeedTracts.length) return;
+        activeLocalIndex = (activeLocalIndex - 1 + currentTopNeedTracts.length) % currentTopNeedTracts.length;
+        renderLocalPanel();
+        renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+      };
+    }
+
+    if (next) {
+      next.onclick = () => {
+        if (!currentTopNeedTracts.length) return;
+        activeLocalIndex = (activeLocalIndex + 1) % currentTopNeedTracts.length;
+        renderLocalPanel();
+        renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+      };
+    }
+  }
+
+  async function renderTopTractsMiniMap(topTracts, selectedIndex = 0) {
+    const container = document.getElementById("topTractsMiniMap");
+
+    if (!container || !Array.isArray(topTracts) || !topTracts.length || !window.L) return;
+
+    const selectedItem = topTracts[selectedIndex] || topTracts[0];
+    const selectedGeoid = normalizeGeoid(selectedItem.geoid);
+    const targetGeoids = new Set(topTracts.map(item => normalizeGeoid(item.geoid)));
+
+    if (!cachedTractGeojson) {
+      const res = await fetch("./data/processed/boundaries/sd_tracts.geojson");
+      cachedTractGeojson = await res.json();
+    }
+
+    if (miniMap) {
+      miniMap.remove();
+      miniMap = null;
+    }
+
+    miniMap = L.map("topTractsMiniMap", {
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      dragging: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      tap: false
+    });
+
+    L.control.zoom({ position: "topright" }).addTo(miniMap);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      maxZoom: 18
+    }).addTo(miniMap);
+
+    L.geoJSON(cachedTractGeojson, {
+      filter: feature => !targetGeoids.has(getFeatureGeoid(feature)),
+      style: {
+        color: "#aab8c2",
+        weight: 0.35,
+        opacity: 0.35,
+        fillColor: "#dce6ea",
+        fillOpacity: 0.08
+      },
+      interactive: false
+    }).addTo(miniMap);
+
+    L.geoJSON(cachedTractGeojson, {
+      filter: feature => targetGeoids.has(getFeatureGeoid(feature)) && getFeatureGeoid(feature) !== selectedGeoid,
+      style: {
+        color: STORY_COLORS.teal,
+        weight: 1,
+        opacity: 0.8,
+        fillColor: STORY_COLORS.aqua,
+        fillOpacity: 0.36
+      },
+      interactive: false
+    }).addTo(miniMap);
+
+    const selectedLayer = L.geoJSON(cachedTractGeojson, {
+      filter: feature => getFeatureGeoid(feature) === selectedGeoid,
+      style: {
+        color: STORY_COLORS.navy,
+        weight: 2.2,
+        opacity: 1,
+        fillColor: STORY_COLORS.orange,
+        fillOpacity: 0.86
+      },
+      onEachFeature: (feature, layer) => {
+        layer.bindTooltip(
+          `<strong>${localTitle(selectedItem, selectedIndex)}</strong><br>` +
+          `${tractLabel(selectedItem)}<br>` +
+          `YOI: <strong>${selectedItem.overall_yoi}/100</strong><br>` +
+          `Main gap: <strong>${selectedItem.lowest_domain}</strong>`,
+          {
+            sticky: true,
+            direction: "top",
+            className: "mini-map-tooltip"
+          }
+        );
+      }
+    }).addTo(miniMap);
+
+    const allLayer = L.geoJSON(cachedTractGeojson, {
+      filter: feature => targetGeoids.has(getFeatureGeoid(feature)),
+      style: { opacity: 0, fillOpacity: 0 },
+      interactive: false
+    });
+
+    const allBounds = allLayer.getBounds();
+    const selectedBounds = selectedLayer.getBounds();
+
+    if (allBounds.isValid()) {
+      miniMap.fitBounds(allBounds.pad(0.7));
+    } else if (selectedBounds.isValid()) {
+      miniMap.fitBounds(selectedBounds.pad(1.8));
+    } else {
+      miniMap.setView([32.82, -117.05], 10);
+    }
+
+    setTimeout(() => {
+      miniMap.invalidateSize();
+      if (allBounds.isValid()) miniMap.fitBounds(allBounds.pad(0.7));
+    }, 150);
+  }
+
+  async function loadInsightsStory() {
+    const [landingRes, corrRes] = await Promise.all([
+      fetch("./data/processed/landing/landing_insights.json"),
+      fetch("./data/processed/landing/landing_correlation_insights.json").catch(() => null)
+    ]);
+
+    const data = await landingRes.json();
+    const corr = corrRes && corrRes.ok ? await corrRes.json() : {};
+
+    renderCounty(data);
+    renderScatter(corr);
+    renderRelationChart(corr);
+    renderRegions(data);
+
+    currentTopNeedTracts = data.top_need_tracts || [];
+    activeLocalIndex = 0;
+
+    const localLead = document.getElementById("localLead");
+    if (localLead && currentTopNeedTracts.length) {
+      const first = currentTopNeedTracts[0];
+
+      localLead.innerHTML = `
+        Review the areas with the greatest opportunity gaps one at a time.
+        The lowest-scoring area is <strong>${localTitle(first, 0)}</strong> at
+        <strong>${first.overall_yoi ?? "N/A"}/100</strong>.
+      `;
+    }
+
+    setupLocalControls();
+    renderLocalPanel();
+    renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+  }
+
+  loadInsightsStory().catch(err => {
+    console.error(err);
+    document.querySelector(".landing-shell")?.insertAdjacentHTML(
+      "beforeend",
+      "<div class='landing-loading'>Could not load insights. Run the landing data build scripts and refresh.</div>"
+    );
+  });
+</script>
+
+</body>
+</html>

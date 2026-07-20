@@ -8,8 +8,2614 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  /* =========================================================
+     INSIGHTS LANDING PAGE
+     Scoped to this page only.
+     ========================================================= */
+
+  body.landing-page {
+    --brand-charcoal: #0b151c;
+    --brand-deep: #396775;
+    --brand-teal: #59979e;
+    --brand-soft: #92c5bb;
+    --brand-light: #abcbc7;
+    --brand-cream: #d7cfa5;
+    --brand-gold: #d9a95d;
+    --brand-slate: #57676d;
+
+    --story-surface: #ffffff;
+    --story-surface-alt: #f7faf9;
+    --story-surface-teal: #edf5f3;
+    --story-line: rgba(57, 103, 117, 0.18);
+    --story-line-strong: rgba(57, 103, 117, 0.3);
+    --story-shadow: 0 18px 44px rgba(11, 21, 28, 0.075);
+    --story-width: 1240px;
+
+    height: auto !important;
+    min-height: 100%;
+    margin: 0;
+    padding-top: 74px;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    color: var(--brand-charcoal);
+    background: var(--story-surface);
+    font-family: "Inter", system-ui, sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .landing-page .landing-header {
+    position: fixed;
+    top: 0;
+    z-index: 2000;
+  }
+
+  .landing-page .page-header-inner {
+    width: min(100%, var(--story-width));
+    margin: 0 auto;
+  }
+
+  .landing-page .landing-shell {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .landing-page .story-container {
+    width: min(
+      var(--story-width),
+      calc(100% - 48px)
+    );
+    margin: 0 auto;
+  }
+
+  .landing-page strong {
+    color: inherit;
+  }
+
+  .landing-page button,
+  .landing-page a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* =========================
+     HERO
+     ========================= */
+
+  .insights-story-page .story-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    padding: 78px 0 72px;
+
+    background:
+      linear-gradient(
+        112deg,
+        #f7faf9 0%,
+        #ffffff 53%,
+        #f2f7f6 100%
+      );
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .story-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -2;
+
+    top: 0;
+    right: 0;
+
+    width: 37%;
+    height: 100%;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(89, 151, 158, 0.1),
+        rgba(146, 197, 187, 0.04)
+      );
+
+    border-left: 1px solid rgba(57, 103, 117, 0.12);
+  }
+
+  .insights-story-page .story-hero-bg {
+    position: absolute;
+    z-index: -1;
+
+    top: 8%;
+    right: -7%;
+
+    width: 43vw;
+    min-width: 440px;
+    max-width: 690px;
+    aspect-ratio: 1;
+
+    opacity: 0.64;
+    pointer-events: none;
+
+    background:
+      repeating-radial-gradient(
+        circle at 50% 50%,
+        rgba(57, 103, 117, 0.16) 0 1px,
+        transparent 1px 15px
+      );
+
+    border-radius: 50%;
+    transform: rotate(-11deg) scaleY(0.62);
+  }
+
+  .insights-story-page .story-hero-grid {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1.22fr)
+      minmax(360px, 0.78fr);
+
+    gap: clamp(48px, 6vw, 86px);
+    align-items: center;
+  }
+
+  .insights-story-page .story-hero-copy {
+    max-width: 790px;
+  }
+
+  .insights-story-page .landing-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0 0 17px;
+    padding: 6px 10px;
+
+    color: #76501d;
+    background: rgba(217, 169, 93, 0.12);
+    border: 1px solid rgba(217, 169, 93, 0.36);
+
+    font-size: 0.73rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.085em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .story-hero h1 {
+    max-width: 790px;
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: clamp(3rem, 5.2vw, 5.15rem);
+    font-weight: 500;
+    line-height: 0.99;
+    letter-spacing: -0.058em;
+
+    text-wrap: balance;
+  }
+
+  .insights-story-page .story-hero-lead {
+    max-width: 690px;
+    margin: 26px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 1.08rem;
+    line-height: 1.72;
+  }
+
+  .insights-story-page .landing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    margin-top: 30px;
+  }
+
+  .insights-story-page .landing-primary-btn,
+  .insights-story-page .landing-secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 48px;
+    padding: 0 19px;
+
+    border-radius: 2px;
+
+    font-size: 0.91rem;
+    font-weight: 750;
+    line-height: 1;
+    text-decoration: none;
+
+    transition:
+      transform 150ms ease,
+      background 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .insights-story-page .landing-primary-btn {
+    color: #ffffff;
+    background: var(--brand-deep);
+    border: 1px solid var(--brand-deep);
+
+    box-shadow:
+      0 9px 22px
+      rgba(57, 103, 117, 0.17);
+  }
+
+  .insights-story-page .landing-primary-btn:hover {
+    color: #ffffff;
+    background: var(--brand-charcoal);
+    border-color: var(--brand-charcoal);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+      0 12px 26px
+      rgba(11, 21, 28, 0.16);
+  }
+
+  .insights-story-page .landing-secondary-btn {
+    color: var(--brand-deep);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--story-line-strong);
+  }
+
+  .insights-story-page .landing-secondary-btn:hover {
+    color: var(--brand-charcoal);
+    background: #ffffff;
+    border-color: var(--brand-deep);
+
+    transform: translateY(-1px);
+  }
+
+  /* =========================
+     EXECUTIVE SNAPSHOT
+     ========================= */
+
+  .insights-story-page .hero-summary-card {
+    position: relative;
+    overflow: hidden;
+
+    padding: 26px 28px 25px;
+
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--story-line);
+
+    box-shadow: var(--story-shadow);
+  }
+
+  .insights-story-page .hero-summary-card::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 5px;
+    height: 100%;
+
+    background:
+      linear-gradient(
+        180deg,
+        var(--brand-gold) 0%,
+        var(--brand-soft) 100%
+      );
+  }
+
+  .insights-story-page .hero-summary-card::after {
+    content: "";
+    position: absolute;
+
+    top: -80px;
+    right: -80px;
+
+    width: 180px;
+    height: 180px;
+
+    background: rgba(146, 197, 187, 0.14);
+    border-radius: 50%;
+
+    pointer-events: none;
+  }
+
+  .insights-story-page .hero-summary-head {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .hero-summary-head span {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--brand-deep);
+
+    font-size: 0.69rem;
+    font-weight: 800;
+    letter-spacing: 0.085em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .hero-summary-head h2 {
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1.16rem;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  .insights-story-page .hero-summary-mark {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+
+    width: 42px;
+    height: 42px;
+
+    color: var(--brand-deep);
+    background: var(--story-surface-teal);
+    border: 1px solid var(--story-line);
+
+    font-size: 1.15rem;
+  }
+
+  .insights-story-page .hero-summary-list {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+  }
+
+  .insights-story-page .hero-summary-item {
+    display: grid;
+
+    grid-template-columns:
+      minmax(82px, 0.38fr)
+      minmax(0, 1fr);
+
+    gap: 18px;
+    align-items: baseline;
+
+    padding: 18px 0;
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .hero-summary-item strong {
+    color: var(--brand-deep);
+
+    font-size: clamp(1.65rem, 2.3vw, 2.2rem);
+    font-weight: 620;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .insights-story-page .hero-summary-item-text strong {
+    font-size: 1rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .insights-story-page .hero-summary-item span {
+    color: var(--brand-slate);
+
+    font-size: 0.87rem;
+    line-height: 1.5;
+  }
+
+  .insights-story-page .hero-summary-note {
+    position: relative;
+    z-index: 1;
+
+    margin: 17px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+
+  /* =========================
+     BRIEFING NAVIGATION
+     ========================= */
+
+  .insights-story-page .briefing-nav {
+    position: sticky;
+    top: 74px;
+    z-index: 50;
+
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid var(--story-line);
+
+    backdrop-filter: blur(14px);
+  }
+
+  .insights-story-page .briefing-nav-inner {
+    display: flex;
+    align-items: center;
+
+    min-height: 58px;
+  }
+
+  .insights-story-page .briefing-nav-label {
+    margin-right: auto;
+
+    color: var(--brand-slate);
+
+    font-size: 0.71rem;
+    font-weight: 800;
+    letter-spacing: 0.085em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .briefing-nav a {
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+    gap: 9px;
+
+    padding: 0 20px;
+
+    color: var(--brand-deep);
+    border-left: 1px solid var(--story-line);
+
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .insights-story-page .briefing-nav a:last-child {
+    border-right: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .briefing-nav a span {
+    color: var(--brand-gold);
+
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+  }
+
+  .insights-story-page .briefing-nav a:hover {
+    color: var(--brand-charcoal);
+    background: var(--story-surface-alt);
+  }
+
+  /* =========================
+     SHARED SECTION SYSTEM
+     ========================= */
+
+  .insights-story-page .story-section {
+    padding: 76px 0 82px;
+
+    scroll-margin-top: 132px;
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .county-story {
+    background: #ffffff;
+  }
+
+  .insights-story-page .region-story {
+    background: var(--story-surface-alt);
+  }
+
+  .insights-story-page .local-story {
+    background: #ffffff;
+  }
+
+  .insights-story-page .story-section-header {
+    display: grid;
+
+    grid-template-columns:
+      54px
+      minmax(280px, 0.82fr)
+      minmax(0, 1.18fr);
+
+    gap: clamp(24px, 3.5vw, 50px);
+    align-items: start;
+
+    margin-bottom: 34px;
+  }
+
+  .insights-story-page .section-number {
+    display: grid;
+    place-items: center;
+
+    width: 46px;
+    height: 46px;
+
+    color: var(--brand-deep);
+    background: transparent;
+    border: 1px solid var(--story-line-strong);
+
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+  }
+
+  .insights-story-page .section-heading .landing-eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .insights-story-page .section-heading h2 {
+    max-width: 520px;
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: clamp(2rem, 3.25vw, 3.15rem);
+    font-weight: 560;
+    line-height: 1.06;
+    letter-spacing: -0.047em;
+
+    text-wrap: balance;
+  }
+
+  .insights-story-page .section-lead,
+  .insights-story-page .section-lead-wrap {
+    margin: 0;
+  }
+
+  .insights-story-page .section-lead {
+    max-width: 680px;
+
+    color: var(--brand-slate);
+
+    font-size: 1rem;
+    line-height: 1.72;
+  }
+
+  .insights-story-page .section-lead strong {
+    color: var(--brand-charcoal);
+    font-weight: 720;
+  }
+
+  .insights-story-page .section-lead-wrap {
+    display: grid;
+    gap: 16px;
+  }
+
+  .insights-story-page .story-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    width: max-content;
+
+    color: var(--brand-deep);
+
+    font-size: 0.88rem;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  .insights-story-page .story-text-link:hover {
+    color: var(--brand-charcoal);
+  }
+
+  .insights-story-page .section-context-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    max-width: 650px;
+    margin: 0;
+    padding: 13px 15px;
+
+    color: var(--brand-slate);
+    background: rgba(215, 207, 165, 0.13);
+    border-left: 3px solid var(--brand-gold);
+
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .insights-story-page .section-context-note i {
+    flex: 0 0 auto;
+
+    margin-top: 2px;
+    color: var(--brand-deep);
+  }
+
+  /* =========================
+     SHARED CARDS
+     ========================= */
+
+  .insights-story-page .story-card,
+  .insights-story-page .story-fact-card,
+  .insights-story-page .story-region-card {
+    position: relative;
+
+    background: #ffffff;
+    border: 1px solid var(--story-line);
+
+    box-shadow:
+      0 9px 26px
+      rgba(11, 21, 28, 0.045);
+  }
+
+  .insights-story-page .story-card {
+    overflow: hidden;
+  }
+
+  .insights-story-page .story-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+
+    margin-bottom: 20px;
+  }
+
+  .insights-story-page .card-kicker {
+    margin: 0 0 8px !important;
+
+    color: var(--brand-deep) !important;
+
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.085em !important;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .story-card-head h3,
+  .insights-story-page .local-map-heading h3 {
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1.08rem;
+    font-weight: 760;
+    line-height: 1.27;
+    letter-spacing: -0.025em;
+  }
+
+  .insights-story-page
+    .story-card-head
+    > div
+    > p:not(.card-kicker) {
+    margin: 7px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.83rem;
+    line-height: 1.5;
+  }
+
+  .insights-story-page .chart-badge {
+    flex: 0 0 auto;
+
+    padding: 7px 9px;
+
+    color: #76501d;
+    background: rgba(217, 169, 93, 0.13);
+    border: 1px solid rgba(217, 169, 93, 0.35);
+
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  /* =========================
+     COUNTY FACTS
+     ========================= */
+
+  .insights-story-page .story-fact-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+  }
+
+  .insights-story-page .story-fact-card {
+    overflow: hidden;
+
+    min-height: 190px;
+    padding: 20px 20px 19px 23px;
+  }
+
+  .insights-story-page .story-fact-card::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: var(--brand-soft);
+  }
+
+  .insights-story-page .story-fact-card.orange::before {
+    background: var(--brand-gold);
+  }
+
+  .insights-story-page .story-fact-card.teal::before {
+    background: var(--brand-deep);
+  }
+
+  .insights-story-page .story-fact-card.gold::before {
+    background:
+      linear-gradient(
+        180deg,
+        var(--brand-gold),
+        var(--brand-cream)
+      );
+  }
+
+  .insights-story-page .story-fact-card.aqua::before {
+    background:
+      linear-gradient(
+        180deg,
+        var(--brand-teal),
+        var(--brand-soft)
+      );
+  }
+
+  .insights-story-page .fact-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .insights-story-page .fact-label {
+    max-width: 180px;
+
+    color: var(--brand-slate);
+
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .fact-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+
+    width: 34px;
+    height: 34px;
+
+    color: var(--brand-deep);
+    background: var(--story-surface-teal);
+    border: 1px solid var(--story-line);
+
+    font-size: 1rem;
+  }
+
+  .insights-story-page .fact-value {
+    display: block;
+    margin-top: 24px;
+
+    color: var(--brand-charcoal);
+
+    font-size: clamp(1.55rem, 2.2vw, 2rem);
+    font-weight: 620;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+  }
+
+  .insights-story-page
+    .story-fact-card.aqua
+    .fact-value {
+    font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .insights-story-page .story-fact-card p {
+    margin: 10px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  /* =========================
+     COUNTY VISUALS
+     ========================= */
+
+  .insights-story-page .county-visual-grid {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1.36fr)
+      minmax(360px, 0.64fr);
+
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .insights-story-page .scatter-card {
+    min-height: 610px;
+    padding: 24px 24px 20px;
+  }
+
+  .insights-story-page .scatter-card::before,
+  .insights-story-page .relation-card::before,
+  .insights-story-page .local-map-card::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background:
+      linear-gradient(
+        90deg,
+        var(--brand-gold) 0%,
+        var(--brand-soft) 48%,
+        var(--brand-deep) 100%
+      );
+  }
+
+  .insights-story-page .scatter-canvas-wrap {
+    position: relative;
+    height: 500px;
+  }
+
+  .insights-story-page .county-insight-stack {
+    display: grid;
+
+    grid-template-rows:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 18px;
+  }
+
+  .insights-story-page .relation-card {
+    min-height: 415px;
+    padding: 24px 22px 18px;
+  }
+
+  .insights-story-page .relation-canvas-wrap {
+    position: relative;
+    height: 310px;
+  }
+
+  .insights-story-page .scatter-canvas-wrap canvas,
+  .insights-story-page .relation-canvas-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .insights-story-page .meaning-card {
+    display: grid;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr);
+
+    gap: 15px;
+
+    padding: 20px;
+
+    background:
+      linear-gradient(
+        135deg,
+        #f7faf9 0%,
+        #edf5f3 100%
+      );
+
+    border-left: 4px solid var(--brand-gold);
+    box-shadow: none;
+  }
+
+  .insights-story-page .meaning-icon {
+    display: grid;
+    place-items: center;
+
+    width: 38px;
+    height: 38px;
+
+    color: var(--brand-deep);
+    background: #ffffff;
+    border: 1px solid var(--story-line);
+
+    font-size: 1rem;
+  }
+
+  .insights-story-page .meaning-card h3 {
+    margin: 0 0 9px;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1rem;
+    font-weight: 760;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .insights-story-page .meaning-card p {
+    margin: 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .insights-story-page
+    .meaning-card
+    .meaning-footnote {
+    margin-top: 9px;
+    padding-top: 9px;
+
+    border-top: 1px solid var(--story-line);
+
+    font-size: 0.76rem;
+  }
+
+  /* =========================
+     REGIONAL CARDS
+     ========================= */
+
+  .insights-story-page .region-card-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .insights-story-page .story-region-card {
+    overflow: hidden;
+
+    min-height: 410px;
+    padding: 20px 20px 18px 23px;
+  }
+
+  .insights-story-page .story-region-card::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background:
+      linear-gradient(
+        180deg,
+        var(--brand-soft),
+        var(--brand-deep)
+      );
+  }
+
+  .insights-story-page
+    .story-region-card.lowest::before {
+    background:
+      linear-gradient(
+        180deg,
+        var(--brand-gold),
+        #b97b2a
+      );
+  }
+
+  .insights-story-page .region-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 28px;
+  }
+
+  .insights-story-page .region-rank {
+    color: var(--brand-gold);
+
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .insights-story-page .region-status {
+    color: var(--brand-slate);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page
+    .story-region-card.lowest
+    .region-status {
+    color: #76501d;
+  }
+
+  .insights-story-page .story-region-card h3 {
+    min-height: 48px;
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1.25rem;
+    font-weight: 720;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .insights-story-page .region-score-row {
+    display: flex;
+    align-items: end;
+    gap: 12px;
+
+    margin-top: 20px;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .region-score-row strong {
+    color: var(--brand-deep);
+
+    font-size: 2.7rem;
+    font-weight: 560;
+    line-height: 0.88;
+    letter-spacing: -0.055em;
+  }
+
+  .insights-story-page
+    .story-region-card.lowest
+    .region-score-row
+    strong {
+    color: #9b651f;
+  }
+
+  .insights-story-page .region-score-row span {
+    color: var(--brand-slate);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .region-details {
+    display: grid;
+    gap: 0;
+
+    margin: 8px 0 0;
+  }
+
+  .insights-story-page .region-details > div {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 12px;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .region-details dt {
+    color: var(--brand-slate);
+
+    font-size: 0.73rem;
+    font-weight: 600;
+  }
+
+  .insights-story-page .region-details dd {
+    max-width: 138px;
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: 0.75rem;
+    font-weight: 760;
+    line-height: 1.35;
+    text-align: right;
+  }
+
+  .insights-story-page .region-action {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    margin: 15px 0 0;
+
+    color: var(--brand-deep);
+
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1.45;
+  }
+
+  .insights-story-page .region-action i {
+    flex: 0 0 auto;
+    margin-top: 1px;
+  }
+
+  /* =========================
+     LOCAL CAROUSEL AND MAP
+     ========================= */
+
+  .insights-story-page .local-section-grid {
+    display: grid;
+
+    grid-template-columns:
+      minmax(390px, 0.9fr)
+      minmax(500px, 1.1fr);
+
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .insights-story-page .local-card,
+  .insights-story-page .local-map-card {
+    min-height: 590px;
+  }
+
+  .insights-story-page .local-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .insights-story-page .local-slide {
+    flex: 1;
+  }
+
+  .insights-story-page .local-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 26px 26px 24px;
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(215, 207, 165, 0.2),
+        rgba(146, 197, 187, 0.14)
+      );
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-kicker {
+    margin: 0 0 9px;
+
+    color: #76501d;
+
+    font-size: 0.69rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .local-card-head h3 {
+    margin: 0;
+
+    color: var(--brand-charcoal);
+
+    font-size: clamp(1.7rem, 2.4vw, 2.25rem);
+    font-weight: 570;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+
+  .insights-story-page .local-area-context {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 9px 0 0;
+
+  color: var(--brand-deep);
+
+  font-size: 0.76rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.insights-story-page .local-area-context i {
+  flex: 0 0 auto;
+
+  color: var(--brand-gold);
+  font-size: 0.82rem;
+}
+
+  .insights-story-page .local-count {
+    flex: 0 0 auto;
+
+    padding: 7px 9px;
+
+    color: var(--brand-deep);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--story-line);
+
+    font-size: 0.69rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .insights-story-page .local-score-layout {
+    display: grid;
+
+    grid-template-columns:
+      1.16fr
+      0.84fr;
+
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-primary-score,
+  .insights-story-page .local-secondary-stat {
+    padding: 24px 26px;
+  }
+
+  .insights-story-page .local-primary-score {
+    border-right: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-primary-score > span,
+  .insights-story-page .local-secondary-stat > span,
+  .insights-story-page .local-action-block > span {
+    display: block;
+
+    color: var(--brand-slate);
+
+    font-size: 0.67rem;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .local-primary-score > div {
+    display: flex;
+    align-items: end;
+    gap: 5px;
+
+    margin-top: 15px;
+  }
+
+  .insights-story-page .local-primary-score strong {
+    color: var(--brand-deep);
+
+    font-size: 3.65rem;
+    font-weight: 530;
+    line-height: 0.82;
+    letter-spacing: -0.065em;
+  }
+
+  .insights-story-page .local-primary-score small {
+    color: var(--brand-slate);
+
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .insights-story-page .local-secondary-stat strong {
+    display: block;
+    margin-top: 17px;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1.85rem;
+    font-weight: 590;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .insights-story-page .local-primary-score p,
+  .insights-story-page .local-secondary-stat p {
+    margin: 15px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.76rem;
+    line-height: 1.48;
+  }
+
+  .insights-story-page .local-focus-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+
+    padding: 20px 26px;
+
+    background: var(--story-surface-alt);
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-focus-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: var(--brand-slate);
+
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .insights-story-page .local-focus-label i {
+    color: var(--brand-deep);
+    font-size: 1rem;
+  }
+
+  .insights-story-page .local-focus-value {
+    text-align: right;
+  }
+
+  .insights-story-page .local-focus-value strong {
+    display: block;
+
+    color: var(--brand-charcoal);
+
+    font-size: 1rem;
+    font-weight: 760;
+    line-height: 1.3;
+  }
+
+  .insights-story-page .local-focus-value span {
+    display: block;
+    margin-top: 3px;
+
+    color: #9b651f;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .insights-story-page .local-action-block {
+    padding: 20px 26px 22px;
+  }
+
+  .insights-story-page .local-action-block p {
+    margin: 9px 0 0;
+
+    color: var(--brand-slate);
+
+    font-size: 0.84rem;
+    line-height: 1.58;
+  }
+
+  .insights-story-page .local-action-block strong {
+    color: var(--brand-charcoal);
+  }
+
+  .insights-story-page .local-controls {
+    display: grid;
+
+    grid-template-columns:
+      42px
+      minmax(0, 1fr)
+      42px;
+
+    gap: 14px;
+    align-items: center;
+
+    margin-top: auto;
+    padding: 14px 18px;
+
+    background: #ffffff;
+    border-top: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-controls > button {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    color: var(--brand-deep);
+    background: #ffffff;
+
+    border: 1px solid var(--story-line-strong);
+    border-radius: 0;
+
+    font-size: 1rem;
+    cursor: pointer;
+
+    transition:
+      color 140ms ease,
+      background 140ms ease,
+      border-color 140ms ease,
+      transform 140ms ease;
+  }
+
+  .insights-story-page
+    .local-controls
+    > button:hover {
+    color: #ffffff;
+    background: var(--brand-deep);
+    border-color: var(--brand-deep);
+
+    transform: translateY(-1px);
+  }
+
+  .insights-story-page
+    .local-controls
+    > button:focus-visible,
+  .insights-story-page
+    .local-dots
+    button:focus-visible {
+    outline: 3px solid rgba(89, 151, 158, 0.28);
+    outline-offset: 2px;
+  }
+
+  .insights-story-page .local-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 42px;
+  }
+
+  .insights-story-page .local-dots button {
+    width: 8px;
+    min-width: 0;
+    height: 8px;
+
+    margin: 0;
+    padding: 0;
+
+    background: #c9d6d7;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: none;
+
+    cursor: pointer;
+
+    transition:
+      width 150ms ease,
+      background 150ms ease;
+  }
+
+  .insights-story-page
+    .local-dots
+    button.active {
+    width: 27px;
+    background: var(--brand-gold);
+  }
+
+  .insights-story-page .local-map-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--story-surface-teal);
+  }
+
+  .insights-story-page .local-map-heading {
+    position: relative;
+    z-index: 500;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    min-height: 82px;
+    padding: 19px 22px;
+
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .local-map-heading span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 9px;
+
+    color: var(--brand-deep);
+    background: var(--story-surface-teal);
+    border: 1px solid var(--story-line);
+
+    font-size: 0.68rem;
+    font-weight: 750;
+    white-space: nowrap;
+  }
+
+  .insights-story-page .story-map {
+    flex: 1;
+
+    width: 100%;
+    min-height: 507px;
+
+    background: #e7f0f0;
+  }
+
+  .insights-story-page .mini-map-legend:empty {
+    display: none;
+  }
+
+  .insights-story-page .leaflet-control-zoom {
+    overflow: hidden;
+
+    border:
+      1px solid
+      var(--story-line-strong) !important;
+
+    border-radius: 0 !important;
+
+    box-shadow:
+      0 8px 22px
+      rgba(11, 21, 28, 0.12) !important;
+  }
+
+  .insights-story-page
+    .leaflet-control-zoom
+    a {
+    color: var(--brand-deep) !important;
+  }
+
+  .insights-story-page .mini-map-tooltip {
+    color: var(--brand-charcoal);
+
+    border: 1px solid var(--story-line-strong);
+    border-radius: 0;
+
+    box-shadow:
+      0 10px 28px
+      rgba(11, 21, 28, 0.15);
+
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  .insights-story-page .military-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+
+    margin-top: 18px;
+    padding: 15px 17px;
+
+    color: var(--brand-slate);
+    background: rgba(215, 207, 165, 0.11);
+
+    border: 1px solid rgba(217, 169, 93, 0.27);
+    border-left: 4px solid var(--brand-gold);
+
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .insights-story-page .military-note i {
+    flex: 0 0 auto;
+
+    margin-top: 2px;
+    color: #9b651f;
+  }
+
+  .insights-story-page .military-note p {
+    margin: 0;
+  }
+
+  .insights-story-page .military-note strong {
+    color: var(--brand-charcoal);
+  }
+
+  /* =========================
+     FINAL CTA
+     ========================= */
+
+  .insights-story-page .story-cta {
+    padding: 62px 0;
+
+    color: #ffffff;
+
+    background:
+      linear-gradient(
+        115deg,
+        #2f5965 0%,
+        #396775 58%,
+        #477a83 100%
+      );
+  }
+
+  .insights-story-page .story-cta-inner {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 42px;
+    align-items: center;
+  }
+
+  .insights-story-page
+    .story-cta
+    .landing-eyebrow {
+    color: #fff2d4;
+    background: rgba(217, 169, 93, 0.16);
+    border-color: rgba(255, 242, 212, 0.28);
+  }
+
+  .insights-story-page .story-cta h2 {
+    max-width: 760px;
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: clamp(2rem, 3.3vw, 3.15rem);
+    font-weight: 520;
+    line-height: 1.06;
+    letter-spacing: -0.045em;
+  }
+
+  .insights-story-page
+    .story-cta
+    p:not(.landing-eyebrow) {
+    max-width: 720px;
+    margin: 16px 0 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 0.93rem;
+    line-height: 1.65;
+  }
+
+  .insights-story-page
+    .story-cta
+    .landing-primary-btn {
+    color: var(--brand-charcoal);
+    background: #ffffff;
+    border-color: #ffffff;
+
+    box-shadow:
+      0 12px 28px
+      rgba(11, 21, 28, 0.2);
+
+    white-space: nowrap;
+  }
+
+  .insights-story-page
+    .story-cta
+    .landing-primary-btn:hover {
+    color: var(--brand-charcoal);
+    background: #fff7e4;
+    border-color: #fff7e4;
+  }
+
+  /* =========================
+     FOOTER
+     ========================= */
+
+  .insights-story-page .story-footer {
+    padding: 27px 0;
+
+    background: #ffffff;
+    border-top: 1px solid var(--story-line);
+  }
+
+  .insights-story-page .story-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  .insights-story-page .story-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .insights-story-page .story-footer-brand img {
+    width: 38px;
+    height: 38px;
+
+    object-fit: contain;
+  }
+
+  .insights-story-page .story-footer-brand strong,
+  .insights-story-page .story-footer-brand span {
+    display: block;
+  }
+
+  .insights-story-page .story-footer-brand strong {
+    color: var(--brand-charcoal);
+    font-size: 0.83rem;
+  }
+
+  .insights-story-page .story-footer-brand span {
+    margin-top: 3px;
+
+    color: var(--brand-slate);
+    font-size: 0.72rem;
+  }
+
+  .insights-story-page .story-footer-links {
+    display: flex;
+    gap: 22px;
+  }
+
+  .insights-story-page .story-footer-links a {
+    color: var(--brand-deep);
+
+    font-size: 0.78rem;
+    font-weight: 720;
+    text-decoration: none;
+  }
+
+  .insights-story-page
+    .story-footer-links
+    a:hover {
+    color: var(--brand-charcoal);
+    text-decoration: underline;
+  }
+
+  .insights-story-page .landing-loading {
+    grid-column: 1 / -1;
+
+    padding: 20px;
+
+    color: var(--brand-slate);
+    background: #ffffff;
+    border: 1px solid var(--story-line);
+
+    font-size: 0.88rem;
+  }
+
+  /* =========================
+     RESPONSIVE
+     ========================= */
+
+  @media (max-width: 1120px) {
+    .insights-story-page .story-hero-grid {
+      grid-template-columns:
+        minmax(0, 1.08fr)
+        minmax(330px, 0.92fr);
+
+      gap: 42px;
+    }
+
+    .insights-story-page .story-fact-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    .insights-story-page .county-visual-grid {
+      grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(330px, 0.85fr);
+    }
+
+    .insights-story-page .region-card-grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    .insights-story-page .story-region-card {
+      min-height: 380px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .landing-page .page-header-inner {
+      gap: 16px;
+    }
+
+    .landing-page .page-header .top-nav {
+      gap: 12px;
+    }
+
+    .landing-page .page-header .top-nav a {
+      font-size: 0.82rem;
+    }
+
+    .insights-story-page .story-hero {
+      padding: 62px 0 58px;
+    }
+
+    .insights-story-page .story-hero-grid,
+    .insights-story-page .county-visual-grid,
+    .insights-story-page .local-section-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page .story-hero-copy {
+      max-width: 760px;
+    }
+
+    .insights-story-page .hero-summary-card {
+      max-width: 720px;
+    }
+
+    .insights-story-page .story-section-header {
+      grid-template-columns:
+        46px
+        minmax(0, 1fr);
+
+      gap: 20px 24px;
+    }
+
+    .insights-story-page
+      .story-section-header
+      > .section-lead,
+    .insights-story-page
+      .story-section-header
+      > .section-lead-wrap {
+      grid-column: 2;
+    }
+
+    .insights-story-page .scatter-card {
+      min-height: 560px;
+    }
+
+    .insights-story-page .scatter-canvas-wrap {
+      height: 455px;
+    }
+
+    .insights-story-page .county-insight-stack {
+      grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(270px, 0.75fr);
+
+      grid-template-rows: auto;
+    }
+
+    .insights-story-page .relation-card {
+      min-height: 380px;
+    }
+
+    .insights-story-page .relation-canvas-wrap {
+      height: 280px;
+    }
+
+    .insights-story-page .meaning-card {
+      align-content: start;
+    }
+
+    .insights-story-page .local-card,
+    .insights-story-page .local-map-card {
+      min-height: 560px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .landing-page .story-container {
+      width: min(
+        var(--story-width),
+        calc(100% - 36px)
+      );
+    }
+
+    .landing-page .brand-logo {
+      width: 36px;
+      height: 36px;
+
+      margin-left: 0;
+    }
+
+    .landing-page .page-header .brand-title {
+      font-size: 0.9rem !important;
+    }
+
+    .landing-page .page-header .brand-subtitle {
+      display: none !important;
+    }
+
+    .landing-page .page-header .top-nav {
+      max-width: 52vw;
+
+      overflow-x: auto;
+      flex-wrap: nowrap;
+
+      scrollbar-width: none;
+    }
+
+    .landing-page
+      .page-header
+      .top-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .landing-page .page-header .top-nav a {
+      flex: 0 0 auto;
+      font-size: 0.76rem;
+    }
+
+    .insights-story-page .story-hero::before {
+      width: 100%;
+      opacity: 0.45;
+    }
+
+    .insights-story-page .story-hero-bg {
+      right: -50%;
+      opacity: 0.35;
+    }
+
+    .insights-story-page .story-hero h1 {
+      font-size: clamp(2.55rem, 12vw, 4rem);
+    }
+
+    .insights-story-page .briefing-nav {
+      overflow-x: auto;
+    }
+
+    .insights-story-page .briefing-nav-inner {
+      width: max-content;
+      min-width: 100%;
+    }
+
+    .insights-story-page .briefing-nav-label {
+      padding-right: 20px;
+    }
+
+    .insights-story-page .briefing-nav a {
+      flex: 0 0 auto;
+      padding: 0 15px;
+    }
+
+    .insights-story-page .story-section {
+      padding: 58px 0 62px;
+    }
+
+    .insights-story-page .story-section-header {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page .section-number {
+      width: 40px;
+      height: 40px;
+    }
+
+    .insights-story-page
+      .story-section-header
+      > .section-lead,
+    .insights-story-page
+      .story-section-header
+      > .section-lead-wrap {
+      grid-column: 1;
+    }
+
+    .insights-story-page .story-fact-grid,
+    .insights-story-page .region-card-grid,
+    .insights-story-page .county-insight-stack {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page .scatter-card {
+      min-height: 520px;
+      padding: 20px 16px 16px;
+    }
+
+    .insights-story-page .scatter-canvas-wrap {
+      height: 410px;
+    }
+
+    .insights-story-page .relation-card {
+      padding: 20px 16px 16px;
+    }
+
+    .insights-story-page .local-score-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page .local-primary-score {
+      border-right: 0;
+      border-bottom: 1px solid var(--story-line);
+    }
+
+    .insights-story-page .local-focus-block {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .insights-story-page .local-focus-value {
+      text-align: left;
+    }
+
+    .insights-story-page .local-map-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .insights-story-page .story-map {
+      min-height: 440px;
+    }
+
+    .insights-story-page .story-cta-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page
+      .story-cta
+      .landing-primary-btn {
+      width: max-content;
+    }
+
+    .insights-story-page .story-footer-inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .insights-story-page .story-hero {
+      padding-top: 46px;
+    }
+
+    .insights-story-page .landing-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .insights-story-page .landing-primary-btn,
+    .insights-story-page .landing-secondary-btn {
+      width: 100%;
+    }
+
+    .insights-story-page .hero-summary-card {
+      padding: 23px 22px 22px;
+    }
+
+    .insights-story-page .hero-summary-item {
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+
+    .insights-story-page .story-card-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .insights-story-page .story-fact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .insights-story-page .local-card-head {
+      padding: 22px 20px;
+    }
+
+    .insights-story-page .local-primary-score,
+    .insights-story-page .local-secondary-stat,
+    .insights-story-page .local-focus-block,
+    .insights-story-page .local-action-block {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .insights-story-page .local-card,
+    .insights-story-page .local-map-card {
+      min-height: 520px;
+    }
+
+    .insights-story-page
+      .story-cta
+      .landing-primary-btn {
+      width: 100%;
+    }
+
+    .insights-story-page .story-footer-links {
+      flex-wrap: wrap;
+      gap: 14px 20px;
+    }
+  }
+
+  /* =========================================================
+   FINAL INSIGHTS LAYOUT CORRECTIONS
+   Paste at the end of the existing Insights <style> block.
+   ========================================================= */
+
+
+/* -------------------------
+   HERO
+   ------------------------- */
+
+.insights-story-page .story-hero {
+  padding: 68px 0 70px;
+}
+
+.insights-story-page .story-hero-grid {
+  grid-template-columns:
+    minmax(0, 1.06fr)
+    minmax(410px, 0.94fr);
+
+  gap: clamp(50px, 6vw, 86px);
+}
+
+.insights-story-page .story-hero-copy {
+  max-width: 730px;
+}
+
+.insights-story-page .story-hero h1 {
+  max-width: 720px;
+
+  font-size: clamp(3rem, 4.8vw, 4.75rem);
+  font-weight: 520;
+  line-height: 0.98;
+  letter-spacing: -0.058em;
+}
+
+.insights-story-page .story-hero-lead {
+  max-width: 650px;
+  margin-top: 24px;
+
+  font-size: 1.08rem;
+  line-height: 1.68;
+}
+
+
+/* -------------------------
+   HOW TO READ THE INDEX CARD
+   ------------------------- */
+
+.insights-story-page .hero-method-card {
+  position: relative;
+  overflow: hidden;
+
+  padding: 28px 29px 27px;
+
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--story-line);
+  border-left: 4px solid var(--brand-gold);
+
+  box-shadow:
+    0 20px 48px
+    rgba(11, 21, 28, 0.09);
+}
+
+.insights-story-page .hero-method-card::after {
+  content: "";
+  position: absolute;
+
+  top: -90px;
+  right: -90px;
+
+  width: 210px;
+  height: 210px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(146, 197, 187, 0.13);
+
+  pointer-events: none;
+}
+
+.insights-story-page .hero-method-heading {
+  position: relative;
+  z-index: 1;
+
+  padding-bottom: 21px;
+
+  border-bottom:
+    1px solid
+    var(--story-line);
+}
+
+.insights-story-page .hero-method-kicker {
+  margin: 0 0 8px;
+
+  color: var(--brand-deep);
+
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+}
+
+.insights-story-page .hero-method-heading h2 {
+  max-width: 390px;
+  margin: 0;
+
+  color: var(--brand-charcoal);
+
+  font-size: 1.35rem;
+  font-weight: 720;
+  line-height: 1.2;
+  letter-spacing: -0.032em;
+}
+
+.insights-story-page .hero-method-heading > p:last-child {
+  max-width: 420px;
+  margin: 11px 0 0;
+
+  color: var(--brand-slate);
+
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.insights-story-page .hero-scale {
+  position: relative;
+  z-index: 1;
+
+  padding: 22px 0 20px;
+
+  border-bottom:
+    1px solid
+    var(--story-line);
+}
+
+.insights-story-page .hero-scale-labels,
+.insights-story-page .hero-scale-values {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.insights-story-page .hero-scale-labels {
+  margin-bottom: 9px;
+
+  color: var(--brand-slate);
+
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.025em;
+}
+
+.insights-story-page .hero-scale-bar {
+  width: 100%;
+  height: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #b6442c 0%,
+      #e59a22 20%,
+      #eec574 39%,
+      #7cc6bb 61%,
+      #2b989e 80%,
+      #246e7e 100%
+    );
+}
+
+.insights-story-page .hero-scale-values {
+  margin-top: 7px;
+
+  color: var(--brand-slate);
+
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.insights-story-page .hero-method-list {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+}
+
+.insights-story-page .hero-method-item {
+  display: grid;
+
+  grid-template-columns:
+    37px
+    minmax(0, 1fr);
+
+  gap: 13px;
+
+  padding: 16px 0;
+
+  border-bottom:
+    1px solid
+    var(--story-line);
+}
+
+.insights-story-page .hero-method-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.insights-story-page .hero-method-icon {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  color: var(--brand-deep);
+  background: var(--story-surface-teal);
+  border: 1px solid var(--story-line);
+
+  font-size: 0.94rem;
+}
+
+.insights-story-page .hero-method-item strong {
+  display: block;
+
+  color: var(--brand-charcoal);
+
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.insights-story-page .hero-method-item p {
+  margin: 4px 0 0;
+
+  color: var(--brand-slate);
+
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+
+/* -------------------------
+   SECTION HEADERS
+   No numbered third column
+   ------------------------- */
+
+.insights-story-page .story-section-header {
+  grid-template-columns:
+    minmax(300px, 0.82fr)
+    minmax(0, 1.18fr);
+
+  gap: clamp(42px, 6vw, 82px);
+  align-items: start;
+}
+
+.insights-story-page .section-heading {
+  min-width: 0;
+}
+
+.insights-story-page .section-heading h2 {
+  max-width: 570px;
+}
+
+.insights-story-page .section-lead,
+.insights-story-page .section-lead-wrap {
+  min-width: 0;
+}
+
+
+/* -------------------------
+   COUNTY VISUALS
+   Two equal chart cards,
+   interpretation below
+   ------------------------- */
+
+.insights-story-page .county-visual-grid {
+  grid-template-columns:
+    minmax(0, 1.08fr)
+    minmax(390px, 0.92fr);
+
+  gap: 18px;
+  align-items: stretch;
+}
+
+.insights-story-page .county-insight-stack {
+  display: contents;
+}
+
+.insights-story-page .scatter-card,
+.insights-story-page .relation-card {
+  min-height: 455px;
+  height: auto;
+}
+
+.insights-story-page .scatter-card {
+  padding: 24px 24px 20px;
+}
+
+.insights-story-page .relation-card {
+  padding: 24px 22px 20px;
+}
+
+.insights-story-page .scatter-canvas-wrap,
+.insights-story-page .relation-canvas-wrap {
+  height: 345px;
+}
+
+.insights-story-page .meaning-card {
+  grid-column: 1 / -1;
+
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  gap: 16px;
+  align-items: start;
+
+  min-height: 0;
+  padding: 21px 23px;
+
+  background:
+    linear-gradient(
+      115deg,
+      #f7faf9 0%,
+      #edf5f3 100%
+    );
+
+  border: 1px solid var(--story-line);
+  border-left: 4px solid var(--brand-gold);
+
+  box-shadow: none;
+}
+
+.insights-story-page .meaning-content {
+  min-width: 0;
+}
+
+.insights-story-page .meaning-card h3 {
+  margin: 0 0 8px;
+
+  font-size: 1.05rem;
+}
+
+.insights-story-page .meaning-card p {
+  max-width: 940px;
+
+  overflow-wrap: normal;
+  word-break: normal;
+  white-space: normal;
+}
+
+.insights-story-page .meaning-card .meaning-footnote {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+
+/* -------------------------
+   Remove obsolete elements
+   even if one was missed
+   ------------------------- */
+
+.insights-story-page .briefing-nav,
+.insights-story-page .section-number,
+.insights-story-page .story-footer,
+.insights-story-page .hero-summary-card {
+  display: none !important;
+}
+
+
+/* -------------------------
+   RESPONSIVE
+   ------------------------- */
+
+@media (max-width: 1000px) {
+  .insights-story-page .story-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-story-page .hero-method-card {
+    max-width: 720px;
+  }
+
+  .insights-story-page .story-section-header {
+    grid-template-columns:
+      minmax(260px, 0.85fr)
+      minmax(0, 1.15fr);
+
+    gap: 34px;
+  }
+
+  .insights-story-page .county-visual-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-story-page .meaning-card {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .insights-story-page .story-hero {
+    padding: 48px 0 54px;
+  }
+
+  .insights-story-page .story-hero h1 {
+    font-size:
+      clamp(
+        2.55rem,
+        12vw,
+        3.75rem
+      );
+  }
+
+  .insights-story-page .story-section-header {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .insights-story-page
+    .story-section-header
+    > .section-lead,
+  .insights-story-page
+    .story-section-header
+    > .section-lead-wrap {
+    grid-column: 1;
+  }
+
+  .insights-story-page .scatter-card,
+  .insights-story-page .relation-card {
+    min-height: 0;
+  }
+
+  .insights-story-page .scatter-canvas-wrap,
+  .insights-story-page .relation-canvas-wrap {
+    height: 380px;
+  }
+
+  .insights-story-page .meaning-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .insights-story-page .hero-method-card {
+    padding: 23px 21px;
+  }
+
+  .insights-story-page .hero-method-heading h2 {
+    font-size: 1.2rem;
+  }
+
+  .insights-story-page .hero-method-item {
+    grid-template-columns:
+      34px
+      minmax(0, 1fr);
+  }
+
+  .insights-story-page .scatter-canvas-wrap,
+  .insights-story-page .relation-canvas-wrap {
+    height: 330px;
+  }
+}
+</style>
+
 </head>
 
 <body class="landing-page pro-landing">
@@ -33,1264 +2639,1781 @@
     </div>
   </header>
 
-  <main class="landing-shell">
-    <section class="landing-hero pro-hero">
-      <div>
-        <p class="landing-eyebrow">San Diego County youth opportunity</p>
-        <h1>Mapping youth opportunity deserts across San Diego County</h1>
-        <p class="landing-hero-copy">
-          An interactive decision-support tool that maps where young people in San Diego County face the greatest barriers to opportunity. Spot the neighborhoods with the deepest gaps. See what is driving those gaps, then compare them with services, transit access, COI, and Workforce-report benchmarks to guide smarter investment.
-        </p>
+  
+  <main class="landing-shell insights-story-page">
+  <section class="story-hero">
+  <div
+    class="story-hero-bg"
+    aria-hidden="true"
+  ></div>
 
-        <div class="landing-actions">
-          <a class="landing-primary-btn" href="./map.html">Open interactive map</a>
-          <a class="landing-secondary-btn" href="#priority-areas">View priority areas</a>
-        </div>
+  <div class="story-container story-hero-grid">
+    <div class="story-hero-copy">
+      <p class="landing-eyebrow">
+        Youth Opportunity Index · San Diego County
+      </p>
+
+      <h1>
+        Mapping Youth Opportunity Deserts in San Diego County
+      </h1>
+
+      <p class="story-hero-lead">
+        See where barriers are concentrated, how opportunity differs
+        across regions, and which census tracts warrant closer review.
+      </p>
+
+      <div class="landing-actions">
+        <a
+          class="landing-primary-btn"
+          href="./map.html"
+        >
+          Explore the interactive map
+          <i class="bi bi-arrow-up-right"></i>
+        </a>
+
+        <a
+          class="landing-secondary-btn"
+          href="#county-story"
+        >
+          View key findings
+          <i class="bi bi-arrow-down"></i>
+        </a>
       </div>
-
-      <aside class="landing-hero-card snapshot-hero-card">
-  <div class="snapshot-hero-head">
-    <div class="landing-hero-card-label">Key takeaways</div>
-    <h2>What the dashboard reveals</h2>
-    <p>
-      A quick summary of how widespread lower-opportunity areas are in San Diego County
-      and what patterns stand out most.
-    </p>
-  </div>
-
-  <div id="executiveSummary" class="hero-kpi-shell">
-    Loading summary…
-  </div>
-</aside>
-    </section>
-
-    <section class="landing-section">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Dashboard at a glance</p>
-        <h2>Current coverage and validation context</h2>
-      </div>
-
-      <div class="landing-metric-grid pro-metric-grid" id="landingMetrics">
-        <div class="landing-loading">Loading dashboard metrics…</div>
-      </div>
-    </section>
-
-    <section class="landing-section" id="priority-areas">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Areas needing attention</p>
-        <h2>Top places that may need attention</h2>
-        <p>
-          These are the lowest-scoring Census tracts by overall YOI among tracts with enough estimated youth
-          population to make the ranking meaningful.
-        </p>
-      </div>
-
-      <div class="landing-card-grid two-col">
-        <div class="landing-card pro-card">
-          <div class="pro-card-head">
-            <h3>Lowest overall YOI tracts</h3>
-            <span class="pro-tag">Top 5</span>
-          </div>
-          <div id="topNeedList" class="landing-rank-list"></div>
-        </div>
-
-        <div class="landing-card pro-card mini-map-card">
-          <div class="pro-card-head">
-            <h3>Where are these tracts?</h3>
-            <span class="pro-tag">Map view</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Highlighted areas show the five lowest-scoring Census tracts from the priority scan.
-          </p>
-          <div id="topTractsMiniMap" class="top-tracts-mini-map"></div>
-          <div id="topTractsMiniMapLegend" class="mini-map-legend"></div>
-        </div>
-
-        <div class="landing-card pro-card">
-          <div class="pro-card-head">
-            <h3>Opportunity score distribution</h3>
-            <span class="pro-tag">All tracts</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Count of Census tracts by overall YOI score range.
-          </p>
-          <div id="distributionChart" class="histogram-chart"></div>
-        </div>
-      </div>
-    </section>
-
-    
-
-
-
-    <section class="landing-section" id="correlation-insights">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Opportunity relationships</p>
-        <h2>What patterns move with youth opportunity?</h2>
-        <p>
-          These charts compare domain and indicator scores across Census tracts. They help show which conditions
-          tend to rise or fall with the overall Youth Opportunity Index score. Correlation is descriptive and does
-          not prove causation.
-        </p>
-      </div>
-
-      <div class="correlation-status" id="correlationStatus">
-        Loading correlation insights…
-      </div>
-
-      <div class="landing-card pro-card chart-definitions-card" id="chartDefinitions">
-        <div class="pro-card-head">
-          <h3>How to read these charts</h3>
-          <span class="pro-tag">Definitions</span>
-        </div>
-
-        <p class="landing-card-subtitle">
-          These charts show how different local conditions relate to youth opportunity across Census tracts.
-        </p>
-
-        <div class="chart-definition-grid">
-          <div class="chart-definition-item">
-            <h4>Overall YOI score</h4>
-            <p>
-              The overall Youth Opportunity Index score for a place, shown on a 0–100 scale.
-              Higher scores indicate stronger opportunity conditions.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Domain score</h4>
-            <p>
-              A 0–100 score for one part of the index, such as Economic, Education, Health,
-              Housing, Safety / Environment, Mobility / Connectivity, or Youth Supports.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Standardized YOI (z-score)</h4>
-            <p>
-              A standardized version of the Youth Opportunity Index. A value of 0 is around
-              the county average, positive values are above average, and negative values are below average.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Correlation (r)</h4>
-            <p>
-              Correlation shows how strongly two variables move together. Values closer to +1
-              mean a stronger positive relationship, values closer to −1 mean a stronger negative
-              relationship, and values near 0 mean little clear relationship.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>Each point</h4>
-            <p>
-              In scatterplots, each point represents one Census tract. Hovering over a point shows
-              the tract and the two values being compared.
-            </p>
-          </div>
-
-          <div class="chart-definition-item">
-            <h4>What to look for</h4>
-            <p>
-              Use these visuals to see which conditions tend to rise or fall with youth opportunity,
-              and which domains may be most connected to lower or higher opportunity scores.
-            </p>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="correlation-callout" id="correlationCallout"></div>
-
-      <div class="landing-card-grid two-col correlation-grid">
-        <div class="landing-card pro-card correlation-card">
-          <div class="pro-card-head">
-            <h3>Domain relationship with overall YOI</h3>
-            <span class="pro-tag">Pearson r</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Shows which domain scores most closely move with the overall Youth Opportunity Index.
-          </p>
-          <div class="correlation-chart-wrap">
-            <canvas id="domainCorrelationCanvas"></canvas>
-          </div>
-        </div>
-
-        <div class="landing-card pro-card correlation-card">
-          <div class="pro-card-head">
-            <h3>Indicator-level relationships</h3>
-            <span class="pro-tag">Top drivers</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Shows the strongest positive and negative relationships between individual indicators and overall YOI.
-          </p>
-          <div class="correlation-chart-wrap">
-            <canvas id="indicatorCorrelationCanvas"></canvas>
-          </div>
-        </div>
-
-        <div class="landing-card pro-card correlation-card">
-          <div class="pro-card-head">
-            <h3>How domains move together</h3>
-            <span class="pro-tag">Domain pairs</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Shows which opportunity domains tend to appear together across Census tracts.
-          </p>
-          <div class="correlation-chart-wrap">
-            <canvas id="domainPairCorrelationCanvas"></canvas>
-          </div>
-        </div>
-
-        <div class="landing-card pro-card correlation-card">
-          <div class="pro-card-head">
-            <h3>Strongest tract-level pattern</h3>
-            <span class="pro-tag">Scatterplot</span>
-          </div>
-          <p class="landing-card-subtitle" id="scatterSubtitle">
-            Each point represents one Census tract.
-          </p>
-          <div class="correlation-chart-wrap">
-            <canvas id="scatterCorrelationCanvas"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <section class="landing-section" id="regional-action-priorities">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Regional action priorities</p>
-        <h2>What does the dashboard reveal by region?</h2>
-        <p>
-          This section translates regional YOI patterns into planning signals: which region has the lowest score,
-          which domain is weakest, how many youth are represented, and what type of action may be most relevant.
-        </p>
-      </div>
-
-      <div id="regionalActionGrid" class="regional-action-grid"></div>
-    </section>
-
-    <section class="landing-section" id="dashboard-importance">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Why this dashboard matters</p>
-        <h2>What are the biggest takeaways?</h2>
-        <p>
-          The dashboard is most useful when it shows where low opportunity is concentrated and which domains
-          are driving those local gaps. These summary statistics help explain why an interactive tool is needed.
-        </p>
-      </div>
-
-      <div class="landing-card-grid two-col">
-        <div class="landing-card pro-card">
-          <div class="pro-card-head">
-            <h3>Most common gap drivers in the lowest-opportunity tracts</h3>
-            <span class="pro-tag">Bottom quintile</span>
-          </div>
-          <p class="landing-card-subtitle">
-            Among the bottom 20% of tracts, this shows which domain most often appears as the weakest local condition.
-          </p>
-          <div id="driverBars" class="driver-bars"></div>
-        </div>
-
-        <div class="landing-card pro-card">
-          <div class="pro-card-head">
-            <h3>Core evidence for action</h3>
-            <span class="pro-tag">Key stats</span>
-          </div>
-          <div id="whyDashboardMatters" class="evidence-grid"></div>
-        </div>
-      </div>
-    </section>
-
-    <div class="legacy-landing-dummies" hidden>
-      <div id="regionBars"></div>
-      <div id="domainAverageBars"></div>
-      <div id="youthSupportsGapList"></div>
-      <div id="economicGapList"></div>
     </div>
 
-<section class="landing-section">
-      <div class="landing-section-head compact-head">
-        <p class="landing-eyebrow">Workforce report context</p>
-        <h2>Countywide benchmarks used for validation</h2>
+    <aside
+      class="hero-method-card"
+      aria-label="How to interpret the Youth Opportunity Index"
+    >
+      <div class="hero-method-heading">
+        <p class="hero-method-kicker">
+          How to read the index
+        </p>
+
+        <h2>
+          One score, seven dimensions of opportunity
+        </h2>
+
         <p>
-          These values describe San Diego County overall. They support validation against the Workforce report and
-          should not be interpreted as values for a selected tract, ZIP code, or district.
+          Overall YOI combines conditions that shape young people’s
+          access to resources, stability, and opportunity.
         </p>
       </div>
 
-      <div class="landing-metric-grid workforce-grid" id="workforceCards"></div>
-    </section>
+      <div class="hero-scale">
+        <div class="hero-scale-labels">
+          <span>Greater barriers</span>
+          <span>Greater opportunity</span>
+        </div>
 
-    <section class="landing-section landing-final-section">
-      <div class="landing-card pro-card next-steps-card">
-        <p class="landing-eyebrow">Next phase</p>
-        <h2>What still needs to be improved?</h2>
+        <div
+          class="hero-scale-bar"
+          aria-hidden="true"
+        ></div>
 
-        <div class="landing-next-grid">
+        <div class="hero-scale-values">
+          <span>0</span>
+          <span>50</span>
+          <span>100</span>
+        </div>
+      </div>
+
+      <div class="hero-method-list">
+        <div class="hero-method-item">
+          <div class="hero-method-icon">
+            <i class="bi bi-layers"></i>
+          </div>
+
           <div>
-            <h3>Refine service taxonomy</h3>
+            <strong>Look beyond the overall score</strong>
+
             <p>
-              Review youth-support, wraparound, employment, and transition-pathway categories so the service layer
-              better matches stakeholder expectations and the Workforce report.
+              Domain scores show which conditions contribute most to
+              each place’s result.
             </p>
           </div>
+        </div>
+
+        <div class="hero-method-item">
+          <div class="hero-method-icon">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+
           <div>
-            <h3>Add exact regional validation metrics</h3>
+            <strong>Compare places at the right scale</strong>
+
             <p>
-              Add Workforce-aligned regional values for unemployment, labor-force participation, graduation,
-              dropout, postsecondary enrollment, credential attainment, and youth segment counts.
+              County, regional, and tract views answer different
+              planning questions.
             </p>
           </div>
+        </div>
+
+        <div class="hero-method-item">
+          <div class="hero-method-icon">
+            <i class="bi bi-people"></i>
+          </div>
+
           <div>
-            <h3>Strengthen documentation</h3>
+            <strong>Add community context</strong>
+
             <p>
-              Build a final data dictionary with source, year, geography, transformation, directionality, and
-              domain assignment for every indicator.
+              Use the index as a starting point for investigation,
+              not as a final judgment about a neighborhood.
             </p>
           </div>
         </div>
       </div>
-    </section>
-  </main>
+    </aside>
+  </div>
+</section>
 
-  <script>
-    function formatNumber(value) {
-      if (value === null || value === undefined || Number.isNaN(Number(value))) return "N/A";
-      return Number(value).toLocaleString();
-    }
+  
 
-    function metricCard(label, value, note) {
-      return `
-        <article class="landing-metric-card pro-stat-card">
-          <div class="landing-metric-label">${label}</div>
-          <div class="landing-metric-value">${value}</div>
-          <div class="landing-metric-note">${note}</div>
-        </article>
-      `;
-    }
+  <section
+    class="story-section county-story"
+    id="county-story"
+  >
+    <div class="story-container">
+      <header class="story-section-header">
 
-    function rankItem(item, index) {
-      const yoi = item.overall_yoi ?? "N/A";
-      const youth = formatNumber(item.youth_pop_14_24);
-      const gap = item.lowest_domain ?? "N/A";
-      const gapScore = item.lowest_domain_score ?? "N/A";
+        <div class="section-heading">
+          <p class="landing-eyebrow orange">
+            Countywide picture
+          </p>
 
-      return `
-        <div class="priority-table-row">
-          <div class="priority-table-rank">${index + 1}</div>
-
-          <div class="priority-table-place">
-            <strong>${item.name}</strong>
-            <span>Lowest overall opportunity ranking</span>
-          </div>
-
-          <div class="priority-table-number">
-            <span>YOI score</span>
-            <strong>${yoi}/100</strong>
-          </div>
-
-          <div class="priority-table-number">
-            <span>Youth 14–24</span>
-            <strong>${youth}</strong>
-          </div>
-
-          <div class="priority-table-gap">
-            <span>Primary gap</span>
-            <strong>${gap}</strong>
-            <em>${gapScore}/100</em>
-          </div>
+          <h2>
+            Opportunity is uneven across San Diego County
+          </h2>
         </div>
-      `;
-    }
 
-    function compactGapItem(item, index, domainLabel) {
-      const domainScore = item.domain_scores?.[domainLabel];
-      return `
-        <div class="landing-rank-item pro-rank-item compact">
-          <div class="landing-rank-number">${index + 1}</div>
-          <div class="landing-rank-body">
-            <div class="landing-rank-title">${item.name}</div>
-            <div class="landing-rank-meta">
-              ${domainLabel} <strong>${domainScore ?? "N/A"}/100</strong>
-              · Overall <strong>${item.overall_yoi ?? "N/A"}/100</strong>
-            </div>
-          </div>
+        <p
+          id="countyLead"
+          class="section-lead"
+        >
+          Loading countywide insight…
+        </p>
+      </header>
+
+      <div
+        id="countyFacts"
+        class="story-fact-grid"
+      >
+        <div class="landing-loading">
+          Loading countywide metrics…
         </div>
-      `;
-    }
+      </div>
 
-    function horizontalBar(label, value, note = "") {
-      const safeValue = Math.max(0, Math.min(100, Number(value || 0)));
-      return `
-        <div class="pro-bar-row">
-          <div class="pro-bar-top">
+      <div class="county-visual-grid">
+        <article class="story-card scatter-card">
+          <div class="story-card-head">
             <div>
-              <strong>${label}</strong>
-              ${note ? `<span>${note}</span>` : ""}
+              <p class="card-kicker">
+                Neighborhood relationship
+              </p>
+
+              <h3>
+                Economic conditions move closely with overall opportunity
+              </h3>
+
+              <p>
+                Each point represents one San Diego County census tract.
+              </p>
             </div>
-            <strong>${value ?? "N/A"}/100</strong>
+
+            <span
+              id="scatterBadge"
+              class="chart-badge"
+            >
+              r = —
+            </span>
           </div>
-          <div class="pro-bar-track">
-            <div class="pro-bar-fill" style="width:${safeValue}%"></div>
+
+          <div class="scatter-canvas-wrap">
+            <canvas id="mainScatterCanvas"></canvas>
           </div>
+        </article>
+
+        <div class="county-insight-stack">
+          <article class="story-card relation-card">
+            <div class="story-card-head">
+              <div>
+                <p class="card-kicker">
+                  Strongest relationships
+                </p>
+
+                <h3>
+                  Which conditions are most connected to YOI?
+                </h3>
+
+                <p>
+                  Bars show correlation with overall opportunity.
+                </p>
+              </div>
+            </div>
+
+            <div class="relation-canvas-wrap">
+              <canvas id="relationBarCanvas"></canvas>
+            </div>
+          </article>
+
+          <aside
+            class="story-card meaning-card"
+            id="scatterMeaning"
+          >
+            <div class="meaning-icon">
+              <i class="bi bi-lightbulb"></i>
+            </div>
+
+            <div>
+              <p class="card-kicker">Interpretation</p>
+
+              <h3>What this pattern means</h3>
+
+              <p>
+                Loading relationship summary…
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="story-section region-story"
+    id="region-story"
+  >
+    <div class="story-container">
+      <header class="story-section-header">
+
+        <div class="section-heading">
+          <p class="landing-eyebrow orange">
+            Regional comparison
+          </p>
+
+          <h2>
+            Regional averages show where gaps are most concentrated
+          </h2>
+        </div>
+
+        <div class="section-lead-wrap">
+          <p
+            id="regionLead"
+            class="section-lead"
+          >
+            Loading regional insight…
+          </p>
+
+          <a
+            class="story-text-link"
+            href="./map.html"
+          >
+            Compare regions on the map
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </header>
+
+      <div
+        id="regionalActionGrid"
+        class="region-card-grid"
+      ></div>
+    </div>
+  </section>
+
+  <section
+    class="story-section local-story"
+    id="local-story"
+  >
+    <div class="story-container">
+      <header class="story-section-header">
+
+        <div class="section-heading">
+          <p class="landing-eyebrow orange">
+            Local priorities
+          </p>
+
+          <h2>
+            A closer look at the lowest-scoring census tracts
+          </h2>
+        </div>
+
+        <div class="section-lead-wrap">
+          <p
+            id="localLead"
+            class="section-lead"
+          >
+            Loading local insight…
+          </p>
+
+          <p class="section-context-note">
+            <i class="bi bi-info-circle"></i>
+
+            Treat these as starting points for investigation, community
+            context, and local action—not as final rankings of neighborhood
+            worth.
+          </p>
+        </div>
+      </header>
+
+      <div class="local-section-grid">
+        <article class="story-card local-card">
+          <div
+            id="topNeedList"
+            class="local-slide"
+            aria-live="polite"
+          ></div>
+
+          <div
+            class="local-controls"
+            aria-label="Local area carousel controls"
+          >
+            <button
+              id="localPrevBtn"
+              type="button"
+              aria-label="Previous area"
+            >
+              <i class="bi bi-arrow-left"></i>
+            </button>
+
+            <div
+              id="localDots"
+              class="local-dots"
+              aria-label="Choose a local area"
+            ></div>
+
+            <button
+              id="localNextBtn"
+              type="button"
+              aria-label="Next area"
+            >
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </article>
+
+        <article class="story-card local-map-card">
+          <div class="local-map-heading">
+            <div>
+              <p class="card-kicker">
+                Selected census tract
+              </p>
+
+              <h3>Geographic context</h3>
+            </div>
+
+            <span>
+              <i class="bi bi-geo-alt"></i>
+              Map follows carousel
+            </span>
+          </div>
+
+          <div
+            id="topTractsMiniMap"
+            class="top-tracts-mini-map story-map"
+          ></div>
+
+          <div
+            id="topTractsMiniMapLegend"
+            class="mini-map-legend"
+          ></div>
+        </article>
+      </div>
+
+      <div class="military-note">
+        <i class="bi bi-exclamation-circle"></i>
+
+        <p>
+          <strong>Interpret special-use areas carefully.</strong>
+          Military and low-residential ZIP codes can have unusual population
+          patterns and should be reviewed separately before priority-setting.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story-cta">
+    <div class="story-container story-cta-inner">
+      <div>
+        <p class="landing-eyebrow">
+          Continue the analysis
+        </p>
+
+        <h2>
+          Move from the headline findings to neighborhood-level detail
+        </h2>
+
+        <p>
+          Use the interactive map to compare geographies, inspect individual
+          domains, adjust weights, and review local context.
+        </p>
+      </div>
+
+      <a
+        class="landing-primary-btn"
+        href="./map.html"
+      >
+        Open the full dashboard
+        <i class="bi bi-arrow-up-right"></i>
+      </a>
+    </div>
+  </section>
+
+  
+
+  <div
+    class="legacy-landing-dummies"
+    hidden
+  >
+    <div id="landingMetrics"></div>
+    <div id="executiveSummary"></div>
+    <div id="distributionChart"></div>
+    <div id="driverBars"></div>
+    <div id="correlationStatus"></div>
+    <div id="chartDefinitions"></div>
+    <div id="correlationCallout"></div>
+    <div id="domainCorrelationCanvas"></div>
+    <div id="indicatorCorrelationCanvas"></div>
+    <div id="domainPairCorrelationCanvas"></div>
+    <div id="scatterCorrelationCanvas"></div>
+    <div id="whyDashboardMatters"></div>
+    <div id="regionBars"></div>
+    <div id="domainAverageBars"></div>
+    <div id="youthSupportsGapList"></div>
+    <div id="economicGapList"></div>
+    <div id="workforceCards"></div>
+    <div id="priorityCarouselTabs"></div>
+  </div>
+</main>
+
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  const STORY_COLORS = {
+    navy: "#072843",
+    teal: "#246E7E",
+    teal2: "#2B989E",
+    aqua: "#7CC6BB",
+    yellow: "#EEC574",
+    orange: "#E59A22",
+    rust: "#B6442C",
+    slate: "#64748b"
+  };
+
+  let scatterChart = null;
+  let relationChart = null;
+  let regionChart = null;
+  let miniMap = null;
+let cachedTractGeojson = null;
+
+let miniMapContextLayer = null;
+let miniMapOtherPriorityLayer = null;
+let miniMapSelectedLayer = null;
+
+let currentTopNeedTracts = [];
+let activeLocalIndex = 0;
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || Number.isNaN(Number(value))) return "N/A";
+    return Number(value).toLocaleString();
+  }
+
+  function pct(numerator, denominator, digits = 1) {
+    const n = Number(numerator || 0);
+    const d = Number(denominator || 0);
+    if (!d) return "N/A";
+    return `${((n / d) * 100).toFixed(digits)}%`;
+  }
+
+  function normalizeGeoid(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.padStart(11, "0").slice(-11);
+  }
+
+  function tractLabel(item) {
+    if (item.name) return item.name;
+    if (item.geoid) return `Census tract ${String(item.geoid).slice(-6)}`;
+    return "Census tract";
+  }
+
+  const LOCAL_TRACT_NAMES = {
+  "211.02": "Jacumba Hot Springs & Boulevard",
+  "100.13": "San Ysidro",
+  "100.05": "San Ysidro",
+  "164.04": "El Cajon",
+  "200.29": "Palomar Estates, San Marcos"
+};
+
+const LOCAL_TRACT_CONTEXT = {
+  "211.02":
+    "Rural East County backcountry communities",
+
+  "100.13":
+    "Far South San Diego near the U.S.–Mexico border",
+
+  "100.05":
+    "Northern San Ysidro, north of State Route 905",
+
+  "164.04":
+    "El Cajon Subregional Area",
+
+  "200.29":
+    "Near Linda Vista Drive and Beverly Place"
+};
+
+function getLocalTractNumber(item) {
+  /*
+   * First, try a readable tract name such as:
+   * "Census tract 211.02"
+   */
+  const nameValue =
+    item.name ||
+    item.tract_name ||
+    item.NAME ||
+    "";
+
+  const nameMatch =
+    String(nameValue).match(
+      /(?:census\s+tract\s+)?0*(\d+)\.(\d{2})/i
+    );
+
+  if (nameMatch) {
+    return `${Number(nameMatch[1])}.${nameMatch[2]}`;
+  }
+
+  /*
+   * The data might store the tract number directly
+   * instead of using a full Census GEOID.
+   */
+  const rawId = String(
+    item.geoid ||
+    item.tract_geoid ||
+    item.GEOID ||
+    item.GEOID20 ||
+    ""
+  ).trim();
+
+  const directMatch =
+    rawId.match(/^0*(\d+)\.(\d{2})$/);
+
+  if (directMatch) {
+    return `${Number(directMatch[1])}.${directMatch[2]}`;
+  }
+
+  /*
+   * Otherwise, extract the tract number from an
+   * 11-digit GEOID such as 06073021102.
+   *
+   * Last six digits: 021102
+   * First four: 0211 -> 211
+   * Last two: 02
+   * Result: 211.02
+   */
+  const normalizedGeoid =
+    normalizeGeoid(rawId);
+
+  if (normalizedGeoid) {
+    const tractCode =
+      normalizedGeoid.slice(-6);
+
+    const wholeNumber =
+      Number(tractCode.slice(0, 4));
+
+    const decimalNumber =
+      tractCode.slice(4);
+
+    return `${wholeNumber}.${decimalNumber}`;
+  }
+
+  return "";
+}
+
+function localTitle(item) {
+  const tractNumber =
+    getLocalTractNumber(item);
+
+  /*
+   * Use the custom name for the five priority tracts.
+   */
+  if (LOCAL_TRACT_NAMES[tractNumber]) {
+    return LOCAL_TRACT_NAMES[tractNumber];
+  }
+
+  /*
+   * Continue supporting neighborhood fields if they
+   * are added to the generated JSON later.
+   */
+  const candidate =
+    item.neighborhood ||
+    item.community ||
+    item.community_name ||
+    item.planning_area ||
+    item.display_name ||
+    item.area_name;
+
+  if (
+    candidate &&
+    !String(candidate)
+      .toLowerCase()
+      .includes("census tract")
+  ) {
+    return candidate;
+  }
+
+  /*
+   * Never fall back to "Area 1," "Area 2," etc.
+   */
+  if (tractNumber) {
+    return `Census Tract ${tractNumber}`;
+  }
+
+  return "Local Priority Area";
+}
+
+function localAreaContext(item) {
+  const tractNumber =
+    getLocalTractNumber(item);
+
+  return (
+    LOCAL_TRACT_CONTEXT[tractNumber] ||
+    ""
+  );
+}
+
+  function domainAction(domain) {
+    const d = String(domain || "").toLowerCase();
+
+    if (d.includes("economic")) return "employment, income stability, and workforce access";
+    if (d.includes("youth")) return "youth services and wraparound support";
+    if (d.includes("health")) return "health access and neighborhood health conditions";
+    if (d.includes("housing")) return "housing affordability and stability";
+    if (d.includes("mobility")) return "transportation and connectivity";
+    if (d.includes("education")) return "education pathways and attainment";
+    if (d.includes("safety")) return "safety and environmental conditions";
+
+    return "the underlying indicators";
+  }
+
+  function getFeatureGeoid(feature) {
+    const p = feature?.properties || {};
+    return normalizeGeoid(
+      p.tract_geoid ||
+      p.GEOID ||
+      p.GEOID20 ||
+      p.geoid ||
+      p.TRACT_GEOID ||
+      p.TRACTCE ||
+      ""
+    );
+  }
+
+  function factCard(label, value, note, accent, icon) {
+  return `
+    <article class="story-fact-card ${accent}">
+      <div class="fact-card-top">
+        <span class="fact-label">${label}</span>
+
+        <div
+          class="fact-icon"
+          aria-hidden="true"
+        >
+          <i class="bi ${icon}"></i>
+        </div>
+      </div>
+
+      <strong class="fact-value">${value}</strong>
+
+      <p>${note}</p>
+    </article>
+  `;
+}
+
+function renderCounty(data) {
+  const metrics = data.metrics || {};
+
+  const tractShare = pct(
+    metrics.low_opportunity_tracts,
+    metrics.tract_count
+  );
+
+  const youthShare = pct(
+    metrics.youth_in_low_opportunity_tracts,
+    metrics.total_youth_pop_14_24
+  );
+
+  const lowTracts = formatNumber(
+    metrics.low_opportunity_tracts
+  );
+
+  const affectedYouth = formatNumber(
+    metrics.youth_in_low_opportunity_tracts
+  );
+
+  const commonGap =
+    metrics.bottom_quintile_main_driver ||
+    "N/A";
+
+  const heroTractsValue =
+    document.getElementById("heroTractsValue");
+
+  const heroYouthValue =
+    document.getElementById("heroYouthValue");
+
+  const heroGapValue =
+    document.getElementById("heroGapValue");
+
+  if (heroTractsValue) {
+    heroTractsValue.textContent = lowTracts;
+  }
+
+  if (heroYouthValue) {
+    heroYouthValue.textContent = affectedYouth;
+  }
+
+  if (heroGapValue) {
+    heroGapValue.textContent = commonGap;
+  }
+
+  const lead =
+    document.getElementById("countyLead");
+
+  if (lead) {
+    lead.innerHTML = `
+      <strong>${lowTracts} mapped tracts</strong>
+      score below 40 out of 100. Together, they are home to about
+      <strong>${affectedYouth} young people ages 14–24</strong>.
+      The pattern is not evenly distributed, which makes
+      place-based context essential.
+    `;
+  }
+
+  const facts =
+    document.getElementById("countyFacts");
+
+  if (facts) {
+    facts.innerHTML = [
+      factCard(
+        "Low-opportunity tracts",
+        lowTracts,
+        `${tractShare} of all mapped census tracts score below 40.`,
+        "orange",
+        "bi-map"
+      ),
+
+      factCard(
+        "Youth living in those tracts",
+        affectedYouth,
+        `${youthShare} of the county’s estimated population ages 14–24.`,
+        "teal",
+        "bi-people"
+      ),
+
+      factCard(
+        "Lowest observed tract score",
+        `${metrics.lowest_overall_score ?? "N/A"}/100`,
+        "The lowest overall YOI value among mapped census tracts.",
+        "gold",
+        "bi-graph-down-arrow"
+      ),
+
+      factCard(
+        "Most frequent weakest domain",
+        commonGap,
+        "The domain most often appearing as the largest gap in the bottom quintile.",
+        "aqua",
+        "bi-compass"
+      )
+    ].join("");
+  }
+}
+
+  function chooseScatter(corr) {
+    return (
+      (corr.scatter_plots || []).find(d => String(d.title || "").toLowerCase().includes("economic")) ||
+      (corr.scatter_plots || [])[0]
+    );
+  }
+
+  function renderScatter(corr) {
+  const canvas =
+    document.getElementById("mainScatterCanvas");
+
+  const badge =
+    document.getElementById("scatterBadge");
+
+  const meaning =
+    document.getElementById("scatterMeaning");
+
+  if (!canvas) {
+    console.error(
+      "Missing canvas element: #mainScatterCanvas"
+    );
+
+    return;
+  }
+
+  if (!window.Chart) {
+    console.error(
+      "Chart.js did not load."
+    );
+
+    return;
+  }
+
+  const scatter =
+    chooseScatter(corr || {});
+
+  /*
+   * Show a safe message when the correlation JSON
+   * is unavailable or contains no scatter points.
+   */
+  if (
+    !scatter ||
+    !Array.isArray(scatter.points) ||
+    !scatter.points.length
+  ) {
+    if (badge) {
+      badge.textContent =
+        "Data unavailable";
+    }
+
+    if (meaning) {
+      meaning.innerHTML = `
+        <div
+          class="meaning-icon"
+          aria-hidden="true"
+        >
+          <i class="bi bi-info-circle"></i>
+        </div>
+
+        <div class="meaning-content">
+          <p class="card-kicker">
+            Interpretation
+          </p>
+
+          <h3>
+            Relationship data unavailable
+          </h3>
+
+          <p>
+            The correlation data could not be loaded.
+            The countywide, regional, and local findings
+            are still available.
+          </p>
         </div>
       `;
     }
 
-    function regionBar(region) {
-      const note = `
-        Youth 14–24: ${formatNumber(region.youth_pop_14_24)}
-        · Lowest: ${region.lowest_domain} ${region.lowest_domain_score ?? "N/A"}/100
-      `;
-      return horizontalBar(region.region, region.overall_yoi, note);
-    }
+    return;
+  }
 
-    function domainBar(domain) {
-      return horizontalBar(domain.domain, domain.score, "Average tract score");
-    }
+  const r =
+    Number(scatter.r || 0);
 
-    let yoiDistributionChart = null;
+  const strength =
+    Math.abs(r) >= 0.7
+      ? "strong"
+      : Math.abs(r) >= 0.35
+        ? "moderate"
+        : "weak";
 
-    function histogram(data) {
-      return `
-        <div class="chartjs-yoi-wrap">
-          <canvas id="yoiDistributionCanvas" aria-label="Opportunity score distribution chart"></canvas>
-        </div>
-      `;
-    }
+  const direction =
+    r >= 0
+      ? "positive"
+      : "negative";
 
-    function renderYoiDistributionChart(data) {
-      const canvas = document.getElementById("yoiDistributionCanvas");
-      if (!canvas || !window.Chart) return;
+  if (badge) {
+    badge.textContent =
+      `Correlation r = ${r.toFixed(2)}`;
+  }
 
-      const labels = data.map(d => d.range);
-      const counts = data.map(d => Number(d.tract_count || 0));
-      const maxCount = Math.max(...counts, 1);
-      const yMax = Math.ceil(maxCount / 100) * 100;
+  if (meaning) {
+    meaning.innerHTML = `
+      <div
+        class="meaning-icon"
+        aria-hidden="true"
+      >
+        <i class="bi bi-lightbulb"></i>
+      </div>
 
-      if (yoiDistributionChart) {
-        yoiDistributionChart.destroy();
-      }
+      <div class="meaning-content">
+        <p class="card-kicker">
+          Interpretation
+        </p>
 
-      yoiDistributionChart = new Chart(canvas, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Census tracts",
-            data: counts,
-            backgroundColor: "#246e7e",
-            borderColor: "#174f5c",
+        <h3>
+          A ${strength} relationship, not proof of cause
+        </h3>
+
+        <p>
+          The chart shows a
+          <strong>
+            ${strength} ${direction} relationship
+          </strong>
+          between
+          ${scatter.x_label.toLowerCase()}
+          and overall opportunity. Census tracts with
+          stronger scores on this condition generally
+          also have stronger overall YOI scores.
+        </p>
+
+        <p class="meaning-footnote">
+          Correlation does not establish cause and effect.
+          Use this pattern to identify places and domain
+          indicators that deserve closer investigation.
+        </p>
+      </div>
+    `;
+  }
+
+  if (scatterChart) {
+    scatterChart.destroy();
+  }
+
+  scatterChart = new Chart(
+    canvas,
+    {
+      type: "scatter",
+
+      data: {
+        datasets: [
+          {
+            data: scatter.points.map(
+              point => ({
+                x: Number(point.x),
+                y: Number(point.y),
+                name: point.name
+              })
+            ),
+
+            backgroundColor:
+              "rgba(36, 110, 126, 0.62)",
+
+            borderColor:
+              STORY_COLORS.navy,
+
             borderWidth: 1,
-            hoverBackgroundColor: "#2b989e",
-            borderRadius: 2,
-            barPercentage: 0.62,
-            categoryPercentage: 0.72
-          }]
+            pointRadius: 2.8,
+            pointHoverRadius: 5
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        interaction: {
+          mode: "nearest",
+          intersect: true
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 450,
-            easing: "easeOutQuart"
+
+        plugins: {
+          legend: {
+            display: false
           },
-          interaction: {
-            mode: "index",
-            intersect: false
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: "#072843",
-              titleColor: "#ffffff",
-              bodyColor: "#ffffff",
-              borderColor: "#174f5c",
-              borderWidth: 1,
-              cornerRadius: 4,
-              displayColors: false,
-              padding: 10,
-              callbacks: {
-                title: items => `YOI score range: ${items[0].label}`,
-                label: item => `${item.raw.toLocaleString()} Census tracts`
+
+          tooltip: {
+            backgroundColor:
+              STORY_COLORS.navy,
+
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            padding: 10,
+
+            callbacks: {
+              title: items =>
+                items[0]?.raw?.name ||
+                "Census tract",
+
+              label: item => [
+                `${scatter.x_label}: ${
+                  Number(item.raw.x).toFixed(1)
+                }`,
+
+                `${scatter.y_label}: ${
+                  Number(item.raw.y).toFixed(1)
+                }`
+              ]
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: scatter.x_label,
+              color: STORY_COLORS.slate,
+
+              font: {
+                family: "Inter",
+                size: 12,
+                weight: "600"
               }
+            },
+
+            ticks: {
+              color: STORY_COLORS.slate,
+
+              font: {
+                family: "Inter",
+                size: 11,
+                weight: "500"
+              }
+            },
+
+            grid: {
+              color: "#d8e1e8"
+            },
+
+            border: {
+              color: "#cfd9e2"
             }
           },
-          scales: {
-            y: {
-              beginAtZero: true,
-              suggestedMax: yMax,
-              title: {
-                display: true,
-                text: "Number of Census tracts",
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                }
-              },
-              ticks: {
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                },
-                precision: 0
-              },
-              grid: {
-                color: "#d8e1e8",
-                lineWidth: 1
-              },
-              border: {
-                color: "#cfd9e2",
-                width: 1
+
+          y: {
+            title: {
+              display: true,
+              text: scatter.y_label,
+              color: STORY_COLORS.slate,
+
+              font: {
+                family: "Inter",
+                size: 12,
+                weight: "600"
               }
             },
-            x: {
-              title: {
-                display: true,
-                text: "Overall YOI score range",
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                }
-              },
-              ticks: {
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 13,
-                  weight: "800"
-                }
-              },
-              grid: {
-                display: false
-              },
-              border: {
-                color: "#cfd9e2",
-                width: 1
+
+            ticks: {
+              color: STORY_COLORS.slate,
+
+              font: {
+                family: "Inter",
+                size: 11,
+                weight: "500"
               }
+            },
+
+            grid: {
+              color: "#d8e1e8"
+            },
+
+            border: {
+              color: "#cfd9e2"
             }
           }
         }
+      }
+    }
+  );
+}
+
+  function relationRows(corr) {
+    const rows = [
+      ...(corr.top_positive_indicators || []),
+      ...(corr.top_negative_indicators || [])
+    ]
+      .filter(row => {
+        const label = String(row.indicator || "");
+        return !/overall|yoi$|standardized yoi|score z/i.test(label);
+      })
+      .sort((a, b) => Math.abs(Number(b.r || 0)) - Math.abs(Number(a.r || 0)))
+      .slice(0, 8);
+
+    if (rows.length) {
+      return rows.map(row => ({
+        label: row.indicator,
+        value: Number(row.r || 0)
+      }));
+    }
+
+    return (corr.domain_to_overall || []).slice(0, 7).map(row => ({
+      label: row.domain,
+      value: Number(row.r || 0)
+    }));
+  }
+
+  function renderRelationChart(corr) {
+    const canvas = document.getElementById("relationBarCanvas");
+    if (!canvas || !window.Chart) return;
+
+    const rows = relationRows(corr || {});
+
+    if (!rows.length) return;
+
+    if (relationChart) relationChart.destroy();
+
+    relationChart = new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: rows.map(row => row.label),
+        datasets: [{
+          data: rows.map(row => row.value),
+          backgroundColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderWidth: 1,
+          borderRadius: 3,
+          barPercentage: 0.7,
+          categoryPercentage: 0.72
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: STORY_COLORS.navy,
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            callbacks: {
+              label: item => `r = ${Number(item.raw).toFixed(2)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: -1,
+            max: 1,
+            title: {
+              display: true,
+              text: "Correlation (r)",
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 12, weight: "600" }
+            },
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: {
+              color: ctx => ctx.tick.value === 0 ? STORY_COLORS.navy : "#d8e1e8",
+              lineWidth: ctx => ctx.tick.value === 0 ? 1.2 : 1
+            },
+            border: { color: "#cfd9e2" }
+          },
+          y: {
+            ticks: {
+              color: "#0f172a",
+              font: { family: "Inter", size: 11, weight: "600" }
+            },
+            grid: { display: false },
+            border: { color: "#cfd9e2" }
+          }
+        }
+      }
+    });
+  }
+
+  function regionCard(region, index) {
+  const weak =
+    region.lowest_domain ||
+    "N/A";
+
+  const weakScore =
+    region.lowest_domain_score ??
+    "N/A";
+
+  const isLowest =
+    index === 0;
+
+  return `
+    <article
+      class="story-region-card ${isLowest ? "lowest" : ""}"
+    >
+      <div class="region-card-top">
+        <span class="region-rank">
+          0${index + 1}
+        </span>
+
+        <span class="region-status">
+          ${
+            isLowest
+              ? "Lowest regional score"
+              : "Regional comparison"
+          }
+        </span>
+      </div>
+
+      <h3>${region.region}</h3>
+
+      <div class="region-score-row">
+        <strong>
+          ${region.overall_yoi ?? "N/A"}
+        </strong>
+
+        <span>
+          Overall YOI<br>
+          out of 100
+        </span>
+      </div>
+
+      <dl class="region-details">
+        <div>
+          <dt>Youth ages 14–24</dt>
+
+          <dd>
+            ${formatNumber(region.youth_pop_14_24)}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Weakest domain</dt>
+
+          <dd>${weak}</dd>
+        </div>
+
+        <div>
+          <dt>Domain score</dt>
+
+          <dd>${weakScore}/100</dd>
+        </div>
+      </dl>
+
+      <p class="region-action">
+        <i class="bi bi-arrow-right-circle"></i>
+
+        Investigate ${domainAction(weak)} first.
+      </p>
+    </article>
+  `;
+}
+
+function renderRegions(data) {
+  const regions =
+    (data.county_regions || [])
+      .slice()
+      .sort(
+        (a, b) =>
+          Number(a.overall_yoi || 0) -
+          Number(b.overall_yoi || 0)
+      );
+
+  const lead =
+    document.getElementById("regionLead");
+
+  if (lead && regions.length) {
+    const lowest =
+      regions[0];
+
+    const highest =
+      regions[regions.length - 1];
+
+    const gap = (
+      Number(highest.overall_yoi || 0) -
+      Number(lowest.overall_yoi || 0)
+    ).toFixed(1);
+
+    lead.innerHTML = `
+      Regional averages differ by
+      <strong>${gap} points</strong>.
+      <strong>${lowest.region}</strong>
+      has the lowest regional YOI, while
+      <strong>${highest.region}</strong>
+      has the highest. These averages help frame policy
+      conversations, but they can still hide meaningful variation
+      between neighborhoods within the same region.
+    `;
+  }
+
+  const grid =
+    document.getElementById("regionalActionGrid");
+
+  if (grid) {
+    grid.innerHTML =
+      regions
+        .map(regionCard)
+        .join("");
+  }
+}
+
+  function renderRegionChart(regions) {
+    const canvas = document.getElementById("regionChartCanvas");
+    if (!canvas || !window.Chart || !regions.length) return;
+
+    if (regionChart) regionChart.destroy();
+
+    regionChart = new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: regions.map(r => r.region),
+        datasets: [{
+          data: regions.map(r => Number(r.overall_yoi || 0)),
+          backgroundColor: regions.map((_, i) => i === 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
+          borderRadius: 4,
+          barPercentage: 0.52,
+          categoryPercentage: 0.7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: STORY_COLORS.navy,
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            displayColors: false,
+            callbacks: {
+              label: item => `Overall YOI: ${Number(item.raw).toFixed(1)}/100`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              color: STORY_COLORS.slate,
+              font: { family: "Inter", size: 11, weight: "500" }
+            },
+            grid: { color: "#d8e1e8" },
+            border: { color: "#cfd9e2" }
+          },
+          x: {
+            ticks: {
+              color: "#0f172a",
+              font: { family: "Inter", size: 10, weight: "600" },
+              maxRotation: 0,
+              autoSkip: false
+            },
+            grid: { display: false },
+            border: { color: "#cfd9e2" }
+          }
+        }
+      }
+    });
+  }
+
+  function renderLocalPanel() {
+  const panel =
+    document.getElementById("topNeedList");
+
+  const dots =
+    document.getElementById("localDots");
+
+  if (
+    !panel ||
+    !currentTopNeedTracts.length
+  ) {
+    return;
+  }
+
+  const item =
+    currentTopNeedTracts[activeLocalIndex];
+
+  const gap =
+    item.lowest_domain ||
+    "N/A";
+
+  const currentNumber =
+    String(activeLocalIndex + 1)
+      .padStart(2, "0");
+
+  const totalNumber =
+    String(currentTopNeedTracts.length)
+      .padStart(2, "0");
+
+  panel.innerHTML = `
+    <div class="local-card-head">
+      <div>
+        <p class="local-kicker">
+          Priority area ${currentNumber}
+        </p>
+
+        <h3>
+          ${localTitle(item, activeLocalIndex)}
+        </h3>
+
+        <p class="local-tract-label">
+  ${tractLabel(item)}
+</p>
+
+${
+  localAreaContext(item)
+    ? `
+      <p class="local-area-context">
+        <i class="bi bi-geo-alt"></i>
+        ${localAreaContext(item)}
+      </p>
+    `
+    : ""
+}
+      </div>
+
+      <span class="local-count">
+        ${currentNumber} / ${totalNumber}
+      </span>
+    </div>
+
+    <div class="local-score-layout">
+      <div class="local-primary-score">
+        <span>
+          Overall Youth Opportunity Index
+        </span>
+
+        <div>
+          <strong>
+            ${item.overall_yoi ?? "N/A"}
+          </strong>
+
+          <small>/100</small>
+        </div>
+
+        <p>
+          Lower scores indicate greater barriers relative to other
+          mapped tracts.
+        </p>
+      </div>
+
+      <div class="local-secondary-stat">
+        <span>
+          Estimated youth ages 14–24
+        </span>
+
+        <strong>
+          ${formatNumber(item.youth_pop_14_24)}
+        </strong>
+
+        <p>
+          Young people represented in this census tract.
+        </p>
+      </div>
+    </div>
+
+    <div class="local-focus-block">
+      <div class="local-focus-label">
+        <i class="bi bi-compass"></i>
+        Main opportunity gap
+      </div>
+
+      <div class="local-focus-value">
+        <strong>${gap}</strong>
+
+        <span>
+          ${item.lowest_domain_score ?? "N/A"}/100
+        </span>
+      </div>
+    </div>
+
+    <div class="local-action-block">
+      <span>Where to look first</span>
+
+      <p>
+        Review
+        <strong>${domainAction(gap)}</strong>,
+        then use the map to compare this tract with nearby areas
+        and the countywide pattern.
+      </p>
+    </div>
+  `;
+
+  if (dots) {
+    dots.innerHTML =
+      currentTopNeedTracts
+        .map(
+          (_, i) => `
+            <button
+              class="${
+                i === activeLocalIndex
+                  ? "active"
+                  : ""
+              }"
+              data-index="${i}"
+              type="button"
+              aria-label="Show priority area ${i + 1}"
+              aria-current="${
+                i === activeLocalIndex
+                  ? "true"
+                  : "false"
+              }"
+            ></button>
+          `
+        )
+        .join("");
+
+    dots
+      .querySelectorAll("[data-index]")
+      .forEach(button => {
+        button.addEventListener(
+          "click",
+          () => {
+            activeLocalIndex =
+              Number(button.dataset.index);
+
+            renderLocalPanel();
+
+            renderTopTractsMiniMap(
+              currentTopNeedTracts,
+              activeLocalIndex
+            );
+          }
+        );
       });
+  }
+}
+
+  function setupLocalControls() {
+    const prev = document.getElementById("localPrevBtn");
+    const next = document.getElementById("localNextBtn");
+
+    if (prev) {
+      prev.onclick = () => {
+        if (!currentTopNeedTracts.length) return;
+        activeLocalIndex = (activeLocalIndex - 1 + currentTopNeedTracts.length) % currentTopNeedTracts.length;
+        renderLocalPanel();
+        renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+      };
     }
 
-
-    function normalizeGeoid(value) {
-      const digits = String(value || "").replace(/\D/g, "");
-      if (!digits) return "";
-      return digits.padStart(11, "0").slice(-11);
+    if (next) {
+      next.onclick = () => {
+        if (!currentTopNeedTracts.length) return;
+        activeLocalIndex = (activeLocalIndex + 1) % currentTopNeedTracts.length;
+        renderLocalPanel();
+        renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+      };
     }
+  }
 
-    function getFeatureGeoid(feature) {
-      const p = feature?.properties || {};
-      return normalizeGeoid(
-        p.tract_geoid ||
-        p.GEOID ||
-        p.GEOID20 ||
-        p.geoid ||
-        p.TRACT_GEOID ||
-        p.TRACTCE ||
-        ""
+  async function renderTopTractsMiniMap(topTracts, selectedIndex = 0) {
+  const container = document.getElementById("topTractsMiniMap");
+
+  if (
+    !container ||
+    !Array.isArray(topTracts) ||
+    !topTracts.length ||
+    !window.L
+  ) {
+    return;
+  }
+
+  const selectedItem = topTracts[selectedIndex] || topTracts[0];
+  const selectedGeoid = normalizeGeoid(selectedItem.geoid);
+
+  const targetGeoids = new Set(
+    topTracts.map(item => normalizeGeoid(item.geoid))
+  );
+
+  /*
+   * Load the tract boundaries only once.
+   */
+  if (!cachedTractGeojson) {
+    const response = await fetch(
+      "./data/processed/boundaries/sd_tracts.geojson"
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Unable to load tract boundaries: ${response.status}`
       );
     }
 
-    async function renderTopTractsMiniMap(topTracts) {
-      const container = document.getElementById("topTractsMiniMap");
-      const legend = document.getElementById("topTractsMiniMapLegend");
-
-      if (!container || !window.L || !Array.isArray(topTracts) || topTracts.length === 0) {
-        return;
-      }
-
-      const targetGeoids = new Set(topTracts.map(t => normalizeGeoid(t.geoid)));
-      const tractByGeoid = new Map(topTracts.map((t, i) => [normalizeGeoid(t.geoid), { ...t, rank: i + 1 }]));
-
-      const res = await fetch("./data/processed/boundaries/sd_tracts.geojson");
-      const geojson = await res.json();
-
-      // Clear old map if the page re-renders.
-      if (window.topTractsMiniLeafletMap) {
-        window.topTractsMiniLeafletMap.remove();
-      }
-
-      const map = L.map("topTractsMiniMap", {
-        zoomControl: false,
-        attributionControl: false,
-        scrollWheelZoom: false,
-        dragging: true,
-        doubleClickZoom: false,
-        boxZoom: false,
-        keyboard: false,
-        tap: false
-      });
-
-      window.topTractsMiniLeafletMap = map;
-
-      // Add visible zoom controls for the mini map.
-      L.control.zoom({ position: "topright" }).addTo(map);
-
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        maxZoom: 18
-      }).addTo(map);
-
-      const backgroundLayer = L.geoJSON(geojson, {
-        filter: feature => !targetGeoids.has(getFeatureGeoid(feature)),
-        style: {
-          color: "#94a3b8",
-          weight: 0.35,
-          opacity: 0.35,
-          fillColor: "#dce6ea",
-          fillOpacity: 0.12
-        },
-        interactive: false
-      }).addTo(map);
-
-      const highlightLayer = L.geoJSON(geojson, {
-        filter: feature => targetGeoids.has(getFeatureGeoid(feature)),
-        style: {
-          color: "#072843",
-          weight: 1.6,
-          opacity: 1,
-          fillColor: "#e59a22",
-          fillOpacity: 0.78
-        },
-        onEachFeature: (feature, layer) => {
-          const geoid = getFeatureGeoid(feature);
-          const item = tractByGeoid.get(geoid);
-
-          if (!item) return;
-
-          layer.bindTooltip(
-            `<strong>#${item.rank} ${item.name}</strong><br>` +
-            `Overall YOI: <strong>${item.overall_yoi}/100</strong><br>` +
-            `Main gap: <strong>${item.lowest_domain}</strong>`,
-            {
-              sticky: true,
-              direction: "top",
-              className: "mini-map-tooltip"
-            }
-          );
-        }
-      }).addTo(map);
-
-      const bounds = highlightLayer.getBounds();
-
-      if (bounds.isValid()) {
-        map.fitBounds(bounds.pad(0.16));
-      } else {
-        map.setView([32.82, -117.05], 10);
-      }
-
-      // Fix Leaflet sizing after hidden/layout paint.
-      setTimeout(() => {
-        map.invalidateSize();
-        if (bounds.isValid()) map.fitBounds(bounds.pad(0.16));
-      }, 120);
-
-      if (legend) {
-        legend.innerHTML = topTracts.map((t, i) => `
-          <div class="mini-map-legend-item">
-            <span>${i + 1}</span>
-            <strong>${t.name}</strong>
-            <em>${t.overall_yoi}/100</em>
-          </div>
-        `).join("");
-      }
-    }
-
-
-    function planningSignalForDomain(domain) {
-      const d = String(domain || "").toLowerCase();
-
-      if (d.includes("economic")) {
-        return "Prioritize workforce, income stability, and employment-access strategies.";
-      }
-
-      if (d.includes("youth")) {
-        return "Review service coverage, youth programming, and access to wraparound support.";
-      }
-
-      if (d.includes("education")) {
-        return "Investigate school, enrollment, attainment, and postsecondary pathway barriers.";
-      }
-
-      if (d.includes("health")) {
-        return "Review health access, health burden, and neighborhood condition indicators.";
-      }
-
-      if (d.includes("housing")) {
-        return "Review housing affordability, stability, and residential pressure indicators.";
-      }
-
-      if (d.includes("mobility")) {
-        return "Review transit access, vehicle access, commute burden, and connectivity barriers.";
-      }
-
-      if (d.includes("safety")) {
-        return "Review safety, environmental burden, and community condition indicators.";
-      }
-
-      return "Review the underlying indicators for this region.";
-    }
-
-    function regionalActionCard(region) {
-      const weakest = region.lowest_domain || "N/A";
-      const weakestScore = region.lowest_domain_score ?? "N/A";
-      const overall = region.overall_yoi ?? "N/A";
-
-      return `
-        <article class="regional-action-card">
-          <div class="regional-action-top">
-            <div>
-              <h3>${region.region}</h3>
-              <p>Estimated youth 14–24: <strong>${formatNumber(region.youth_pop_14_24)}</strong></p>
-            </div>
-            <div class="regional-score">${overall}/100</div>
-          </div>
-
-          <div class="regional-action-body">
-            <div>
-              <span>Weakest domain</span>
-              <strong>${weakest}</strong>
-              <em>${weakestScore}/100</em>
-            </div>
-
-            <p>${planningSignalForDomain(weakest)}</p>
-          </div>
-        </article>
-      `;
-    }
-
-    function driverBar(item, maxCount) {
-      const count = Number(item.tract_count || 0);
-      const width = maxCount ? Math.max(4, (count / maxCount) * 100) : 0;
-
-      return `
-        <div class="driver-row" data-tooltip="${count} bottom-quintile tracts have ${item.domain} as their weakest domain">
-          <div class="driver-label">${item.domain}</div>
-          <div class="driver-track">
-            <div class="driver-fill" style="width:${width}%"></div>
-          </div>
-          <div class="driver-value">${count}</div>
-        </div>
-      `;
-    }
-
-    function evidenceCard(label, value, note) {
-      return `
-        <div class="evidence-card">
-          <span>${label}</span>
-          <strong>${value}</strong>
-          <p>${note}</p>
-        </div>
-      `;
-    }
-
-
-
-    const correlationCharts = {};
-
-    function destroyCorrelationChart(canvasId) {
-      if (correlationCharts[canvasId]) {
-        correlationCharts[canvasId].destroy();
-        delete correlationCharts[canvasId];
-      }
-    }
-
-    function correlationColor(r) {
-      const value = Number(r || 0);
-      if (value < 0) return "#e59a22";
-      return "#246e7e";
-    }
-
-    function correlationLabel(r) {
-      const value = Number(r || 0);
-
-      if (value >= 0.6) return "strong positive";
-      if (value >= 0.35) return "positive";
-      if (value <= -0.6) return "strong negative";
-      if (value <= -0.35) return "negative";
-      return "weak";
-    }
-
-    function shortChartLabel(label, maxLength = 28) {
-      const text = String(label || "N/A");
-      if (text.length <= maxLength) return text;
-      return text.slice(0, maxLength - 1) + "…";
-    }
-
-    function renderCorrelationBarChart(canvasId, rows, labelKey, valueKey, xTitle) {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas || !window.Chart || !Array.isArray(rows) || rows.length === 0) return;
-
-      destroyCorrelationChart(canvasId);
-
-      const labels = rows.map(row => shortChartLabel(row[labelKey]));
-      const values = rows.map(row => Number(row[valueKey] || 0));
-
-      correlationCharts[canvasId] = new Chart(canvas, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            data: values,
-            backgroundColor: values.map(correlationColor),
-            borderColor: values.map(correlationColor),
-            borderWidth: 1,
-            borderRadius: 3,
-            barPercentage: 0.68,
-            categoryPercentage: 0.76
-          }]
-        },
-        options: {
-          indexAxis: "y",
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 450,
-            easing: "easeOutQuart"
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: "#072843",
-              titleColor: "#ffffff",
-              bodyColor: "#ffffff",
-              borderColor: "#174f5c",
-              borderWidth: 1,
-              cornerRadius: 4,
-              displayColors: false,
-              padding: 10,
-              callbacks: {
-                title: items => rows[items[0].dataIndex][labelKey],
-                label: item => {
-                  const row = rows[item.dataIndex];
-                  const r = Number(row[valueKey] || 0);
-                  return `r = ${r.toFixed(3)} (${correlationLabel(r)})`;
-                },
-                afterLabel: item => {
-                  const row = rows[item.dataIndex];
-                  return row.n ? `${row.n.toLocaleString()} tracts used` : "";
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              min: -1,
-              max: 1,
-              title: {
-                display: true,
-                text: xTitle || "Correlation with overall YOI",
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                }
-              },
-              ticks: {
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 11,
-                  weight: "700"
-                },
-                callback: value => Number(value).toFixed(1)
-              },
-              grid: {
-                color: ctx => ctx.tick.value === 0 ? "#072843" : "#d8e1e8",
-                lineWidth: ctx => ctx.tick.value === 0 ? 1.3 : 1
-              },
-              border: {
-                color: "#cfd9e2"
-              }
-            },
-            y: {
-              ticks: {
-                color: "#0f172a",
-                font: {
-                  family: "Inter",
-                  size: 11,
-                  weight: "800"
-                }
-              },
-              grid: {
-                display: false
-              },
-              border: {
-                color: "#cfd9e2"
-              }
-            }
-          }
-        }
-      });
-    }
-
-    function renderScatterCorrelationChart(canvasId, scatter) {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas || !window.Chart || !scatter || !Array.isArray(scatter.points)) return;
-
-      destroyCorrelationChart(canvasId);
-
-      const subtitle = document.getElementById("scatterSubtitle");
-      if (subtitle) {
-        subtitle.textContent = `${scatter.title}. Each point represents one Census tract. r = ${scatter.r ?? "N/A"}.`;
-      }
-
-      correlationCharts[canvasId] = new Chart(canvas, {
-        type: "scatter",
-        data: {
-          datasets: [{
-            label: scatter.title,
-            data: scatter.points.map(point => ({
-              x: Number(point.x),
-              y: Number(point.y),
-              name: point.name
-            })),
-            backgroundColor: "rgba(36, 110, 126, 0.55)",
-            borderColor: "#174f5c",
-            borderWidth: 1,
-            pointRadius: 3,
-            pointHoverRadius: 5
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 450,
-            easing: "easeOutQuart"
-          },
-          interaction: {
-            mode: "nearest",
-            intersect: true
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: "#072843",
-              titleColor: "#ffffff",
-              bodyColor: "#ffffff",
-              borderColor: "#174f5c",
-              borderWidth: 1,
-              cornerRadius: 4,
-              displayColors: false,
-              padding: 10,
-              callbacks: {
-                title: items => {
-                  const point = items[0]?.raw || {};
-                  return point.name || "Census tract";
-                },
-                label: item => {
-                  const point = item.raw || {};
-                  return [
-                    `${scatter.x_label}: ${Number(point.x).toFixed(1)}`,
-                    `${scatter.y_label}: ${Number(point.y).toFixed(1)}`
-                  ];
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: scatter.x_label,
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                }
-              },
-              ticks: {
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 11,
-                  weight: "700"
-                }
-              },
-              grid: {
-                color: "#d8e1e8"
-              },
-              border: {
-                color: "#cfd9e2"
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: scatter.y_label,
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 12,
-                  weight: "700"
-                }
-              },
-              ticks: {
-                color: "#64748b",
-                font: {
-                  family: "Inter",
-                  size: 11,
-                  weight: "700"
-                }
-              },
-              grid: {
-                color: "#d8e1e8"
-              },
-              border: {
-                color: "#cfd9e2"
-              }
-            }
-          }
-        }
-      });
-    }
-
-    function renderCorrelationCallout(data) {
-      const callout = document.getElementById("correlationCallout");
-      if (!callout) return;
-
-      const takeaways = data.takeaways || [];
-      if (!takeaways.length) {
-        callout.innerHTML = "";
-        return;
-      }
-
-      callout.innerHTML = `
-        <div class="correlation-callout-title">What stands out?</div>
-        <div class="correlation-callout-list">
-          ${takeaways.map(item => `<p>${item}</p>`).join("")}
-        </div>
-      `;
-    }
-
-    async function renderCorrelationInsights() {
-      const status = document.getElementById("correlationStatus");
-      if (!status) return;
-
-      try {
-        const res = await fetch("./data/processed/landing/landing_correlation_insights.json");
-
-        if (!res.ok) {
-          throw new Error("Missing landing_correlation_insights.json");
-        }
-
-        const data = await res.json();
-
-        const meta = data.metadata || {};
-        status.innerHTML = `
-          <strong>${formatNumber(meta.tract_count)} Census tracts analyzed.</strong>
-          Pearson correlations are calculated from <code>${meta.source_file || "tract-level YOI data"}</code>.
-        `;
-
-        renderCorrelationCallout(data);
-
-        const domainRows = data.domain_to_overall || [];
-        renderCorrelationBarChart(
-          "domainCorrelationCanvas",
-          domainRows,
-          "domain",
-          "r",
-          "Correlation with overall YOI"
-        );
-
-        const indicatorRows = [
-          ...(data.top_positive_indicators || []),
-          ...(data.top_negative_indicators || [])
-        ]
-          .sort((a, b) => Math.abs(Number(b.r || 0)) - Math.abs(Number(a.r || 0)))
-          .slice(0, 12);
-
-        renderCorrelationBarChart(
-          "indicatorCorrelationCanvas",
-          indicatorRows,
-          "indicator",
-          "r",
-          "Correlation with overall YOI"
-        );
-
-        const pairRows = (data.domain_pair_correlations || [])
-          .map(row => ({
-            ...row,
-            pair_label: `${row.x_domain} ↔ ${row.y_domain}`
-          }))
-          .sort((a, b) => Math.abs(Number(b.r || 0)) - Math.abs(Number(a.r || 0)))
-          .slice(0, 10);
-
-        renderCorrelationBarChart(
-          "domainPairCorrelationCanvas",
-          pairRows,
-          "pair_label",
-          "r",
-          "Correlation between domain scores"
-        );
-
-        const scatter = (data.scatter_plots || [])[0];
-        renderScatterCorrelationChart("scatterCorrelationCanvas", scatter);
-      } catch (err) {
-        console.error(err);
-        status.innerHTML = `
-          Could not load correlation insights. Run
-          <code>python scripts/build_landing_correlation_insights.py</code>
-          and refresh the page.
-        `;
-      }
-    }
-
-
-    async function loadLandingInsights() {
-      const res = await fetch("./data/processed/landing/landing_insights.json");
-      const data = await res.json();
-      const metrics = data.metrics || {};
-
-      const tractShareBelow40 = metrics.tract_count
-        ? (Number(metrics.low_opportunity_tracts || 0) / Number(metrics.tract_count || 1)) * 100
-        : 0;
-
-      const youthShareBelow40 = metrics.total_youth_pop_14_24
-        ? (Number(metrics.youth_in_low_opportunity_tracts || 0) / Number(metrics.total_youth_pop_14_24 || 1)) * 100
-        : 0;
-
-      const executiveSummaryEl = document.getElementById("executiveSummary");
-
-      if (executiveSummaryEl) {
-        executiveSummaryEl.innerHTML = `
-  <div class="hero-kpi-grid">
-    <div class="hero-kpi-card hero-kpi-accent">
-      <span class="hero-kpi-label">Tracts below 40</span>
-      <strong>${formatNumber(metrics.low_opportunity_tracts)}</strong>
-      <small>${tractShareBelow40.toFixed(1)}% of mapped tracts</small>
-    </div>
-
-    <div class="hero-kpi-card">
-      <span class="hero-kpi-label">Youth affected</span>
-      <strong>${formatNumber(metrics.youth_in_low_opportunity_tracts)}</strong>
-      <small>${youthShareBelow40.toFixed(1)}% of estimated youth 14–24</small>
-    </div>
-
-    <div class="hero-kpi-card">
-      <span class="hero-kpi-label">Lowest tract score</span>
-      <strong>${metrics.lowest_overall_score ?? "N/A"}/100</strong>
-      <small>Most severe observed tract score</small>
-    </div>
-
-    <div class="hero-kpi-card hero-kpi-driver">
-      <span class="hero-kpi-label">Most common gap driver</span>
-      <strong>${metrics.bottom_quintile_main_driver || "N/A"}</strong>
-      <small>Most frequent weakest domain in bottom-quintile tracts</small>
-    </div>
-  </div>
-`;
-      }
-
-      document.getElementById("landingMetrics").innerHTML = [
-        metricCard("Census tracts", formatNumber(metrics.tract_count), "Most detailed neighborhood geography"),
-        metricCard("Comparison levels", formatNumber(metrics.geography_levels), "Tracts, ZIPs, regions, supervisor districts, city districts"),
-        metricCard("Opportunity domains", formatNumber(metrics.domain_count), "Economic, Education, Health, Housing, Safety / Env, Mobility, Youth Supports"),
-        metricCard("Youth 14–24", formatNumber(metrics.total_youth_pop_14_24), "Estimated youth population represented in tract data")
-      ].join("");
-
-      const topNeedTracts = data.top_need_tracts || [];
-
-      const topNeedListEl = document.getElementById("topNeedList");
-      topNeedListEl.classList.add("priority-table");
-      topNeedListEl.innerHTML = `
-        <div class="priority-table-header">
-          <div>Rank</div>
-          <div>Census tract</div>
-          <div>YOI</div>
-          <div>Youth</div>
-          <div>Primary gap</div>
-        </div>
-        ${topNeedTracts.map(rankItem).join("")}
-      `;
-
-      requestAnimationFrame(() => {
-        renderTopTractsMiniMap(topNeedTracts);
-      });
-
-      const yoiDistributionData = data.yoi_distribution || [];
-      document.getElementById("distributionChart").innerHTML = histogram(yoiDistributionData);
-      requestAnimationFrame(() => renderYoiDistributionChart(yoiDistributionData));
-
-      const regions = data.county_regions || [];
-      const regionalActionGrid = document.getElementById("regionalActionGrid");
-
-      if (regionalActionGrid) {
-        regionalActionGrid.innerHTML = regions
-          .sort((a, b) => (a.overall_yoi || 0) - (b.overall_yoi || 0))
-          .map(regionalActionCard)
-          .join("");
-      }
-
-      const driverData = data.bottom_quintile_driver_counts || [];
-      const driverBarsEl = document.getElementById("driverBars");
-
-      if (driverBarsEl) {
-        const maxDriverCount = Math.max(...driverData.map(d => Number(d.tract_count || 0)), 1);
-        driverBarsEl.innerHTML = driverData.map(d => driverBar(d, maxDriverCount)).join("");
-      }
-
-      const whyEl = document.getElementById("whyDashboardMatters");
-
-      if (whyEl) {
-        whyEl.innerHTML = [
-          evidenceCard(
-            "Tracts below 40/100",
-            formatNumber(metrics.low_opportunity_tracts),
-            "These are the clearest low-opportunity geographies flagged by the dashboard."
-          ),
-          evidenceCard(
-            "Youth in tracts below 40/100",
-            formatNumber(metrics.youth_in_low_opportunity_tracts),
-            "This estimates the number of youth ages 14–24 living in the most concerning areas."
-          ),
-          evidenceCard(
-            "Most common bottom-quintile driver",
-            metrics.bottom_quintile_main_driver || "N/A",
-            "This identifies the domain most often driving low opportunity among the lowest-scoring tracts."
-          ),
-          evidenceCard(
-            "Lowest observed tract score",
-            `${metrics.lowest_overall_score ?? "N/A"}/100`,
-            "This shows the most severe local opportunity gap currently visible in the dashboard."
-          )
-        ].join("");
-      }
-
-      document.getElementById("workforceCards").innerHTML =
-        (data.workforce_context || [])
-          .map(card => metricCard(card.label, card.value, card.source || "Countywide benchmark"))
-          .join("");
-
-      await renderCorrelationInsights();
-    }
-
-    loadLandingInsights().catch(err => {
-      console.error(err);
-      document.getElementById("landingMetrics").innerHTML =
-        "<div class='landing-loading'>Could not load landing insights. Run scripts/build_landing_insights.py first.</div>";
+    cachedTractGeojson = await response.json();
+  }
+
+  /*
+   * Create the Leaflet map only once.
+   * Previously, the map was destroyed and recreated after every
+   * carousel click.
+   */
+  if (!miniMap) {
+    miniMap = L.map("topTractsMiniMap", {
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      dragging: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      tap: false
     });
-  </script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    L.control.zoom({
+      position: "topright"
+    }).addTo(miniMap);
+
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      {
+        maxZoom: 18
+      }
+    ).addTo(miniMap);
+  }
+
+  /*
+   * Remove only the old tract layers.
+   * Keep the Leaflet map and background tiles alive.
+   */
+  [
+    miniMapContextLayer,
+    miniMapOtherPriorityLayer,
+    miniMapSelectedLayer
+  ]
+    .filter(Boolean)
+    .forEach(layer => {
+      miniMap.removeLayer(layer);
+    });
+
+  /*
+   * Draw the rest of San Diego County lightly in the background.
+   */
+  miniMapContextLayer = L.geoJSON(cachedTractGeojson, {
+    filter: feature => {
+      const featureGeoid = getFeatureGeoid(feature);
+      return !targetGeoids.has(featureGeoid);
+    },
+
+    style: {
+      color: "#aab8c2",
+      weight: 0.35,
+      opacity: 0.3,
+      fillColor: "#dce6ea",
+      fillOpacity: 0.06
+    },
+
+    interactive: false
+  }).addTo(miniMap);
+
+  /*
+   * Draw the other priority tracts in teal.
+   */
+  miniMapOtherPriorityLayer = L.geoJSON(cachedTractGeojson, {
+    filter: feature => {
+      const featureGeoid = getFeatureGeoid(feature);
+
+      return (
+        targetGeoids.has(featureGeoid) &&
+        featureGeoid !== selectedGeoid
+      );
+    },
+
+    style: {
+      color: STORY_COLORS.teal,
+      weight: 1,
+      opacity: 0.75,
+      fillColor: STORY_COLORS.aqua,
+      fillOpacity: 0.28
+    },
+
+    interactive: false
+  }).addTo(miniMap);
+
+  /*
+   * Draw the currently selected carousel tract in orange.
+   */
+  miniMapSelectedLayer = L.geoJSON(cachedTractGeojson, {
+    filter: feature => {
+      return getFeatureGeoid(feature) === selectedGeoid;
+    },
+
+    style: {
+      color: STORY_COLORS.navy,
+      weight: 2.5,
+      opacity: 1,
+      fillColor: STORY_COLORS.orange,
+      fillOpacity: 0.86
+    },
+
+    onEachFeature: (feature, layer) => {
+      layer.bindTooltip(
+        `
+          <strong>${localTitle(selectedItem, selectedIndex)}</strong><br>
+          ${tractLabel(selectedItem)}<br>
+          YOI: <strong>${selectedItem.overall_yoi}/100</strong><br>
+          Main gap: <strong>${selectedItem.lowest_domain}</strong>
+        `,
+        {
+          sticky: true,
+          direction: "top",
+          className: "mini-map-tooltip"
+        }
+      );
+    }
+  }).addTo(miniMap);
+
+  const selectedBounds = miniMapSelectedLayer.getBounds();
+
+  /*
+   * Wait until the card has its final size, then animate the map
+   * directly to the currently selected census tract.
+   */
+  requestAnimationFrame(() => {
+    miniMap.invalidateSize({
+      pan: false
+    });
+
+    if (selectedBounds.isValid()) {
+      miniMap.fitBounds(selectedBounds, {
+        padding: [34, 34],
+        maxZoom: 14,
+        animate: true,
+        duration: 0.55
+      });
+    } else {
+      miniMap.setView(
+        [32.82, -117.05],
+        10,
+        {
+          animate: true
+        }
+      );
+    }
+  });
+}
+
+  async function loadInsightsStory() {
+    const [landingRes, corrRes] = await Promise.all([
+      fetch("./data/processed/landing/landing_insights.json"),
+      fetch("./data/processed/landing/landing_correlation_insights.json").catch(() => null)
+    ]);
+
+    const data = await landingRes.json();
+    const corr = corrRes && corrRes.ok ? await corrRes.json() : {};
+
+    renderCounty(data);
+    renderScatter(corr);
+    renderRelationChart(corr);
+    renderRegions(data);
+
+    currentTopNeedTracts = data.top_need_tracts || [];
+    activeLocalIndex = 0;
+
+    const localLead = document.getElementById("localLead");
+    if (localLead && currentTopNeedTracts.length) {
+      const first = currentTopNeedTracts[0];
+
+      localLead.innerHTML = `
+  The carousel begins with
+  <strong>${localTitle(first, 0)}</strong>,
+  which has an overall YOI of
+  <strong>${first.overall_yoi ?? "N/A"}/100</strong>.
+  Move through the priority areas to see how the leading gap and
+  youth population change from tract to tract.
+`;
+    }
+
+    setupLocalControls();
+    renderLocalPanel();
+    renderTopTractsMiniMap(currentTopNeedTracts, activeLocalIndex);
+  }
+
+  loadInsightsStory().catch(err => {
+    console.error(err);
+    document.querySelector(".landing-shell")?.insertAdjacentHTML(
+      "beforeend",
+      "<div class='landing-loading'>Could not load insights. Run the landing data build scripts and refresh.</div>"
+    );
+  });
+</script>
+
 </body>
 </html>
