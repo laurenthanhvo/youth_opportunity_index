@@ -2614,6 +2614,685 @@
     height: 330px;
   }
 }
+
+/* =========================================================
+   PLAIN-LANGUAGE RELATIONSHIP SUMMARY
+   ========================================================= */
+
+.insights-story-page .relation-summary-card {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 455px;
+  padding: 24px;
+}
+
+.insights-story-page .relation-summary-head {
+  margin-bottom: 18px;
+}
+
+.insights-story-page .relation-summary-head h3 {
+  max-width: 480px;
+}
+
+.insights-story-page .relation-summary {
+  display: grid;
+  gap: 14px;
+
+  flex: 1;
+}
+
+
+/* Higher-opportunity takeaway */
+
+.insights-story-page .relationship-positive {
+  display: grid;
+
+  grid-template-columns:
+    46px
+    minmax(0, 1fr);
+
+  gap: 15px;
+  align-items: start;
+
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(146, 197, 187, 0.2),
+      rgba(237, 245, 243, 0.76)
+    );
+
+  border: 1px solid rgba(57, 103, 117, 0.2);
+  border-left: 4px solid var(--brand-deep);
+}
+
+.insights-story-page .relationship-positive-icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  color: #ffffff;
+  background: var(--brand-deep);
+
+  font-size: 1rem;
+}
+
+.insights-story-page .relationship-positive-copy {
+  min-width: 0;
+}
+
+.insights-story-page .relationship-label {
+  display: block;
+
+  color: var(--brand-deep);
+
+  font-size: 0.67rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.insights-story-page .relationship-positive h4,
+.insights-story-page .relationship-lower-heading h4 {
+  margin: 7px 0 0;
+
+  color: var(--brand-charcoal);
+
+  font-size: 1.14rem;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.insights-story-page .relationship-positive p {
+  max-width: 500px;
+  margin: 8px 0 0;
+
+  color: var(--brand-slate);
+
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+
+/* Lower-opportunity conditions */
+
+.insights-story-page .relationship-lower {
+  padding: 19px;
+
+  background: #fffdfa;
+
+  border: 1px solid rgba(217, 169, 93, 0.28);
+  border-left: 4px solid var(--brand-gold);
+}
+
+.insights-story-page .relationship-lower-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+
+  margin-bottom: 14px;
+  padding-bottom: 13px;
+
+  border-bottom: 1px solid rgba(217, 169, 93, 0.25);
+}
+
+.insights-story-page
+  .relationship-lower-heading
+  .relationship-label {
+  color: #875819;
+}
+
+.insights-story-page
+  .relationship-lower-heading
+  > i {
+  flex: 0 0 auto;
+
+  color: #a96b17;
+  font-size: 1.15rem;
+}
+
+.insights-story-page .relationship-condition-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+.insights-story-page .relationship-condition {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(0, 1fr);
+
+  gap: 10px;
+  align-items: start;
+
+  min-height: 70px;
+  padding: 11px;
+
+  background: #ffffff;
+
+  border: 1px solid rgba(217, 169, 93, 0.22);
+}
+
+.insights-story-page .relationship-condition-icon {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+
+  color: #a96b17;
+  background: rgba(217, 169, 93, 0.14);
+
+  font-size: 0.8rem;
+}
+
+.insights-story-page .relationship-condition strong {
+  display: block;
+
+  color: var(--brand-charcoal);
+
+  font-size: 0.78rem;
+  font-weight: 730;
+  line-height: 1.35;
+}
+
+.insights-story-page .relationship-condition span {
+  display: block;
+  margin-top: 5px;
+
+  color: var(--brand-slate);
+
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+
+/* Disclaimer beneath the summary */
+
+.insights-story-page .relation-summary-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  margin-top: 14px;
+  padding-top: 13px;
+
+  color: var(--brand-slate);
+
+  border-top: 1px solid var(--story-line);
+
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.insights-story-page .relation-summary-note i {
+  flex: 0 0 auto;
+
+  margin-top: 1px;
+  color: var(--brand-deep);
+}
+
+.insights-story-page .relation-summary-note p {
+  margin: 0;
+}
+
+
+/* Missing-data message */
+
+.insights-story-page .relationship-empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 18px;
+
+  color: var(--brand-slate);
+  background: var(--story-surface-alt);
+
+  border: 1px solid var(--story-line);
+}
+
+.insights-story-page .relationship-empty i {
+  color: var(--brand-deep);
+}
+
+.insights-story-page .relationship-empty strong {
+  display: block;
+  margin-bottom: 5px;
+
+  color: var(--brand-charcoal);
+}
+
+.insights-story-page .relationship-empty p,
+.insights-story-page .relationship-empty-copy {
+  margin: 0;
+
+  color: var(--brand-slate);
+
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+
+/* Responsive layout */
+
+@media (max-width: 1120px) {
+  .insights-story-page .relationship-condition-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .insights-story-page .relationship-condition-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .insights-story-page .relation-summary-card {
+    padding: 21px 18px 18px;
+  }
+
+  .insights-story-page .relationship-positive {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-story-page .relationship-condition-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   DOMAIN CONTEXT HELP POPOVER
+   ========================================================= */
+
+.insights-story-page .fact-card-actions {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  flex: 0 0 auto;
+}
+
+
+/* Allow this specific card's popup to extend outside the card. */
+
+.insights-story-page
+  .story-fact-card.domain-context-card {
+  overflow: visible;
+  z-index: 5;
+}
+
+.insights-story-page
+  .story-fact-card.domain-context-card:hover,
+.insights-story-page
+  .story-fact-card.domain-context-card:focus-within {
+  z-index: 50;
+}
+
+
+/* Question-mark button */
+
+.insights-story-page .domain-help {
+  position: relative;
+}
+
+.insights-story-page .domain-help-button {
+  display: grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  margin: 0;
+  padding: 0;
+
+  color: var(--brand-deep);
+  background: #ffffff;
+
+  border: 1px solid var(--story-line-strong);
+  border-radius: 0;
+
+  font-family: inherit;
+  font-size: 0.86rem;
+
+  cursor: help;
+
+  transition:
+    color 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.insights-story-page
+  .domain-help-button:hover,
+.insights-story-page
+  .domain-help-button:focus-visible {
+  color: #ffffff;
+  background: var(--brand-deep);
+  border-color: var(--brand-deep);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 7px 18px
+    rgba(11, 21, 28, 0.14);
+}
+
+.insights-story-page
+  .domain-help-button:focus-visible {
+  outline:
+    3px solid
+    rgba(89, 151, 158, 0.28);
+
+  outline-offset: 2px;
+}
+
+
+/* Popup panel */
+
+.insights-story-page .domain-help-popover {
+  position: absolute;
+  z-index: 100;
+
+  top: calc(100% + 12px);
+  right: 0;
+
+  width: min(
+    340px,
+    calc(100vw - 56px)
+  );
+
+  padding: 18px;
+
+  color: var(--brand-charcoal);
+  background: #ffffff;
+
+  border: 1px solid var(--story-line-strong);
+  border-top: 3px solid var(--brand-deep);
+
+  box-shadow:
+    0 20px 48px
+    rgba(11, 21, 28, 0.16);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateY(-5px);
+
+  transition:
+    opacity 150ms ease,
+    visibility 150ms ease,
+    transform 150ms ease;
+}
+
+
+/* Small arrow pointing toward the help button */
+
+.insights-story-page
+  .domain-help-popover::before {
+  content: "";
+
+  position: absolute;
+
+  top: -8px;
+  right: 10px;
+
+  width: 14px;
+  height: 14px;
+
+  background: #ffffff;
+
+  border-top: 1px solid var(--story-line-strong);
+  border-left: 1px solid var(--story-line-strong);
+
+  transform: rotate(45deg);
+}
+
+
+/* Open on mouse hover or keyboard/touch focus */
+
+.insights-story-page
+  .domain-help:hover
+  .domain-help-popover,
+.insights-story-page
+  .domain-help:focus-within
+  .domain-help-popover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform: translateY(0);
+}
+
+
+/* Popup heading */
+
+.insights-story-page .domain-help-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding-bottom: 13px;
+
+  border-bottom: 1px solid var(--story-line);
+}
+
+.insights-story-page
+  .domain-help-heading
+  span,
+.insights-story-page
+  .domain-help-heading
+  strong {
+  display: block;
+}
+
+.insights-story-page
+  .domain-help-heading
+  span {
+  margin-bottom: 5px;
+
+  color: var(--brand-deep);
+
+  font-size: 0.64rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.insights-story-page
+  .domain-help-heading
+  strong {
+  color: var(--brand-charcoal);
+
+  font-size: 0.97rem;
+  font-weight: 760;
+  line-height: 1.3;
+}
+
+.insights-story-page
+  .domain-help-heading
+  > i {
+  flex: 0 0 auto;
+
+  color: var(--brand-deep);
+  font-size: 1rem;
+}
+
+
+/* Introductory explanation */
+
+.insights-story-page .domain-help-intro {
+  margin: 13px 0 12px !important;
+
+  color: var(--brand-slate) !important;
+
+  font-size: 0.74rem !important;
+  line-height: 1.5 !important;
+}
+
+
+/* Domain list */
+
+.insights-story-page .domain-help-list {
+  display: grid;
+  gap: 0;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.insights-story-page .domain-help-list li {
+  display: grid;
+
+  grid-template-columns:
+    9px
+    minmax(0, 1fr)
+    auto;
+
+  gap: 9px;
+  align-items: center;
+
+  min-height: 35px;
+  padding: 8px 7px;
+
+  color: var(--brand-slate);
+
+  border-top: 1px solid var(--story-line);
+
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.insights-story-page
+  .domain-help-list
+  li:first-child {
+  border-top: 0;
+}
+
+.insights-story-page
+  .domain-help-list
+  li.current {
+  color: var(--brand-charcoal);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(217, 169, 93, 0.14),
+      rgba(146, 197, 187, 0.12)
+    );
+}
+
+.insights-story-page .domain-help-dot {
+  width: 7px;
+  height: 7px;
+
+  background: var(--brand-light);
+  border-radius: 50%;
+}
+
+.insights-story-page
+  .domain-help-list
+  li.current
+  .domain-help-dot {
+  background: var(--brand-gold);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(217, 169, 93, 0.16);
+}
+
+.insights-story-page
+  .domain-help-list
+  li
+  strong {
+  color: #875819;
+
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.035em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+
+/* Mobile positioning */
+
+@media (max-width: 560px) {
+  .insights-story-page .domain-help-popover {
+    position: fixed;
+
+    top: 50%;
+    right: 18px;
+    left: 18px;
+
+    width: auto;
+    max-height: calc(100vh - 80px);
+
+    overflow-y: auto;
+
+    transform:
+      translateY(-50%)
+      scale(0.98);
+  }
+
+  .insights-story-page
+    .domain-help:hover
+    .domain-help-popover,
+  .insights-story-page
+    .domain-help:focus-within
+    .domain-help-popover {
+    transform:
+      translateY(-50%)
+      scale(1);
+  }
+
+  .insights-story-page
+    .domain-help-popover::before {
+    display: none;
+  }
+
+  .insights-story-page
+    .domain-help-list
+    li {
+    grid-template-columns:
+      9px
+      minmax(0, 1fr);
+  }
+
+  .insights-story-page
+    .domain-help-list
+    li
+    strong {
+    grid-column: 2;
+
+    text-align: left;
+  }
+}
 </style>
 
 </head>
@@ -2835,27 +3514,43 @@
         </article>
 
         <div class="county-insight-stack">
-          <article class="story-card relation-card">
-            <div class="story-card-head">
-              <div>
-                <p class="card-kicker">
-                  Strongest relationships
-                </p>
+          <article class="story-card relation-card relation-summary-card">
+  <div class="story-card-head relation-summary-head">
+    <div>
+      <p class="card-kicker">
+        What stands out
+      </p>
 
-                <h3>
-                  Which conditions are most connected to YOI?
-                </h3>
+      <h3>
+        Where the strongest relationships appear
+      </h3>
 
-                <p>
-                  Bars show correlation with overall opportunity.
-                </p>
-              </div>
-            </div>
+      <p>
+        A plain-language summary of the clearest countywide patterns.
+      </p>
+    </div>
+  </div>
 
-            <div class="relation-canvas-wrap">
-              <canvas id="relationBarCanvas"></canvas>
-            </div>
-          </article>
+  <div
+    id="relationSummary"
+    class="relation-summary"
+    aria-live="polite"
+  >
+    <div class="landing-loading">
+      Loading key relationships…
+    </div>
+  </div>
+
+  <div class="relation-summary-note">
+    <i class="bi bi-info-circle"></i>
+
+    <p>
+      These patterns show association, not cause and effect.
+      They should guide closer investigation rather than determine
+      decisions on their own.
+    </p>
+  </div>
+</article>
 
           <aside
             class="story-card meaning-card"
@@ -3311,21 +4006,136 @@ function localAreaContext(item) {
     );
   }
 
-  function factCard(label, value, note, accent, icon) {
-  return `
-    <article class="story-fact-card ${accent}">
-      <div class="fact-card-top">
-        <span class="fact-label">${label}</span>
+  function domainContextHelp(currentDomain) {
+  const domains = [
+    "Economic",
+    "Education",
+    "Health",
+    "Housing",
+    "Safety & Environment",
+    "Mobility & Connectivity",
+    "Youth Supports"
+  ];
 
-        <div
-          class="fact-icon"
+  const current =
+    String(currentDomain || "")
+      .trim()
+      .toLowerCase();
+
+  const domainItems =
+    domains
+      .map(domain => {
+        const isCurrent =
+          domain.toLowerCase() === current;
+
+        return `
+          <li class="${isCurrent ? "current" : ""}">
+            <span class="domain-help-dot"></span>
+
+            <span>${domain}</span>
+
+            ${
+              isCurrent
+                ? `
+                    <strong>
+                      Current weakest domain
+                    </strong>
+                  `
+                : ""
+            }
+          </li>
+        `;
+      })
+      .join("");
+
+  return `
+    <div class="domain-help">
+      <button
+        class="domain-help-button"
+        type="button"
+        aria-label="View all Youth Opportunity Index domains"
+        aria-describedby="domainHelpPopover"
+      >
+        <i
+          class="bi bi-question-lg"
           aria-hidden="true"
-        >
-          <i class="bi ${icon}"></i>
+        ></i>
+      </button>
+
+      <div
+        id="domainHelpPopover"
+        class="domain-help-popover"
+        role="tooltip"
+      >
+        <div class="domain-help-heading">
+          <div>
+            <span>
+              Youth Opportunity Index
+            </span>
+
+            <strong>
+              Seven opportunity domains
+            </strong>
+          </div>
+
+          <i
+            class="bi bi-layers"
+            aria-hidden="true"
+          ></i>
+        </div>
+
+        <p class="domain-help-intro">
+          The overall index combines seven domains. The highlighted
+          domain is the one most often identified as the largest gap
+          among bottom-quintile census tracts.
+        </p>
+
+        <ul class="domain-help-list">
+          ${domainItems}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function factCard(
+  label,
+  value,
+  note,
+  accent,
+  icon,
+  options = {}
+) {
+  const extraClass =
+    options.className || "";
+
+  const helpHtml =
+    options.helpHtml || "";
+
+  return `
+    <article
+      class="story-fact-card ${accent} ${extraClass}"
+    >
+      <div class="fact-card-top">
+        <span class="fact-label">
+          ${label}
+        </span>
+
+        <div class="fact-card-actions">
+          <div
+            class="fact-icon"
+            aria-hidden="true"
+          >
+            <i class="bi ${icon}"></i>
+          </div>
+
+          ${helpHtml}
         </div>
       </div>
 
-      <strong class="fact-value">${value}</strong>
+      <strong class="fact-value">
+        ${value}
+      </strong>
 
       <p>${note}</p>
     </article>
@@ -3421,12 +4231,19 @@ function renderCounty(data) {
       ),
 
       factCard(
-        "Most frequent weakest domain",
-        commonGap,
-        "The domain most often appearing as the largest gap in the bottom quintile.",
-        "aqua",
-        "bi-compass"
-      )
+  "Most frequent weakest domain",
+  commonGap,
+  "The domain most often appearing as the largest gap in the bottom quintile.",
+  "aqua",
+  "bi-compass",
+  {
+    className:
+      "domain-context-card",
+
+    helpHtml:
+      domainContextHelp(commonGap)
+  }
+)
     ].join("");
   }
 }
@@ -3715,102 +4532,364 @@ function renderCounty(data) {
 }
 
   function relationRows(corr) {
-    const rows = [
-      ...(corr.top_positive_indicators || []),
-      ...(corr.top_negative_indicators || [])
-    ]
-      .filter(row => {
-        const label = String(row.indicator || "");
-        return !/overall|yoi$|standardized yoi|score z/i.test(label);
-      })
-      .sort((a, b) => Math.abs(Number(b.r || 0)) - Math.abs(Number(a.r || 0)))
+  /*
+   * Plain-language labels shown to the public.
+   * The original data field names remain unchanged.
+   */
+  const friendlyLabels = {
+    "median hh income":
+      "Median household income",
+
+    "poor physical health":
+      "Poor physical health",
+
+    "poverty rate":
+      "Poverty rate",
+
+    "single parent proxy":
+      "Single-parent households",
+
+    "snap or assist rate":
+      "Households receiving SNAP or public assistance",
+
+    "no vehicle rate":
+      "Households without a vehicle"
+  };
+
+  function isZScoreIndicator(label) {
+    const normalized =
+      String(label || "")
+        .trim()
+        .toLowerCase();
+
+    return (
+      /*
+       * Examples removed:
+       * "Z Median Hh Income"
+       * "Z Poor Physical Health"
+       * "z_median_hh_income"
+       */
+      /^z(?:[\s_-]|$)/i.test(normalized) ||
+
+      /*
+       * Examples removed:
+       * "Median Hh Income Z"
+       * "median_hh_income_z"
+       */
+      /(?:[\s_-])z$/i.test(normalized) ||
+
+      /*
+       * Other standardized-label formats.
+       */
+      /\bz[\s_-]?score\b/i.test(normalized) ||
+      /\bstandardized\b/i.test(normalized)
+    );
+  }
+
+  function publicIndicatorLabel(label) {
+    const cleaned =
+      String(label || "")
+        .trim()
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ");
+
+    const lookupKey =
+      cleaned.toLowerCase();
+
+    return (
+      friendlyLabels[lookupKey] ||
+      cleaned
+    );
+  }
+
+  const candidates = [
+    ...(corr.top_positive_indicators || []),
+    ...(corr.top_negative_indicators || [])
+  ]
+    .filter(row => {
+      const label =
+        String(row.indicator || "")
+          .trim();
+
+      if (!label) {
+        return false;
+      }
+
+      /*
+       * Completely remove standardized or z-score versions.
+       * We do not merely hide the letter Z—the duplicate row
+       * itself is excluded from the chart.
+       */
+      if (isZScoreIndicator(label)) {
+        return false;
+      }
+
+      /*
+       * Exclude overall-score fields because the chart should
+       * show community conditions, not YOI compared with itself.
+       */
+      return !/overall|standardized yoi|score z|yoi$/i.test(
+        label
+      );
+    })
+    .map(row => ({
+      label:
+        publicIndicatorLabel(row.indicator),
+
+      value:
+        Number(row.r)
+    }))
+    .filter(row =>
+      Number.isFinite(row.value)
+    );
+
+  /*
+   * Prevent duplicate public labels.
+   * When duplicates remain, retain the stronger relationship.
+   */
+  const uniqueRows =
+    new Map();
+
+  candidates.forEach(row => {
+    const key =
+      row.label.toLowerCase();
+
+    const existing =
+      uniqueRows.get(key);
+
+    if (
+      !existing ||
+      Math.abs(row.value) >
+        Math.abs(existing.value)
+    ) {
+      uniqueRows.set(key, row);
+    }
+  });
+
+  const rows =
+    Array.from(uniqueRows.values())
+      .sort(
+        (a, b) =>
+          Math.abs(b.value) -
+          Math.abs(a.value)
+      )
       .slice(0, 8);
 
-    if (rows.length) {
-      return rows.map(row => ({
-        label: row.indicator,
-        value: Number(row.r || 0)
-      }));
-    }
-
-    return (corr.domain_to_overall || []).slice(0, 7).map(row => ({
-      label: row.domain,
-      value: Number(row.r || 0)
-    }));
+  if (rows.length) {
+    return rows;
   }
 
+  /*
+   * Fallback used only when indicator-level data
+   * is unavailable.
+   */
+  return (corr.domain_to_overall || [])
+    .map(row => ({
+      label:
+        String(row.domain || "")
+          .trim(),
+
+      value:
+        Number(row.r)
+    }))
+    .filter(row =>
+      row.label &&
+      Number.isFinite(row.value)
+    )
+    .sort(
+      (a, b) =>
+        Math.abs(b.value) -
+        Math.abs(a.value)
+    )
+    .slice(0, 7);
+}
   function renderRelationChart(corr) {
-    const canvas = document.getElementById("relationBarCanvas");
-    if (!canvas || !window.Chart) return;
+  const container =
+    document.getElementById("relationSummary");
 
-    const rows = relationRows(corr || {});
-
-    if (!rows.length) return;
-
-    if (relationChart) relationChart.destroy();
-
-    relationChart = new Chart(canvas, {
-      type: "bar",
-      data: {
-        labels: rows.map(row => row.label),
-        datasets: [{
-          data: rows.map(row => row.value),
-          backgroundColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
-          borderColor: rows.map(row => row.value < 0 ? STORY_COLORS.orange : STORY_COLORS.teal),
-          borderWidth: 1,
-          borderRadius: 3,
-          barPercentage: 0.7,
-          categoryPercentage: 0.72
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: STORY_COLORS.navy,
-            titleColor: "#ffffff",
-            bodyColor: "#ffffff",
-            displayColors: false,
-            callbacks: {
-              label: item => `r = ${Number(item.raw).toFixed(2)}`
-            }
-          }
-        },
-        scales: {
-          x: {
-            min: -1,
-            max: 1,
-            title: {
-              display: true,
-              text: "Correlation (r)",
-              color: STORY_COLORS.slate,
-              font: { family: "Inter", size: 12, weight: "600" }
-            },
-            ticks: {
-              color: STORY_COLORS.slate,
-              font: { family: "Inter", size: 11, weight: "500" }
-            },
-            grid: {
-              color: ctx => ctx.tick.value === 0 ? STORY_COLORS.navy : "#d8e1e8",
-              lineWidth: ctx => ctx.tick.value === 0 ? 1.2 : 1
-            },
-            border: { color: "#cfd9e2" }
-          },
-          y: {
-            ticks: {
-              color: "#0f172a",
-              font: { family: "Inter", size: 11, weight: "600" }
-            },
-            grid: { display: false },
-            border: { color: "#cfd9e2" }
-          }
-        }
-      }
-    });
+  if (!container) {
+    return;
   }
+
+  /*
+   * Remove an old Chart.js instance left over
+   * from the previous graph implementation.
+   */
+  if (relationChart) {
+    relationChart.destroy();
+    relationChart = null;
+  }
+
+  const rows =
+    relationRows(corr || {});
+
+  if (!rows.length) {
+    container.innerHTML = `
+      <div class="relationship-empty">
+        <i class="bi bi-info-circle"></i>
+
+        <div>
+          <strong>
+            Relationship data unavailable
+          </strong>
+
+          <p>
+            The remaining countywide, regional, and local findings
+            are still available.
+          </p>
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+  /*
+   * Use shorter, more approachable labels in this
+   * landing-page summary.
+   */
+  const takeawayLabels = {
+    "Poor physical health":
+      "Physical health challenges",
+
+    "Poverty rate":
+      "Poverty",
+
+    "Households receiving SNAP or public assistance":
+      "Public assistance",
+
+    "Households without a vehicle":
+      "Limited vehicle access",
+
+    "Disability Rate":
+      "Disability",
+
+    "Unemployment Rate":
+      "Unemployment"
+  };
+
+  function displayLabel(label) {
+    return (
+      takeawayLabels[label] ||
+      label
+    );
+  }
+
+  const strongestPositive =
+    rows
+      .filter(row => row.value > 0)
+      .sort(
+        (a, b) =>
+          Math.abs(b.value) -
+          Math.abs(a.value)
+      )[0] || null;
+
+  const lowerOpportunityConditions =
+    rows
+      .filter(row => row.value < 0)
+      .sort(
+        (a, b) =>
+          Math.abs(b.value) -
+          Math.abs(a.value)
+      )
+      .slice(0, 4);
+
+  const lowerConditionsMarkup =
+    lowerOpportunityConditions.length
+      ? lowerOpportunityConditions
+          .map(
+            row => `
+              <div class="relationship-condition">
+                <div
+                  class="relationship-condition-icon"
+                  aria-hidden="true"
+                >
+                  <i class="bi bi-arrow-down-right"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    ${displayLabel(row.label)}
+                  </strong>
+
+                  <span>
+                    More common where youth opportunity is lower
+                  </span>
+                </div>
+              </div>
+            `
+          )
+          .join("")
+      : `
+          <p class="relationship-empty-copy">
+            No clear lower-opportunity relationships were found.
+          </p>
+        `;
+
+  container.innerHTML = `
+    <section class="relationship-positive">
+      <div
+        class="relationship-positive-icon"
+        aria-hidden="true"
+      >
+        <i class="bi bi-arrow-up-right"></i>
+      </div>
+
+      <div class="relationship-positive-copy">
+        <span class="relationship-label">
+          Most closely linked with higher opportunity
+        </span>
+
+        <h4>
+          ${
+            strongestPositive
+              ? displayLabel(strongestPositive.label)
+              : "No clear positive relationship"
+          }
+        </h4>
+
+        <p>
+          ${
+            strongestPositive
+              ? `
+                  Across census tracts, higher levels of this
+                  condition tend to appear alongside higher overall
+                  youth opportunity.
+                `
+              : `
+                  The available data did not show a clear positive
+                  relationship to highlight.
+                `
+          }
+        </p>
+      </div>
+    </section>
+
+    <section class="relationship-lower">
+      <div class="relationship-lower-heading">
+        <div>
+          <span class="relationship-label">
+            Conditions linked with lower opportunity
+          </span>
+
+          <h4>
+            Household and community barriers
+          </h4>
+        </div>
+
+        <i
+          class="bi bi-arrow-down-left"
+          aria-hidden="true"
+        ></i>
+      </div>
+
+      <div class="relationship-condition-grid">
+        ${lowerConditionsMarkup}
+      </div>
+    </section>
+  `;
+}
+
 
   function regionCard(region, index) {
   const weak =
