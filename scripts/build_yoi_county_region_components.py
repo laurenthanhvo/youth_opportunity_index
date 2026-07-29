@@ -165,17 +165,30 @@ def aggregate_yoi_to_regions(yoi: pd.DataFrame) -> pd.DataFrame:
             "puma_codes": ", ".join(sorted(group["puma_code"].dropna().unique())),
         }
 
-        if "total_population" in group.columns:
-            row["total_population"] = pd.to_numeric(
-                group["total_population"],
-                errors="coerce"
-            ).fillna(0).sum()
+        # Columns representing counts must be summed across census tracts.
+        sum_columns = {
+            "total_population",
+            "youth_pop_14_24",
+        }
 
+        for col in sum_columns:
+            if col in group.columns:
+                row[col] = pd.to_numeric(
+                    group[col],
+                    errors="coerce"
+                ).fillna(0).sum()
+
+        # Scores, percentages, rates, and other continuous measures
+        # remain population-weighted regional averages.
         for col in numeric_cols:
-            if col in {"total_population", "_weight"}:
+            if col in sum_columns or col == "_weight":
                 continue
 
-            row[col] = weighted_average(group, col, "_weight")
+            row[col] = weighted_average(
+                group,
+                col,
+                "_weight"
+            )
 
         rows.append(row)
 
@@ -290,14 +303,25 @@ def main():
     region_yoi.to_csv(out_yoi, index=False)
 
     print("Saved:", out_yoi)
-    print(region_yoi[[
+
+    print_columns = [
         "county_region_id",
         "county_region",
         "tract_count",
         "puma_codes",
         "total_population",
-        "yoi_custom_0_100",
-    ]].to_string(index=False))
+    ]
+
+    if "youth_pop_14_24" in region_yoi.columns:
+        print_columns.append("youth_pop_14_24")
+
+    print_columns.append("yoi_custom_0_100")
+
+    print(
+        region_yoi[
+            print_columns
+        ].to_string(index=False)
+    )
 
 
 if __name__ == "__main__":

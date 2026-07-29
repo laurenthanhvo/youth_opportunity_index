@@ -3309,7 +3309,7 @@
       </a>
 
       <nav class="top-nav">
-        <a class="nav-link active" href="./index.html">Insights</a>
+        <a class="nav-link" href="./index.html">Insights</a>
         <a class="nav-link" href="./map.html">Map</a>
         <a class="nav-link" href="./datasets.html">YOI Methodology</a>
         <a class="nav-link" href="./about.html">About Us</a>
@@ -5492,6 +5492,52 @@ ${
       "<div class='landing-loading'>Could not load insights. Run the landing data build scripts and refresh.</div>"
     );
   });
+</script>
+
+<script>
+  /*
+   * Automatically underline the navigation link
+   * matching the page currently being viewed.
+   */
+  (() => {
+    const currentPage =
+      window.location.pathname
+        .split("/")
+        .pop() || "index.html";
+
+    document
+      .querySelectorAll(".top-nav .nav-link")
+      .forEach(link => {
+        const href =
+          link.getAttribute("href") || "";
+
+        const linkPage =
+          href
+            .split("/")
+            .pop()
+            .split("?")[0]
+            .split("#")[0] || "index.html";
+
+        const isCurrentPage =
+          linkPage === currentPage;
+
+        link.classList.toggle(
+          "active",
+          isCurrentPage
+        );
+
+        if (isCurrentPage) {
+          link.setAttribute(
+            "aria-current",
+            "page"
+          );
+        } else {
+          link.removeAttribute(
+            "aria-current"
+          );
+        }
+      });
+  })();
 </script>
 
 </body>

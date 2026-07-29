@@ -13,14 +13,27 @@
   <header class="page-header">
     <div class="page-header-inner">
       <a class="brand" href="./index.html">
-        <div class="brand-title">Youth Opportunity Desert Dashboard</div>
-<div class="brand-subtitle">Data Science Alliance (DSA)</div>
-      </a>
+  <img
+    class="brand-logo"
+    src="./logo.png"
+    alt="Youth Opportunity Index logo"
+  />
+
+  <div class="brand-text">
+    <div class="brand-title">
+      Youth Opportunity Desert Dashboard
+    </div>
+
+    <div class="brand-subtitle">
+      Data Science Alliance (DSA)
+    </div>
+  </div>
+</a>
 
       <nav class="top-nav">
-        <a class="nav-link active" href="./index.html">Insights</a>
+        <a class="nav-link" href="./index.html">Insights</a>
         <a class="nav-link" href="./map.html">Map</a>
-        <a class="nav-link active" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link" href="./datasets.html">YOI Methodology</a>
         <a class="nav-link" href="./about.html">About Us</a>
         <a class="nav-link" href="./contact.html">Contact Us</a>
       </nav>
@@ -553,5 +566,51 @@
     </div>
   </section>
 </main>
+
+<script>
+  /*
+   * Automatically underline the navigation link
+   * matching the page currently being viewed.
+   */
+  (() => {
+    const currentPage =
+      window.location.pathname
+        .split("/")
+        .pop() || "index.html";
+
+    document
+      .querySelectorAll(".top-nav .nav-link")
+      .forEach(link => {
+        const href =
+          link.getAttribute("href") || "";
+
+        const linkPage =
+          href
+            .split("/")
+            .pop()
+            .split("?")[0]
+            .split("#")[0] || "index.html";
+
+        const isCurrentPage =
+          linkPage === currentPage;
+
+        link.classList.toggle(
+          "active",
+          isCurrentPage
+        );
+
+        if (isCurrentPage) {
+          link.setAttribute(
+            "aria-current",
+            "page"
+          );
+        } else {
+          link.removeAttribute(
+            "aria-current"
+          );
+        }
+      });
+  })();
+</script>
 </body>
 </html>
