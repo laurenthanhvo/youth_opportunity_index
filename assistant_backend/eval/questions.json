@@ -1,0 +1,44 @@
+[
+  {
+    "id": "methodology_normalization",
+    "persona": "researcher",
+    "question": "How are YOI indicators normalized?",
+    "expected_tool": "get_methodology"
+  },
+  {
+    "id": "military_caveat",
+    "persona": "community_member",
+    "question": "Why should I interpret Camp Pendleton carefully?",
+    "expected_tool": "get_methodology"
+  },
+  {
+    "id": "region_summary",
+    "persona": "policymaker",
+    "question": "Summarize the YOI results for North County.",
+    "expected_tool": "get_geography_summary"
+  },
+  {
+    "id": "region_comparison",
+    "persona": "nonprofit",
+    "question": "How do East San Diego and Metro San Diego compare?",
+    "expected_tool": "compare_geographies"
+  },
+  {
+    "id": "lowest_youth_supports",
+    "persona": "policymaker",
+    "question": "Which five tracts have the lowest Youth Supports scores?",
+    "expected_tool": "find_low_opportunity_areas"
+  },
+  {
+    "id": "indicator_definition",
+    "persona": "researcher",
+    "question": "What does the uninsured-rate indicator mean and where is it from?",
+    "expected_tool": "get_indicator_definition"
+  },
+  {
+    "id": "map_link",
+    "persona": "community_member",
+    "question": "Open North County on the map using the Education domain.",
+    "expected_tool": "generate_map_url"
+  }
+]

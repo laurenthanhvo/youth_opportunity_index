@@ -2,3 +2,47 @@ backend/.env
 backend/.venv/
 # Large raw Census PUMS files
 /data/raw/census/pums_2024/*.zip
+
+# Local AI assistant environment
+.venv-ai/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Secrets and evaluation output
+assistant_backend/.env
+assistant_backend/eval/results.csv
+
+# macOS
+.DS_Store
+
+# Python environments
+.venv/
+.venv-ai/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Secrets and generated evaluation output
+assistant_backend/.env
+assistant_backend/eval/results.csv
+
+# macOS
+.DS_Store
+
+# Python virtual environments
+.venv/
+.venv-ai/
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# Secrets and generated results
+assistant_backend/.env
+assistant_backend/eval/results.csv
+
+# macOS
+.DS_Store
