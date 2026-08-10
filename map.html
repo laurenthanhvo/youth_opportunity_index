@@ -11,6 +11,56 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="./styles.css">
+
+<style id="assistant-readable-formatting">
+.assistant-msg-bot {
+  line-height: 1.55;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.assistant-msg-bot p {
+  margin: 0 0 10px;
+}
+
+.assistant-msg-bot p:last-child {
+  margin-bottom: 0;
+}
+
+.assistant-msg-bot h4 {
+  margin: 14px 0 7px;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.assistant-msg-bot ul,
+.assistant-msg-bot ol {
+  margin: 7px 0 12px 20px;
+  padding: 0;
+}
+
+.assistant-msg-bot li {
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+
+.assistant-msg-bot strong {
+  font-weight: 700;
+}
+
+.assistant-msg-bot em {
+  opacity: 0.88;
+}
+
+.assistant-msg-bot a {
+  color: #246e7e;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+</style>
+
 </head>
 <body>
   <div id="map"></div>
@@ -29,7 +79,7 @@
       <nav class="top-nav">
         <a class="nav-link" href="./index.html">Insights</a>
         <a class="nav-link" href="./map.html">Map</a>
-        <a class="nav-link" href="./datasets.html">YOI Methodology</a>
+        <a class="nav-link" href="./datasets.html">Methodology</a>
         <a class="nav-link" href="./about.html">About Us</a>
         <a class="nav-link" href="./contact.html">Contact Us</a>
       </nav>
@@ -253,8 +303,8 @@
   <div class="assistant-shell">
     <div id="assistantMessages" class="assistant-messages">
       <div class="assistant-msg assistant-msg-bot">
-        Hi — I can help explain the dashboard, switch views, and turn layers on or off.<br><br>
-        <strong>Note:</strong> The first response may take about 50–60 seconds while the assistant boots up.
+        Hello! I can help explain YOI scores and methodology, compare regions or census tracts, identify areas with lower opportunity scores, and open relevant map views. <br><br>
+        Ask a question about the data or what you are seeing on the map. Responses usually take a few seconds, although the first request may take longer if the assistant is waking up.
       </div>
     </div>
 

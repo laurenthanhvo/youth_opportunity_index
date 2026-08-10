@@ -28,6 +28,9 @@ class ChatRequest(BaseModel):
         min_length=1,
         max_length=4000,
     )
+    context: dict = Field(
+        default_factory=dict,
+    )
 
 
 class ChatResponse(BaseModel):
@@ -59,7 +62,10 @@ def health() -> dict:
 @app.post("/api/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> dict:
     try:
-        return ask_assistant(request.message)
+        return ask_assistant(
+            request.message,
+            context=request.context,
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=500,

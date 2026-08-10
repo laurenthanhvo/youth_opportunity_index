@@ -84,7 +84,11 @@ let chartTooltip = null;
 let popupRef = null;
 let serviceLayer = null;
 
-const ASSISTANT_API_URL = 'https://youth-opportunity-index.onrender.com/api/chat';
+const ASSISTANT_API_URL =
+  window.location.hostname === '127.0.0.1' ||
+  window.location.hostname === 'localhost'
+    ? 'http://127.0.0.1:8000/api/chat'
+    : 'https://youth-opportunity-index.onrender.com/api/chat';
 
 function clearTransientUi() {
   if (chartTooltip) chartTooltip.style('opacity', 0);
@@ -3283,13 +3287,330 @@ function buildAssistantContext() {
   };
 }
 
+function escapeAssistantHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function safeAssistantUrl(value) {
+  const url = String(value || '').trim();
+
+  if (
+    url.startsWith('https://') ||
+    url.startsWith('http://') ||
+    url.startsWith('./') ||
+    url.startsWith('/') ||
+    url.startsWith('#')
+  ) {
+    return escapeAssistantHtml(url);
+  }
+
+  return '#';
+}
+
+function formatAssistantInlineMarkdown(text) {
+  const value = String(text || '');
+  const pattern = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+
+  let html = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = pattern.exec(value)) !== null) {
+    html += escapeAssistantHtml(
+      value.slice(lastIndex, match.index)
+    );
+
+    const token = match[0];
+
+    if (token.startsWith('**')) {
+      html += `<strong>${escapeAssistantHtml(
+        token.slice(2, -2)
+      )}</strong>`;
+    } else {
+      const linkMatch = token.match(
+        /^\[([^\]]+)\]\(([^)]+)\)$/
+      );
+
+      if (linkMatch) {
+        const label = escapeAssistantHtml(linkMatch[1]);
+        const url = safeAssistantUrl(linkMatch[2]);
+
+        html +=
+          `<a href="${url}" target="_self">` +
+          `${label}</a>`;
+      }
+    }
+
+    lastIndex = pattern.lastIndex;
+  }
+
+  html += escapeAssistantHtml(value.slice(lastIndex));
+
+  return html;
+}
+
+function renderAssistantMarkdown(text) {
+  const lines = String(text || '')
+    .replace(/\r/g, '')
+    .split('\n');
+
+  const output = [];
+  let activeList = null;
+
+  function closeList() {
+    if (activeList) {
+      output.push(`</${activeList}>`);
+      activeList = null;
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      closeList();
+      continue;
+    }
+
+    const bulletMatch = line.match(/^[-*]\s+(.+)$/);
+    const numberMatch = line.match(/^\d+\.\s+(.+)$/);
+    const headingMatch = line.match(/^#{1,3}\s+(.+)$/);
+
+    if (bulletMatch) {
+      if (activeList !== 'ul') {
+        closeList();
+        output.push('<ul>');
+        activeList = 'ul';
+      }
+
+      output.push(
+        `<li>${formatAssistantInlineMarkdown(
+          bulletMatch[1]
+        )}</li>`
+      );
+
+      continue;
+    }
+
+    if (numberMatch) {
+      if (activeList !== 'ol') {
+        closeList();
+        output.push('<ol>');
+        activeList = 'ol';
+      }
+
+      output.push(
+        `<li>${formatAssistantInlineMarkdown(
+          numberMatch[1]
+        )}</li>`
+      );
+
+      continue;
+    }
+
+    if (headingMatch) {
+      closeList();
+
+      output.push(
+        `<h4>${formatAssistantInlineMarkdown(
+          headingMatch[1]
+        )}</h4>`
+      );
+
+      continue;
+    }
+
+    closeList();
+
+    output.push(
+      `<p>${formatAssistantInlineMarkdown(line)}</p>`
+    );
+  }
+
+  closeList();
+
+  return output.join('');
+}
+
+function escapeAssistantHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function safeAssistantUrl(value) {
+  const url = String(value || '').trim();
+
+  if (
+    url.startsWith('https://') ||
+    url.startsWith('http://') ||
+    url.startsWith('./') ||
+    url.startsWith('/') ||
+    url.startsWith('#')
+  ) {
+    return escapeAssistantHtml(url);
+  }
+
+  return '#';
+}
+
+function formatAssistantInlineMarkdown(text) {
+  const value = String(text ?? '');
+
+  // Bold and links
+  const pattern = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+
+  let html = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = pattern.exec(value)) !== null) {
+    html += escapeAssistantHtml(
+      value.slice(lastIndex, match.index)
+    );
+
+    const token = match[0];
+
+    if (token.startsWith('**')) {
+      html += `<strong>${escapeAssistantHtml(
+        token.slice(2, -2)
+      )}</strong>`;
+    } else {
+      const linkMatch = token.match(
+        /^\[([^\]]+)\]\(([^)]+)\)$/
+      );
+
+      if (linkMatch) {
+        const label = escapeAssistantHtml(linkMatch[1]);
+        const url = safeAssistantUrl(linkMatch[2]);
+
+        html += `<a href="${url}" target="_self">${label}</a>`;
+      }
+    }
+
+    lastIndex = pattern.lastIndex;
+  }
+
+  html += escapeAssistantHtml(
+    value.slice(lastIndex)
+  );
+
+  // Simple italic markdown: *text*
+  html = html.replace(
+    /(^|[\s(])\*([^*\n]+)\*(?=$|[\s).,!?:;])/g,
+    '$1<em>$2</em>'
+  );
+
+  return html;
+}
+
+function renderAssistantMarkdown(text) {
+  const lines = String(text ?? '')
+    .replace(/\r/g, '')
+    .split('\n');
+
+  const output = [];
+  let activeList = null;
+
+  function closeList() {
+    if (activeList) {
+      output.push(`</${activeList}>`);
+      activeList = null;
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      closeList();
+      continue;
+    }
+
+    // Ignore markdown horizontal rules
+    if (/^---+$/.test(line)) {
+      closeList();
+      continue;
+    }
+
+    const bulletMatch = line.match(/^[-*]\s+(.+)$/);
+    const numberMatch = line.match(/^\d+\.\s+(.+)$/);
+    const headingMatch = line.match(/^#{1,4}\s+(.+)$/);
+
+    if (bulletMatch) {
+      if (activeList !== 'ul') {
+        closeList();
+        output.push('<ul>');
+        activeList = 'ul';
+      }
+
+      output.push(
+        `<li>${formatAssistantInlineMarkdown(
+          bulletMatch[1]
+        )}</li>`
+      );
+      continue;
+    }
+
+    if (numberMatch) {
+      if (activeList !== 'ol') {
+        closeList();
+        output.push('<ol>');
+        activeList = 'ol';
+      }
+
+      output.push(
+        `<li>${formatAssistantInlineMarkdown(
+          numberMatch[1]
+        )}</li>`
+      );
+      continue;
+    }
+
+    if (headingMatch) {
+      closeList();
+
+      output.push(
+        `<h4>${formatAssistantInlineMarkdown(
+          headingMatch[1]
+        )}</h4>`
+      );
+      continue;
+    }
+
+    closeList();
+
+    output.push(
+      `<p>${formatAssistantInlineMarkdown(line)}</p>`
+    );
+  }
+
+  closeList();
+
+  return output.join('');
+}
+
 function appendAssistantMessage(text, role = 'bot') {
   const wrap = document.getElementById('assistantMessages');
   if (!wrap) return;
 
   const div = document.createElement('div');
   div.className = `assistant-msg assistant-msg-${role}`;
-  div.textContent = text;
+
+  if (role === 'bot') {
+    div.innerHTML = renderAssistantMarkdown(text);
+  } else {
+    div.textContent = text;
+  }
+
   wrap.appendChild(div);
   wrap.scrollTop = wrap.scrollHeight;
 }
@@ -3350,28 +3671,48 @@ async function sendAssistantMessage(prefilledText = null) {
   try {
     const res = await fetch(ASSISTANT_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        message,
-        context: buildAssistantContext(),
-      }),
+      message: message,
+      context: buildAssistantContext()
+    })
     });
 
-    if (!res.ok) {
-      throw new Error(`Assistant request failed: ${res.status}`);
-    }
-
     const data = await res.json();
-    appendAssistantMessage(data.reply || 'Sorry, I could not answer that.', 'bot');
 
-    if (data.action) {
-      executeAssistantAction(data.action);
+    if (!res.ok) {
+      console.error('Assistant backend error:', data);
+
+      throw new Error(
+        data.detail ||
+        data.error ||
+        `Assistant request failed with status ${res.status}`
+      );
     }
-  } catch (err) {
-    console.error(err);
-    appendAssistantMessage('Sorry — the assistant backend is not reachable right now.', 'bot');
+
+    const assistantText =
+      data.answer ||
+      data.reply ||
+      data.response;
+
+    if (!assistantText) {
+      console.error('Unexpected assistant response:', data);
+      throw new Error('The backend returned no answer.');
+    }
+
+    appendAssistantMessage(assistantText, 'bot');
+  } catch (error) {
+    console.error('Assistant request failed:', error);
+
+    appendAssistantMessage(
+      `Sorry, the assistant could not connect: ${error.message}`,
+      'bot'
+    );
   } finally {
     setAssistantBusy(false);
+    input.focus();
   }
 }
 

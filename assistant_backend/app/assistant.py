@@ -10,7 +10,8 @@ from . import settings
 from .tools import APPROVED_TOOLS, TOOL_DECLARATIONS
 
 
-MAX_TOOL_CALLS_PER_TURN = 2
+MAX_TOOL_CALLS_PER_TURN = 8
+MAX_TOOL_ROUNDS = 4
 
 SYSTEM_INSTRUCTION = """
 You are the constrained assistant for the San Diego Youth Opportunity
@@ -44,6 +45,27 @@ Rules:
 11. Keep answers concise and explain technical results in plain language.
 12. When a tool returns an error or no match, explain the limitation rather
     than guessing.
+13. Preserve the exact metric and geography requested by the user. Never
+    substitute a related metric simply because an available tool supports it.
+14. For multi-step analytical questions, continue using approved tools until
+    the information needed to answer the question has been retrieved.
+15. Prefer calculations returned by approved tools over doing arithmetic,
+    sorting, averaging, set intersections, correlations, or weighting yourself.
+16. If the user asks for a ranking using an undefined concept such as "most
+    concerning", "highest priority", or "best", do not invent an objective
+    formula. Explain the criterion being used or ask for clarification.
+17. When only part of a compound question can be answered, clearly separate
+    what can be answered from what cannot. Never answer a different question
+    in place of the requested one.
+18. Never substitute an average for a median, percentile, rate, count, or
+    other statistic explicitly requested by the user. Use an approved tool
+    that explicitly calculates the requested statistic.
+19. Dashboard UI context is read-only. Use it only to understand the current
+    view; never claim that you changed the map, layers, filters, or zoom.
+20. Format responses for a narrow dashboard sidebar. Prefer short paragraphs,
+    descriptive headings, and bullet lists. Avoid Markdown tables unless the
+    user explicitly asks for a table. Use bold text only for short labels or
+    key values, not entire paragraphs.
 """.strip()
 
 
@@ -301,14 +323,10 @@ def _build_response(
         "response_time_ms": elapsed_ms,
     }
 
-
-def ask_assistant(question: str) -> dict[str, Any]:
-    """Answer one question with at most one tool-selection round.
-
-    The model may select up to two approved tools in the first request.
-    After those tools run, a second request is made without tools so the
-    model must produce final text instead of repeatedly searching.
-    """
+def ask_assistant(
+    question: str,
+    context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if not settings.GEMINI_API_KEY:
         raise RuntimeError(
             "GEMINI_API_KEY is missing. Add it to assistant_backend/.env."
@@ -321,13 +339,27 @@ def ask_assistant(question: str) -> dict[str, Any]:
     client = genai.Client(api_key=settings.GEMINI_API_KEY)
     started = time.perf_counter()
 
+    user_text = clean_question
+
+    if context:
+        user_text = (
+            "READ-ONLY DASHBOARD_UI_CONTEXT:\n"
+            + json.dumps(
+                context,
+                ensure_ascii=False,
+                default=str,
+            )
+            + "\n\nUSER QUESTION:\n"
+            + clean_question
+        )
+
     history: list[dict[str, Any]] = [
         {
             "type": "user_input",
             "content": [
                 {
                     "type": "text",
-                    "text": clean_question,
+                    "text": user_text,
                 }
             ],
         }
@@ -336,66 +368,106 @@ def ask_assistant(question: str) -> dict[str, Any]:
     tool_trace: list[dict[str, Any]] = []
     usage = _empty_usage()
 
-    # Round 1: the model either answers directly or selects approved tools.
-    interaction = client.interactions.create(
-        model=settings.GEMINI_MODEL,
-        input=history,
-        tools=TOOL_DECLARATIONS,
-        system_instruction=SYSTEM_INSTRUCTION,
-        store=False,
-    )
-    usage = _combine_usage(usage, _usage_values(interaction))
-    _append_model_steps(history, interaction)
+    call_cache: dict[str, dict[str, Any]] = {}
+    total_tool_calls = 0
 
-    function_calls = [
-        step
-        for step in interaction.steps
-        if getattr(step, "type", None) == "function_call"
-    ]
+    for _ in range(MAX_TOOL_ROUNDS):
+        interaction = client.interactions.create(
+            model=settings.GEMINI_MODEL,
+            input=history,
+            tools=TOOL_DECLARATIONS,
+            system_instruction=SYSTEM_INSTRUCTION,
+            store=False,
+        )
 
-    if not function_calls:
-        answer = (interaction.output_text or "").strip()
-        if not answer:
-            answer = "I could not produce a response for that question."
-        return _build_response(
-            answer,
-            tool_trace,
+        usage = _combine_usage(
             usage,
-            started,
+            _usage_values(interaction),
         )
 
-    # Execute no more than two unique approved calls. Repeated calls with the
-    # same arguments are ignored so the model cannot search the same content
-    # over and over.
-    seen_calls: set[str] = set()
-    for call in function_calls:
-        arguments = dict(call.arguments or {})
-        signature = json.dumps(
-            {"name": call.name, "arguments": arguments},
-            sort_keys=True,
-            default=str,
-        )
-        if signature in seen_calls:
-            continue
-        seen_calls.add(signature)
+        _append_model_steps(history, interaction)
 
-        if len(tool_trace) >= MAX_TOOL_CALLS_PER_TURN:
-            break
+        function_calls = [
+            step
+            for step in interaction.steps
+            if getattr(step, "type", None) == "function_call"
+        ]
 
-        result = _execute_tool(call.name, arguments)
-        tool_trace.append(
-            {
-                "name": call.name,
-                "arguments": arguments,
-                "result": result,
-            }
-        )
-        _append_function_result(history, call, result)
+        # No tool requested -> model has finished answering.
+        if not function_calls:
+            answer = (interaction.output_text or "").strip()
 
-    # Round 2: tools are intentionally omitted. The model must now answer
-    # from the approved results already present in the history.
-    answer, final_usage = _force_text_response(client, history)
-    usage = _combine_usage(usage, final_usage)
+            if not answer:
+                answer = _deterministic_fallback(tool_trace)
+
+            return _build_response(
+                answer,
+                tool_trace,
+                usage,
+                started,
+            )
+
+        for call in function_calls:
+            arguments = dict(call.arguments or {})
+
+            signature = json.dumps(
+                {
+                    "name": call.name,
+                    "arguments": arguments,
+                },
+                sort_keys=True,
+                default=str,
+            )
+
+            # Reuse duplicate calls instead of executing them again.
+            if signature in call_cache:
+                result = call_cache[signature]
+
+            elif total_tool_calls >= MAX_TOOL_CALLS_PER_TURN:
+                result = {
+                    "ok": False,
+                    "error": "ToolLimitExceeded",
+                    "message": (
+                        "The assistant reached the maximum number "
+                        "of approved data lookups for one question."
+                    ),
+                }
+
+            else:
+                result = _execute_tool(
+                    call.name,
+                    arguments,
+                )
+
+                call_cache[signature] = result
+                total_tool_calls += 1
+
+            tool_trace.append(
+                {
+                    "name": call.name,
+                    "arguments": arguments,
+                    "result": result,
+                }
+            )
+
+            # IMPORTANT:
+            # Every function_call gets a function_result.
+            _append_function_result(
+                history,
+                call,
+                result,
+            )
+
+    # Safety fallback after too many reasoning/tool rounds.
+    answer, final_usage = _force_text_response(
+        client,
+        history,
+    )
+
+    usage = _combine_usage(
+        usage,
+        final_usage,
+    )
 
     if not answer:
         answer = _deterministic_fallback(tool_trace)

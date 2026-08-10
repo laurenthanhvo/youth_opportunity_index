@@ -78,7 +78,9 @@ def compare_geographies(
     shared_domains = sorted(
         set(first_scores).intersection(second_scores)
     )
+
     differences = {}
+    ranked_differences = []
 
     for domain in shared_domains:
         first_value = first_scores.get(domain)
@@ -88,10 +90,32 @@ def compare_geographies(
             second_value,
             (int, float),
         ):
-            differences[domain] = round(first_value - second_value, 1)
+            difference = round(
+                first_value - second_value,
+                1,
+            )
+
+            differences[domain] = difference
+
+            ranked_differences.append(
+                {
+                    "domain": domain,
+                    "difference_a_minus_b": difference,
+                    "absolute_difference": round(
+                        abs(difference),
+                        1,
+                    ),
+                }
+            )
+
+    ranked_differences.sort(
+        key=lambda item: item["absolute_difference"],
+        reverse=True,
+    )
 
     first_source = first.get("source_label")
     second_source = second.get("source_label")
+
     source_label = (
         first_source
         if first_source == second_source
@@ -102,6 +126,7 @@ def compare_geographies(
         "geography_a": first,
         "geography_b": second,
         "score_difference_a_minus_b": differences,
+        "ranked_absolute_differences": ranked_differences,
         "score_scale": "0 to 100",
         "source_label": source_label,
         "geography_note": (
@@ -115,6 +140,15 @@ def compare_geographies(
         ],
     }
 
+def analyze_regions(
+    domains: list[str] | None = None,
+    weights: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    """Analyze YOI scores across all county regions."""
+    return get_database().analyze_regions(
+        domains=domains,
+        weights=weights,
+    )
 
 def find_low_opportunity_areas(
     domain: str = "overall",
@@ -128,6 +162,33 @@ def find_low_opportunity_areas(
         county_region=county_region,
     )
 
+def compare_lowest_domain_overlap(
+    domain_a: str,
+    domain_b: str,
+    limit: int = 20,
+) -> dict[str, Any]:
+    """Compare overlap between the lowest-scoring tracts in two YOI domains."""
+    return get_database().lowest_domain_overlap(
+        domain_a=domain_a,
+        domain_b=domain_b,
+        limit=limit,
+    )
+
+def find_areas_with_reference_filter(
+    rank_domain: str,
+    filter_domain: str,
+    reference_statistic: str = "median",
+    operator: str = "above",
+    limit: int = 5,
+) -> dict[str, Any]:
+    """Rank tracts after filtering against a county reference statistic."""
+    return get_database().areas_with_reference_filter(
+        rank_domain=rank_domain,
+        filter_domain=filter_domain,
+        reference_statistic=reference_statistic,
+        operator=operator,
+        limit=limit,
+    )
 
 def get_indicator_definition(indicator: str) -> dict[str, Any]:
     """Look up an indicator definition, source, year, domain, and notes."""
@@ -351,10 +412,13 @@ def generate_map_url(
 APPROVED_TOOLS = {
     "get_geography_summary": get_geography_summary,
     "compare_geographies": compare_geographies,
+    "analyze_regions": analyze_regions,
     "find_low_opportunity_areas": find_low_opportunity_areas,
+    "compare_lowest_domain_overlap": compare_lowest_domain_overlap,
     "get_indicator_definition": get_indicator_definition,
     "get_methodology": get_methodology,
     "generate_map_url": generate_map_url,
+    "find_areas_with_reference_filter": find_areas_with_reference_filter,
 }
 
 
@@ -396,6 +460,47 @@ TOOL_DECLARATIONS = [
         },
     },
     {
+    "type": "function",
+    "name": "analyze_regions",
+    "description": (
+        "Analyze YOI domain scores across all San Diego County regions. "
+        "Use this when comparing three or more regions, identifying weakest "
+        "or strongest domains, finding the largest within-region domain gap, "
+        "averaging selected domains across regions, or applying custom "
+        "domain weights."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "domains": {
+                "type": ["array", "null"],
+                "items": {
+                    "type": "string"
+                },
+                "description": (
+                    "Optional list of YOI domains. If omitted, analyze all "
+                    "seven domains."
+                ),
+            },
+            "weights": {
+                "type": ["object", "null"],
+                "properties": {
+                    "economic": {"type": "number"},
+                    "education": {"type": "number"},
+                    "health": {"type": "number"},
+                    "housing": {"type": "number"},
+                    "safety_environment": {"type": "number"},
+                    "mobility_connectivity": {"type": "number"},
+                    "youth_supports": {"type": "number"},
+                },
+                "description": (
+                    "Optional weights for selected domains."
+                ),
+            },
+        },
+    },
+},
+    {
         "type": "function",
         "name": "find_low_opportunity_areas",
         "description": (
@@ -427,6 +532,43 @@ TOOL_DECLARATIONS = [
         },
     },
     {
+    "type": "function",
+    "name": "compare_lowest_domain_overlap",
+    "description": (
+        "Deterministically compare the overlap between the lowest-scoring "
+        "census tracts for two YOI domains and calculate the overlap "
+        "percentage. Use this instead of manually comparing tract IDs."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "domain_a": {
+                "type": "string",
+                "description": (
+                    "First YOI domain such as health, housing, education, "
+                    "economic, mobility/connectivity, or youth supports."
+                ),
+            },
+            "domain_b": {
+                "type": "string",
+                "description": (
+                    "Second YOI domain."
+                ),
+            },
+            "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100,
+            },
+        },
+        "required": [
+            "domain_a",
+            "domain_b",
+            "limit",
+        ],
+    },
+},
+    {
         "type": "function",
         "name": "get_indicator_definition",
         "description": (
@@ -456,6 +598,55 @@ TOOL_DECLARATIONS = [
             "required": ["topic"],
         },
     },
+    {
+    "type": "function",
+    "name": "find_areas_with_reference_filter",
+    "description": (
+        "Filter census tracts using a countywide median or average for one "
+        "YOI domain, then rank the qualifying tracts by another YOI domain. "
+        "Use this for questions such as finding the lowest overall YOI "
+        "tracts with Youth Supports above the county median."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "rank_domain": {
+                "type": "string"
+            },
+            "filter_domain": {
+                "type": "string"
+            },
+            "reference_statistic": {
+                "type": "string",
+                "enum": [
+                    "median",
+                    "average"
+                ]
+            },
+            "operator": {
+                "type": "string",
+                "enum": [
+                    "above",
+                    "below",
+                    "at_or_above",
+                    "at_or_below"
+                ]
+            },
+            "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 25
+            },
+        },
+        "required": [
+            "rank_domain",
+            "filter_domain",
+            "reference_statistic",
+            "operator",
+            "limit"
+        ],
+    },
+},
     {
         "type": "function",
         "name": "generate_map_url",

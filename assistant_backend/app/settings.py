@@ -39,6 +39,13 @@ REGION_YOI_CSV = resolve_repo_path(
     )
 )
 
+TRACT_PUMA_CROSSWALK = resolve_repo_path(
+    os.getenv(
+        "TRACT_PUMA_CROSSWALK",
+        "data/rawdomains/regions/2020_Census_Tract_to_2020_PUMA.txt",
+    )
+)
+
 INDICATOR_META_CSV = resolve_repo_path(
     os.getenv(
         "INDICATOR_META_CSV",
